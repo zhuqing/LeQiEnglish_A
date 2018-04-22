@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.leqienglish.mybook.R;
+import com.leqienglish.R;
 import com.leqienglish.controller.SecondViewController;
 
 /**

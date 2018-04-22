@@ -3,4 +3,8 @@
     <string name="title_home">主页</string>
     <string name="title_dashboard">单词</string>
     <string name="title_notifications">我</string>
+
+    <string name="HOST">http:////192.168.1.115:8080</string>
+    <string name="IMAGE_PATH">/english/content/download/image/</string>
+    <string name="AUDIO_PATH">/english/content/download/audio/</string>
 </resources>

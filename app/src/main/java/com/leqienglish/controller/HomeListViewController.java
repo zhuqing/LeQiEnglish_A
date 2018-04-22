@@ -1,18 +1,26 @@
 package com.leqienglish.controller;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-import com.leqienglish.mybook.R;
+import com.leqienglish.R;
+import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.entity.english.Content;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,9 +31,12 @@ import java.util.List;
 public class HomeListViewController extends Controller<View>{
     private ListView listView;
     private HomeListViewAdapter homeListViewAdapter;
+    private String imagePath;
 
     public HomeListViewController(View fragment) {
         super(fragment);
+        fragment.getResources().getString(R.string.HOST);
+        this.imagePath = fragment.getResources().getString(R.string.HOST)+fragment.getResources().getString(R.string.IMAGE_PATH);
     }
 
 
@@ -39,10 +50,21 @@ public class HomeListViewController extends Controller<View>{
 
             }
         });
+
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Content content = homeListViewAdapter.getItem(i);
+                Intent intent = new Intent();
+                intent.putExtras(BundleUtil.create(BundleUtil.DATA,content));
+                intent.setClass(listView.getContext(), PlayAudioActivity.class);
+                getView().getContext().startActivity(intent);
+            }
+        });
     }
 
     private HomeListViewAdapter addAdapter(List<Content> users){
-        HomeListViewAdapter homeListViewAdapter = new HomeListViewAdapter(LayoutInflater.from(this.getView().getContext()));
+         homeListViewAdapter = new HomeListViewAdapter(LayoutInflater.from(this.getView().getContext()));
         homeListViewAdapter.setItems(users);
         listView.setAdapter(homeListViewAdapter);
         homeListViewAdapter.notifyDataSetChanged();
@@ -99,14 +121,23 @@ public class HomeListViewController extends Controller<View>{
                 holder.title = view.findViewById(R.id.home_listview_item_title);
                 holder.subTitle = view.findViewById(R.id.home_listview_item_subtitle);
                 view.setTag(holder);
+
             }
 
             Content actical = this.getItem(i);
             if(actical == null){
                 return view;
             }
-            holder.title.setText(actical.getContent());
 
+            holder.title.setText(actical.getTitle());
+            final  ViewHolder fviewHolder = holder;
+            LQService.get(HomeListViewController.this.getView().getResources().getString(R.string.IMAGE_PATH)+actical.getId(), byte[].class, null, new LQHandler.Consumer<byte[]>() {
+                @Override
+                public void applay(byte[] users) {
+                    System.err.print(users);
+                }
+            });
+            holder.imageView.setImageURI( Uri.parse(imagePath+actical.getId()));
             return view;
         }
     }

@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.leqienglish.mybook.R;
+import com.leqienglish.R;
 
 /**
  * Created by zhuqing on 2017/8/19.

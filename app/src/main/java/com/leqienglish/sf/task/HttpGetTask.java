@@ -23,30 +23,18 @@ public  class HttpGetTask<T> extends HttpTask<T> {
 
     @Override
     protected T getT(RestTemplate restTemplate) {
-        Message message = restTemplate.getForObject(this.getPath(), Message.class,this.getVariables());
-        String data = (String) message.getData();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.USE_GETTERS_AS_SETTERS, true);
-        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true) ;
 
 
-        JsonFactory factory = new JsonFactory();//实例JSON工程对象
-        //使用JsonParser处理json
-        JsonParser jp = null;
-        List<T> contentList = new ArrayList<>();
+
         try {
-            jp = factory.createParser(data);
-
-            return mapper.readValue(jp, this.getClaz());//对象化
-
+            Message message = restTemplate.getForObject(this.getPath(), Message.class,this.getVariables());
+            String data = (String) message.getData();
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(data, this.getClaz());//对象化
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-        return  null;
-
+        return null;
     }
 
 

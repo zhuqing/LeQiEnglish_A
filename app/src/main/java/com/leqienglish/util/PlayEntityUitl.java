@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 public class PlayEntityUitl {
-    public List<PlayEntity> createEntitys(String str) {
+    public static List<PlayEntity> createEntitys(String str) {
     String[] strArr = str.split("\n");
     List<PlayEntity> entitys = new ArrayList<>();
     for (String item : strArr) {

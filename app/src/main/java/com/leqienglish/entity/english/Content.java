@@ -20,14 +20,8 @@ public class Content extends Entity {
     private String imagePath;
     private String audioPath;
     private String timePoint;
+    private String title;
 
-//    public Content(String jsonString){
-//       this.setContent("content");
-//    }
-
-    public Content(){
-
-    }
     /**
      * @return the content
      */
@@ -98,5 +92,18 @@ public class Content extends Entity {
         this.timePoint = timePoint;
     }
 
-   
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
 }

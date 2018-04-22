@@ -13,7 +13,7 @@ import com.leqienglish.fragment.HomeFragment;
 import com.leqienglish.fragment.LQFragmentAdapter;
 import com.leqienglish.fragment.SecondFrament;
 import com.leqienglish.fragment.ThirdFrament;
-import com.leqienglish.mybook.R;
+import com.leqienglish.R;
 
 public class MainActivity extends AppCompatActivity {
 
