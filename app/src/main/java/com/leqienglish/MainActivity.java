@@ -14,6 +14,7 @@ import com.leqienglish.fragment.LQFragmentAdapter;
 import com.leqienglish.fragment.SecondFrament;
 import com.leqienglish.fragment.ThirdFrament;
 import com.leqienglish.R;
+import com.leqienglish.util.FileUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FileUtil.application = this.getApplication();
         setContentView(R.layout.activity_main);
         this.content = (FrameLayout) this.findViewById(R.id.content);
 

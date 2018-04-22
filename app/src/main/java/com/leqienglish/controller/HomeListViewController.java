@@ -18,11 +18,17 @@ import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.entity.english.Content;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
+import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LQHandler;
 
+import org.springframework.http.MediaType;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by zhuqing on 2017/8/19.
@@ -131,13 +137,25 @@ public class HomeListViewController extends Controller<View>{
 
             holder.title.setText(actical.getTitle());
             final  ViewHolder fviewHolder = holder;
-            LQService.get(HomeListViewController.this.getView().getResources().getString(R.string.IMAGE_PATH)+actical.getId(), byte[].class, null, new LQHandler.Consumer<byte[]>() {
-                @Override
-                public void applay(byte[] users) {
-                    System.err.print(users);
+            try {
+                final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
+                File file = new File(filePath);
+                if(file.exists()){
+                    holder.imageView.setImageURI( Uri.parse(filePath));
+                }else{
+                    LQService.download(HomeListViewController.this.getView().getResources().getString(R.string.IMAGE_PATH)+actical.getId(),filePath,MediaType.IMAGE_JPEG,null, new LQHandler.Consumer<String>() {
+                        @Override
+                        public void applay(String s) {
+                            if(Objects.equals(filePath,s)){
+                                fviewHolder.imageView.setImageURI( Uri.parse(filePath));
+                            }
+                        }
+                    });
                 }
-            });
-            holder.imageView.setImageURI( Uri.parse(imagePath+actical.getId()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return view;
         }
     }

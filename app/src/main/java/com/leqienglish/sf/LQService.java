@@ -1,10 +1,14 @@
 package com.leqienglish.sf;
 
+import com.leqienglish.sf.task.HttpDownLoadTask;
 import com.leqienglish.sf.task.HttpGetTask;
 import com.leqienglish.sf.task.HttpPostTask;
 import com.leqienglish.util.LQHandler;
 
+import org.springframework.http.MediaType;
+
 import java.net.HttpURLConnection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +28,9 @@ public class LQService {
         new HttpPostTask<>(http+path,claz,consumer,variables).execute();
     }
 
-
+    public static <T> void download(String path , String filePath , MediaType mediaType,Map<String, ?> variables, LQHandler.Consumer<String> consumer){
+        new HttpDownLoadTask(http+path,filePath,mediaType,consumer,variables).execute();
+    }
 
 
 

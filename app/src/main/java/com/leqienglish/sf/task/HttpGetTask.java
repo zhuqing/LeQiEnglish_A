@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leqienglish.entity.Message;
 import com.leqienglish.util.LQHandler;
 
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -23,8 +25,8 @@ public  class HttpGetTask<T> extends HttpTask<T> {
 
     @Override
     protected T getT(RestTemplate restTemplate) {
-
-
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 
         try {
             Message message = restTemplate.getForObject(this.getPath(), Message.class,this.getVariables());
