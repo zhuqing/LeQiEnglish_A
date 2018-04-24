@@ -3,6 +3,8 @@ package com.leqienglish.controller;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.text.LoginFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.entity.english.Content;
+import com.leqienglish.playandrecord.PlayMediaPlayerThread;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
@@ -30,24 +33,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-/**
+/**private
  * Created by zhuqing on 2017/8/19.
  */
 
 public class HomeListViewController extends Controller<View>{
     private ListView listView;
     private HomeListViewAdapter homeListViewAdapter;
-    private String imagePath;
+
+
 
     public HomeListViewController(View fragment) {
         super(fragment);
-        fragment.getResources().getString(R.string.HOST);
-        this.imagePath = fragment.getResources().getString(R.string.HOST)+fragment.getResources().getString(R.string.IMAGE_PATH);
+       // fragment.getResources().getString(R.string.HOST);
+      //  this.imagePath = fragment.getResources().getString(R.string.HOST)+fragment.getResources().getString(R.string.IMAGE_PATH);
     }
 
 
     @Override
     public void init() {
+
        this.listView= (ListView) this.getView().findViewById(R.id.home_listview);
         LQService.get("/english/content/findAll", Content[].class, null, new LQHandler.Consumer<Content[]>() {
             @Override
@@ -67,6 +72,27 @@ public class HomeListViewController extends Controller<View>{
                 getView().getContext().startActivity(intent);
             }
         });
+    }
+
+
+    private void loadImageFile(Content actical,LQHandler.Consumer<String> consumer) throws IOException {
+        final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
+        File file = new File(filePath);
+        if(file.exists()){
+            consumer.applay(filePath);
+        }else{
+            LQService.download(HomeListViewController.this.getView().getResources().getString(R.string.IMAGE_PATH)+actical.getId(),filePath,MediaType.IMAGE_JPEG,null, consumer);
+        }
+    }
+
+    private void loadAudioFile(Content actical,LQHandler.Consumer<String> consumer) throws IOException {
+        final String filePath = FileUtil.getFileAbsolutePath(actical.getAudioPath());
+        File file = new File(filePath);
+        if(file.exists()){
+            consumer.applay(filePath);
+        }else{
+            LQService.download(HomeListViewController.this.getView().getResources().getString(R.string.AUDIO_PATH)+actical.getId(),filePath,MediaType.ALL,null, consumer);
+        }
     }
 
     private HomeListViewAdapter addAdapter(List<Content> users){
@@ -139,19 +165,21 @@ public class HomeListViewController extends Controller<View>{
             final  ViewHolder fviewHolder = holder;
             try {
                 final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
-                File file = new File(filePath);
-                if(file.exists()){
-                    holder.imageView.setImageURI( Uri.parse(filePath));
-                }else{
-                    LQService.download(HomeListViewController.this.getView().getResources().getString(R.string.IMAGE_PATH)+actical.getId(),filePath,MediaType.IMAGE_JPEG,null, new LQHandler.Consumer<String>() {
-                        @Override
-                        public void applay(String s) {
-                            if(Objects.equals(filePath,s)){
-                                fviewHolder.imageView.setImageURI( Uri.parse(filePath));
+                loadImageFile(actical,new LQHandler.Consumer<String>() {
+                            @Override
+                            public void applay(String s) {
+                                if(Objects.equals(filePath,s)){
+                                    fviewHolder.imageView.setImageURI( Uri.parse(filePath));
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+
+                loadAudioFile(actical,new LQHandler.Consumer<String>() {
+                            @Override
+                            public void applay(String s) {
+                                Log.v("downfile",s);
+                            }
+                        });
             } catch (IOException e) {
                 e.printStackTrace();
             }
