@@ -8,4 +8,97 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Base application theme. -->
+    <style name="title" parent="base_title">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="base_title">
+        <item name="android:textSize">25dp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="readContent_fromwhere">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#9370DB</item>
+    </style>
+
+    <style name="createData">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#d7d7d7</item>
+    </style>
+
+    <style name="catalog_style">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="content">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="catalog">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#333333</item>
+    </style>
+
+    <style name="bottombar_comment_number">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="lession_list_title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="first_page_title">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="first_page_description">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="first_page_catalog">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">#CCCCCC</item>
+    </style>
+
+    <style name="bottombar_button">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">#999999</item>
+    </style>
+
+    <style name="famous_word">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="courrent_play">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#1874CD</item>
+    </style>
+
+    <style name="courrent_unplay">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="read_content_words">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#3D3D3D</item>
+    </style>
+
+    <style name="backgroud">
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">#dddddd</item>
+    </style>
+
+
 </resources>

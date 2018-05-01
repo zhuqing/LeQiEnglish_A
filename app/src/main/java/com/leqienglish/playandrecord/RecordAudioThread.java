@@ -10,8 +10,11 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.util.Log;
 
+import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.AppType;
+import com.leqienglish.util.LQHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /***
@@ -20,34 +23,52 @@ import java.util.List;
  * @author guona
  *
  */
-public class RecordAudioThread extends Thread {
+public class RecordAudioThread extends DataBaseTask<List<short[]>> {
     private List<short[]> byteBufferList;
     private long duration;
-    private Handler handler;
+
+  //  private LQHandler.Consumer< List<short[]>> consumer;
     private boolean isRecording = false;
 
-    public RecordAudioThread(List<short[]> byteBufferList, long duration,
-                        Handler handler) {
-        this.byteBufferList = byteBufferList;
+    public RecordAudioThread( long duration,
+                        LQHandler.Consumer< List<short[]>> handler) {
+        super(handler);
         this.duration = duration;
-        this.handler = handler;
+       // this.consumer = handler;
+        this.byteBufferList= new ArrayList<>();
+    }
+
+    public int getValidSampleRates() {
+        for (int rate : new int[] {44100, 22050, 11025, 16000, 8000}) {  // add the rates you wish to check against
+            int bufferSize = AudioRecord.getMinBufferSize(rate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
+            if (bufferSize > 0) {
+              return bufferSize;
+            }
+        }
+
+        return -1;
     }
 
     public void run() {
-        Log.d(this.getName(), "====start======");
+
+    }
+
+    @Override
+    protected List<short[]> doInBackground(Object... objects) {
+
         if (isRecording) {
-            return;
+            return byteBufferList;
         }
 
         isRecording = true;
         try {
-            int bufferSize = AudioRecord.getMinBufferSize(AppType.frequence,
-                    AudioFormat.CHANNEL_IN_MONO, AppType.audioEncoding);
+            int bufferSize =getValidSampleRates();
 
 
             AudioRecord record = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     AppType.frequence,AudioFormat.CHANNEL_IN_MONO, AppType.audioEncoding,
                     bufferSize);
+
             // 实例AudioTrack
 
             short[] buffer = new short[bufferSize];
@@ -73,8 +94,10 @@ public class RecordAudioThread extends Thread {
             e.printStackTrace();
         }
 
-        this.handler.sendEmptyMessage(AppType.RECORD_OVER);
-        Log.d(this.getName(), "====end=====");
+
+       // Log.d(this.getName(), "====end=====");
         isRecording = false;
+
+        return byteBufferList;
     }
 }

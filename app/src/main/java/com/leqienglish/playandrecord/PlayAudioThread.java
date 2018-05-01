@@ -9,7 +9,9 @@ import android.media.AudioTrack;
 import android.os.Handler;
 import android.util.Log;
 
+import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.AppType;
+import com.leqienglish.util.LQHandler;
 
 
 import java.util.List;
@@ -17,22 +19,29 @@ import java.util.List;
 /**
  * 播放录音
  */
-public class PlayAudioThread extends Thread {
+public class PlayAudioThread extends DataBaseTask {
     private List<short[]> list;
-    private Handler handler;
+   private LQHandler.Consumer consumer;
 
-    public PlayAudioThread(List<short[]> list, Handler handler) {
+    public PlayAudioThread(List<short[]> list, LQHandler.Consumer handler) {
+        super(handler);
         this.list = list;
-        this.handler = handler;
+        this.consumer = handler;
     }
 
     public void run() {
+
+        this.consumer.applay(AppType.PLAY_RECORD_OVER);
+    }
+
+    @Override
+    protected Object doInBackground(Object[] objects) {
 
 
         try {
             int bufferSize = AudioTrack.getMinBufferSize(AppType.frequence,
                     AudioFormat.CHANNEL_OUT_MONO, AppType.audioEncoding);
-            Log.d(this.getName(), "====start play=====bufferSize=" + bufferSize);
+         //   Log.d(this.getName(), "====start play=====bufferSize=" + bufferSize);
             // 实例AudioTrack
             AudioTrack track = new AudioTrack(AudioManager.STREAM_MUSIC,
                     AppType.frequence, AudioFormat.CHANNEL_OUT_MONO, AppType.audioEncoding,
@@ -44,7 +53,7 @@ public class PlayAudioThread extends Thread {
             for( int i = 0;  i < this.list.size() ; i++){
 
                 short[] buffer = this.list.get(i);
-                Log.d(this.getName(), "====start play=====bufferSize=" + buffer.length);
+              //  Log.d(this.getName(), "====start play=====bufferSize=" + buffer.length);
                 track.write(buffer, 0, buffer.length);
             }
             track.stop();
@@ -54,6 +63,6 @@ public class PlayAudioThread extends Thread {
             e.printStackTrace();
         }
         this.list.clear();
-        this.handler.sendEmptyMessage(AppType.PLAY_RECORD_OVER);
+        return "";
     }
 }

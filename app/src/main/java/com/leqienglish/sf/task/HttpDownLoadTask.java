@@ -45,8 +45,6 @@ public class HttpDownLoadTask extends HttpTask<String> {
         try {
 
             headers.setAccept(Arrays.asList(this.mediaType));
-            headers.setContentType(mediaType);
-
             ResponseEntity<byte[]> response = restTemplate.exchange(
                     this.getPath(),
                     HttpMethod.GET,

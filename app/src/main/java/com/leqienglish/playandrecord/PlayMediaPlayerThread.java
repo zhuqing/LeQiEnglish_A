@@ -11,7 +11,7 @@ import java.io.IOException;
  * Created by zhuqing on 2018/4/24.
  */
 
-public class PlayMediaPlayerThread extends Thread{
+public class PlayMediaPlayerThread extends Thread {
     private PlayEntity playEntity;
     private String resource;
     private LQHandler.Consumer playComplete;
@@ -26,58 +26,81 @@ public class PlayMediaPlayerThread extends Thread{
 
     private MediaPlayer mediaPlayer;
 
-    public PlayMediaPlayerThread(String resource , LQHandler.Consumer complete)  {
-        this.playComplete = complete;
+    public PlayMediaPlayerThread(String resource) {
+        //  this.setPlayComplete(complete);
         this.resource = resource;
 
     }
 
-    public void run(){
-        if(this.getPlayEntity() == null || this.playComplete == null){
+    public void run() {
+        if (this.getPlayEntity() == null) {
             return;
         }
         try {
             this.initMediaPlayer();
-            this.mediaPlayer.seekTo(Integer.valueOf( this.getPlayEntity().getStart()/1000+""));
-
+            this.mediaPlayer.seekTo(Integer.valueOf(this.getPlayEntity().getStart() + ""));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void  initMediaPlayer() throws IOException {
-        if(this.mediaPlayer !=null){
+    private void initMediaPlayer() throws IOException {
+        if (this.mediaPlayer != null) {
             return;
         }
+
         this.mediaPlayer = new MediaPlayer();
         this.mediaPlayer.setDataSource(resource);
-        this.mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener(){
+        this.mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
 
             @Override
             public void onSeekComplete(MediaPlayer mp) {
                 // TODO Auto-generated method stub
                 mediaPlayer.start();
-                int end = Integer.valueOf(getPlayEntity().getEnd()/1000+"");
-                while (true){
-                    if(!mediaPlayer.isPlaying()){
-                        playComplete.applay(getPlayEntity());
-                        break;
-                    }
-                    if(mediaPlayer.getCurrentPosition()>end){
-                        playComplete.applay(getPlayEntity());
-                        break;
+                new PlayThread(mediaPlayer, getPlayComplete()).start();
 
-                    }
-                }
-
-
-            }});
-        this.mediaPlayer.prepare();
-        this.mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-            @Override
-            public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
-                return false;
             }
         });
+
+        this.mediaPlayer.prepare();
+
+
+    }
+
+    public LQHandler.Consumer getPlayComplete() {
+        return playComplete;
+    }
+
+    public void setPlayComplete(LQHandler.Consumer playComplete) {
+        this.playComplete = playComplete;
+    }
+
+    public class PlayThread extends Thread {
+        private MediaPlayer mediaPlayer;
+        private LQHandler.Consumer playComplete;
+
+        public PlayThread(MediaPlayer mediaPlayer, LQHandler.Consumer playComplete) {
+            this.mediaPlayer = mediaPlayer;
+            this.playComplete = playComplete;
+        }
+
+        public void run() {
+            int end = Integer.valueOf(getPlayEntity().getEnd() + "");
+            while (true) {
+                if (!mediaPlayer.isPlaying()) {
+                    if (playComplete != null)
+                        playComplete.applay(getPlayEntity());
+                    break;
+                }
+                if (mediaPlayer.getCurrentPosition() > end) {
+                    mediaPlayer.pause();
+                    if (playComplete != null)
+                        playComplete.applay(getPlayEntity());
+                    break;
+
+                }
+            }
+
+        }
     }
 }

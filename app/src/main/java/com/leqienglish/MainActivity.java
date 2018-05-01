@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.leqienglish.controller.HomeListViewController;
+import com.leqienglish.database.ExecuteSQL;
+import com.leqienglish.database.SqlData;
 import com.leqienglish.fragment.HomeFragment;
 import com.leqienglish.fragment.LQFragmentAdapter;
 import com.leqienglish.fragment.SecondFrament;
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FileUtil.application = this.getApplication();
+        ExecuteSQL.init(new SqlData(this.getBaseContext()));
         setContentView(R.layout.activity_main);
         this.content = (FrameLayout) this.findViewById(R.id.content);
 

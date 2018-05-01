@@ -1,24 +1,24 @@
 package com.leqienglish.controller;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.text.LoginFilter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leqienglish.R;
 import com.leqienglish.activity.PlayAudioActivity;
+import com.leqienglish.database.ExecuteSQL;
+
+import com.leqienglish.entity.SQLEntity;
 import com.leqienglish.entity.english.Content;
-import com.leqienglish.playandrecord.PlayMediaPlayerThread;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
@@ -28,17 +28,19 @@ import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static java.util.Arrays.*;
 
 /**private
  * Created by zhuqing on 2017/8/19.
  */
 
 public class HomeListViewController extends Controller<View>{
-    private ListView listView;
+    private GridView gridView;
     private HomeListViewAdapter homeListViewAdapter;
 
 
@@ -53,28 +55,86 @@ public class HomeListViewController extends Controller<View>{
     @Override
     public void init() {
 
-       this.listView= (ListView) this.getView().findViewById(R.id.home_listview);
-        LQService.get("/english/content/findAll", Content[].class, null, new LQHandler.Consumer<Content[]>() {
+       this.gridView = (GridView) this.getView().findViewById(R.id.home_listview);
+        ExecuteSQL.getInstance().getDatasByType(ExecuteSQL.CONTENT_TYPE, new LQHandler.Consumer<List< SQLEntity>>(){
             @Override
-            public void applay(Content[] users) {
-                addAdapter(Arrays.asList(users));
+            public void applay(List<SQLEntity> sqlEnities) {
+                if(sqlEnities == null || sqlEnities.isEmpty()){
+                   // findData(null);
+                    return;
+                }
 
+                List<Content> contents = new ArrayList<Content>(sqlEnities.size());
+                for(SQLEntity sqlEnity:sqlEnities){
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        contents.add(mapper.readValue(sqlEnity.getJson(), Content.class));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                addAdapter(contents);
+
+            }
+        } );
+
+        ExecuteSQL.getInstance().getNewsetByType(ExecuteSQL.CONTENT_TYPE, new LQHandler.Consumer<SQLEntity>() {
+            @Override
+            public void applay(SQLEntity sqlEnity) {
+                findData(sqlEnity);
             }
         });
 
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+
+        this.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Content content = homeListViewAdapter.getItem(i);
                 Intent intent = new Intent();
                 intent.putExtras(BundleUtil.create(BundleUtil.DATA,content));
-                intent.setClass(listView.getContext(), PlayAudioActivity.class);
+                intent.setClass(gridView.getContext(), PlayAudioActivity.class);
                 getView().getContext().startActivity(intent);
             }
         });
     }
 
+    private void findData(SQLEntity sqlEntity){
+        if(sqlEntity == null){
+            LQService.get("/english/content/findAll", Content[].class, null, new LQHandler.Consumer<Content[]>() {
+                @Override
+                public void applay(Content[] users) {
+                    try {
+                        ExecuteSQL.getInstance().insertLearnE(ExecuteSQL.getInstance().toSQLEntitys(asList(users)),null);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    addAdapter(asList(users));
+                }
+            });
+        }else{
+            LQService.get("/english/content/findNew/"+sqlEntity.getCreateTime(), Content[].class, null, new LQHandler.Consumer<Content[]>() {
+                @Override
+                public void applay(Content[] users) {
+                    try {
+                        ExecuteSQL.getInstance().insertLearnE(ExecuteSQL.getInstance().toSQLEntitys(asList(users)),null);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    addAdapter(asList(users));
+                }
+            });
+        }
 
+    }
+
+
+    /**
+     * 加载图片
+     * @param actical
+     * @param consumer
+     * @throws IOException
+     */
     private void loadImageFile(Content actical,LQHandler.Consumer<String> consumer) throws IOException {
         final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
         File file = new File(filePath);
@@ -98,7 +158,7 @@ public class HomeListViewController extends Controller<View>{
     private HomeListViewAdapter addAdapter(List<Content> users){
          homeListViewAdapter = new HomeListViewAdapter(LayoutInflater.from(this.getView().getContext()));
         homeListViewAdapter.setItems(users);
-        listView.setAdapter(homeListViewAdapter);
+        gridView.setAdapter(homeListViewAdapter);
         homeListViewAdapter.notifyDataSetChanged();
         return homeListViewAdapter;
     }
@@ -177,7 +237,7 @@ public class HomeListViewController extends Controller<View>{
                 loadAudioFile(actical,new LQHandler.Consumer<String>() {
                             @Override
                             public void applay(String s) {
-                                Log.v("downfile",s);
+                         //   Log.v("downfile",s);
                             }
                         });
             } catch (IOException e) {

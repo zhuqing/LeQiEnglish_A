@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -13,8 +14,11 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.entity.PlayEntity;
 import com.leqienglish.entity.english.Content;
+import com.leqienglish.playandrecord.PlayAudioThread;
 import com.leqienglish.playandrecord.PlayMediaPlayerThread;
+import com.leqienglish.playandrecord.RecordAudioThread;
 import com.leqienglish.util.FileUtil;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.PlayEntityUitl;
 
@@ -25,11 +29,13 @@ import java.util.List;
  * Created by zhuqing on 2018/4/21.
  */
 
-public class PlayAudioController extends Controller<ListView> {
+public class PlayAudioController extends Controller<GridView> {
+    private LOGGER logger = new LOGGER(PlayAudioController.class);
     private Content content;
     private HomeListViewAdapter homeListViewAdapter;
     private PlayMediaPlayerThread playMediaPlayerThread;
-    public PlayAudioController(ListView view,Content content) {
+
+    public PlayAudioController(GridView view, Content content) {
         super(view);
         this.content = content;
 
@@ -42,24 +48,19 @@ public class PlayAudioController extends Controller<ListView> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<PlayEntity> playEntities =   PlayEntityUitl.createEntitys(this.content.getContent());
+        List<PlayEntity> playEntities = PlayEntityUitl.createEntitys(this.content.getContent());
         homeListViewAdapter = new HomeListViewAdapter(LayoutInflater.from(this.getView().getContext()));
         homeListViewAdapter.setItems(playEntities);
         this.getView().setAdapter(homeListViewAdapter);
     }
 
-    private void  loadAudioFile() throws IOException {
+    private void loadAudioFile() throws IOException {
         final String filePath = FileUtil.getFileAbsolutePath(content.getAudioPath());
-        this.playMediaPlayerThread = new PlayMediaPlayerThread(filePath, new LQHandler.Consumer() {
-            @Override
-            public void applay(Object o) {
-
-            }
-        });
+        this.playMediaPlayerThread = new PlayMediaPlayerThread(filePath);
     }
 
 
-    final class ViewHolder{
+    final class ViewHolder {
 
         TextView title;
         Button playButton;
@@ -71,9 +72,10 @@ public class PlayAudioController extends Controller<ListView> {
 
         private LayoutInflater mInflater;
 
-        public HomeListViewAdapter(LayoutInflater mInflater){
+        public HomeListViewAdapter(LayoutInflater mInflater) {
             this.mInflater = mInflater;
         }
+
         private List<PlayEntity> items;
 
         public List<PlayEntity> getItems() {
@@ -102,25 +104,20 @@ public class PlayAudioController extends Controller<ListView> {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             PlayAudioController.ViewHolder holder = null;
-            if(view!=null){
+            if (view != null) {
                 holder = (PlayAudioController.ViewHolder) view.getTag();
-            }else{
+            } else {
                 holder = new PlayAudioController.ViewHolder();
-                view =this.mInflater.inflate(R.layout.play_audio_item,null);
+                view = this.mInflater.inflate(R.layout.play_audio_item, null);
                 holder.title = view.findViewById(R.id.play_audio_text);
                 holder.playButton = view.findViewById(R.id.play_audio_play);
-                holder.recodeButton =  view.findViewById(R.id.play_audio_record);
+                holder.recodeButton = view.findViewById(R.id.play_audio_record);
                 view.setTag(holder);
                 holder.playButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         PlayEntity pe = (PlayEntity) view.getTag();
-                        if(pe == null){
-                            return;
-                        }
-
-                        playMediaPlayerThread.setPlayEntity(pe);
-                        playMediaPlayerThread.run();
+                        play(pe);
                     }
                 });
 
@@ -130,6 +127,37 @@ public class PlayAudioController extends Controller<ListView> {
             holder.playButton.setTag(playEntity);
             holder.recodeButton.setTag(playEntity);
             return view;
+        }
+
+        private void play(final PlayEntity pe) {
+            if (pe == null) {
+                return;
+            }
+            playMediaPlayerThread.setPlayEntity(pe);
+            playMediaPlayerThread.setPlayComplete(new LQHandler.Consumer() {
+                @Override
+                public void applay(Object o) {
+                    logger.v("播放完成 录音");
+
+                    RecordAudioThread thread = new RecordAudioThread(pe.getDuring()+3000,new LQHandler.Consumer<List<short[]>>(){
+                        @Override
+                        public void applay(List<short[]> shorts) {
+
+                            new PlayAudioThread(shorts, new LQHandler.Consumer() {
+                                @Override
+                                public void applay(Object o) {
+                                    logger.v("录音播放完成 ");
+                                    playMediaPlayerThread.setPlayComplete(null);
+                                    playMediaPlayerThread.start();
+                                }
+                            }).execute();
+
+                        }
+                    });
+                    thread.execute();
+                }
+            });
+            playMediaPlayerThread.start();
         }
     }
 }

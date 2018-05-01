@@ -32,6 +32,10 @@ public class LQService {
         new HttpDownLoadTask(http+path,filePath,mediaType,consumer,variables).execute();
     }
 
+    public static void insertOrUpdate(String id,String url,String json , String type){
+
+    }
+
 
 
 
