@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="180dp">
-<TextView
-    android:paddingTop="10dp"
-    android:id="@+id/play_audio_text"
-    android:layout_width="match_parent"
-    android:layout_height="120dp" />
+    <com.leqienglish.view.LeQiTextView
+        android:paddingTop="10dp"
+        android:id="@+id/play_audio_text"
+        android:layout_width="match_parent"
+        android:layout_height="120dp" />
+
 
     <RelativeLayout
         android:paddingBottom="10dp"

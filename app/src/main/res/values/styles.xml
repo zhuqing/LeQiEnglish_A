@@ -8,6 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="count_down_popwindow" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pop_up_enter</item>
+        <item name="android:windowExitAnimation">@anim/pop_up_exit</item>
+    </style>
+
+
     <!-- Base application theme. -->
     <style name="title" parent="base_title">
         <item name="android:textStyle">bold</item>

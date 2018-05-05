@@ -2,6 +2,7 @@ package com.leqienglish.controller;
 
 import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,10 +18,12 @@ import com.leqienglish.entity.english.Content;
 import com.leqienglish.playandrecord.PlayAudioThread;
 import com.leqienglish.playandrecord.PlayMediaPlayerThread;
 import com.leqienglish.playandrecord.RecordAudioThread;
+import com.leqienglish.popwindow.WordDetailPopupWindow;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.PlayEntityUitl;
+import com.leqienglish.view.LeQiTextView;
 
 import java.io.IOException;
 import java.util.List;
@@ -118,6 +121,24 @@ public class PlayAudioController extends Controller<GridView> {
                     public void onClick(View view) {
                         PlayEntity pe = (PlayEntity) view.getTag();
                         play(pe);
+                    }
+                });
+
+                final LeQiTextView leQiTextView = (LeQiTextView) holder.title;
+                holder.title.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                            String select = leQiTextView.getSelectText();
+                            logger.v("select\t" + select);
+                            if(select==null||select.isEmpty()){
+                                return false;
+                            }
+
+                            new WordDetailPopupWindow(leQiTextView.getContext(),select);
+
+                        }
+                        return false;
                     }
                 });
 
