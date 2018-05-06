@@ -10,6 +10,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
+import com.leqienglish.entity.english.TranslateEntity;
+import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.TransApiUtil;
+
+import java.util.List;
+
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 
 
 /**
@@ -18,6 +29,9 @@ import com.leqienglish.R;
 public class WordDetailPopupWindow extends PopupWindow {
     private Button save;
     private TextView title;
+    private TextView transTextView;
+
+    private String select;
 
     public WordDetailPopupWindow(Context context,String title) {
         super(context);
@@ -27,7 +41,9 @@ public class WordDetailPopupWindow extends PopupWindow {
         this.setContentView(view);
         this.save = view.findViewById(R.id.word_detail_save);
         this.title = view.findViewById(R.id.word_detail_title);
+        this.transTextView = view.findViewById(R.id.word_detail_tans);
         this.title.setText(title);
+        this.select = title;
 
         // 设置弹出窗体的宽和高
         this.setHeight(RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -44,7 +60,30 @@ public class WordDetailPopupWindow extends PopupWindow {
         // 设置弹出窗体显示时的动画，从底部向上弹出
         this.setAnimationStyle(R.style.count_down_popwindow);
         this.initSave();
+        loadTrans();
+    }
 
+    private void loadTrans(){
+        TransApiUtil.transResult(this.select, TransApiUtil.FROM, TransApiUtil.TO, new LQHandler.Consumer<List<TranslateEntity>>() {
+            @Override
+            public void applay(final List<TranslateEntity> translateEntities) {
+                if(translateEntities == null || translateEntities.isEmpty()){
+                    return;
+                }
+                Observable.fromIterable(translateEntities).map(new Function<TranslateEntity, String>() {
+                    @Override
+                    public String apply(@NonNull TranslateEntity translateEntity) throws Exception {
+                        return translateEntity.getDst();
+                    }
+                }).subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        transTextView.setText(transTextView.getText()+"\n"+s);
+                    }
+                });
+
+            }
+        });
     }
 
     private void initSave() {

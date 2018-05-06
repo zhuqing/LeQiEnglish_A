@@ -2,6 +2,7 @@ package com.leqienglish.sf;
 
 import com.leqienglish.sf.task.HttpDownLoadTask;
 import com.leqienglish.sf.task.HttpGetTask;
+import com.leqienglish.sf.task.HttpGetTranslateTask;
 import com.leqienglish.sf.task.HttpPostTask;
 import com.leqienglish.util.LQHandler;
 
@@ -22,6 +23,10 @@ public class LQService {
 
     public static  <T> void  get(String path , Class claz, Map<String,?> variables, LQHandler.Consumer<T> consumer){
          new HttpGetTask(http+path,claz,consumer,variables).execute();
+    }
+
+    public static  <T> void  getTrans(String path , Class claz, Map<String,?> variables, LQHandler.Consumer<T> consumer){
+        new HttpGetTranslateTask<T>(path,claz,consumer,variables).execute();
     }
 
     public static <T> void post(String path , Class claz,Map<String,?> variables,LQHandler.Consumer<T> consumer){

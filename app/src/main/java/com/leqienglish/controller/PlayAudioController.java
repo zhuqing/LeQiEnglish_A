@@ -1,6 +1,7 @@
 package com.leqienglish.controller;
 
 import android.net.Uri;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,14 +16,17 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.entity.PlayEntity;
 import com.leqienglish.entity.english.Content;
+import com.leqienglish.entity.english.TranslateEntity;
 import com.leqienglish.playandrecord.PlayAudioThread;
 import com.leqienglish.playandrecord.PlayMediaPlayerThread;
 import com.leqienglish.playandrecord.RecordAudioThread;
+import com.leqienglish.pop.CustomTranslateDialog;
 import com.leqienglish.popwindow.WordDetailPopupWindow;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.PlayEntityUitl;
+import com.leqienglish.util.TransApiUtil;
 import com.leqienglish.view.LeQiTextView;
 
 import java.io.IOException;
@@ -131,11 +135,20 @@ public class PlayAudioController extends Controller<GridView> {
                         if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                             String select = leQiTextView.getSelectText();
                             logger.v("select\t" + select);
-                            if(select==null||select.isEmpty()){
+                            if (select == null || select.isEmpty()) {
                                 return false;
                             }
-
-                            new WordDetailPopupWindow(leQiTextView.getContext(),select);
+                            WordDetailPopupWindow pop = new WordDetailPopupWindow(leQiTextView.getContext(),select);
+                           pop.showAtLocation(leQiTextView, Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+//                            CustomTranslateDialog customTranslateDialog =
+//                                    new CustomTranslateDialog(leQiTextView.getContext(),
+//                                            new View.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(View view) {
+//                                                    //  customTranslateDialog.dismiss();
+//                                                }
+//                                            }, select);
+//                            customTranslateDialog.show();
 
                         }
                         return false;
@@ -160,7 +173,7 @@ public class PlayAudioController extends Controller<GridView> {
                 public void applay(Object o) {
                     logger.v("播放完成 录音");
 
-                    RecordAudioThread thread = new RecordAudioThread(pe.getDuring()+3000,new LQHandler.Consumer<List<short[]>>(){
+                    RecordAudioThread thread = new RecordAudioThread(pe.getDuring() + 3000, new LQHandler.Consumer<List<short[]>>() {
                         @Override
                         public void applay(List<short[]> shorts) {
 
