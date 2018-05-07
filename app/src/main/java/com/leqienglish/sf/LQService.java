@@ -1,16 +1,25 @@
 package com.leqienglish.sf;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leqienglish.entity.Message;
 import com.leqienglish.sf.task.HttpDownLoadTask;
 import com.leqienglish.sf.task.HttpGetTask;
 import com.leqienglish.sf.task.HttpGetTranslateTask;
 import com.leqienglish.sf.task.HttpPostTask;
 import com.leqienglish.util.LQHandler;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by zhuqing on 2017/8/19.
@@ -31,6 +40,28 @@ public class LQService {
 
     public static <T> void post(String path , Class claz,Map<String,?> variables,LQHandler.Consumer<T> consumer){
         new HttpPostTask<>(http+path,claz,consumer,variables).execute();
+    }
+
+    public static <T>  Object post(String path , Class claz,Map<String,?> variables,T data) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ObjectMapper mapper = new ObjectMapper();
+
+        String value = mapper.writeValueAsString(data);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(value, headers);
+        Message message =  restTemplate.postForObject(path,requestEntity, Message.class,variables);
+
+        if(message == null || Objects.equals(message.getStatus(),Message.ERROR)){
+            return null;
+        }
+
+        if(message.getData() == null || message.getData().isEmpty()){
+            return null;
+        }
+
+        return mapper.readValue(message.getData(),claz);
+
     }
 
     public static <T> void download(String path , String filePath , MediaType mediaType,Map<String, ?> variables, LQHandler.Consumer<String> consumer){

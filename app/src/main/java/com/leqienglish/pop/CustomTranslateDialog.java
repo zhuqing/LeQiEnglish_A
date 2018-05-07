@@ -52,7 +52,7 @@ public class CustomTranslateDialog extends CustomDialog {
         this.contentTextView = this.findViewById(R.id.word_detail_tans);
         this.titleTextView.setText(this.selected);
         okButton.setOnClickListener(this.onClickListener);
-
+        loadTrans();
     }
     private void loadTrans(){
         TransApiUtil.transResult(this.selected, TransApiUtil.FROM, TransApiUtil.TO, new LQHandler.Consumer<List<TranslateEntity>>() {

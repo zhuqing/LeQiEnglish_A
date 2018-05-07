@@ -53,7 +53,7 @@ public class WordDetailPopupWindow extends PopupWindow {
         this.setFocusable(true);
 
         // 实例化一个ColorDrawable颜色为半透明
-        ColorDrawable dw = new ColorDrawable(0xb0000000);
+        ColorDrawable dw = new ColorDrawable(0xffffffff);
         // 设置弹出窗体的背景
         this.setBackgroundDrawable(dw);
 

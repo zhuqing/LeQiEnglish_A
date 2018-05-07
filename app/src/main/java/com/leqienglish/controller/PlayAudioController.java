@@ -32,6 +32,8 @@ import com.leqienglish.view.LeQiTextView;
 import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.android.plugins.RxAndroidPlugins;
+
 /**
  * Created by zhuqing on 2018/4/21.
  */
@@ -129,6 +131,7 @@ public class PlayAudioController extends Controller<GridView> {
                 });
 
                 final LeQiTextView leQiTextView = (LeQiTextView) holder.title;
+               // RxAndroidPlugins.
                 holder.title.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -139,16 +142,7 @@ public class PlayAudioController extends Controller<GridView> {
                                 return false;
                             }
                             WordDetailPopupWindow pop = new WordDetailPopupWindow(leQiTextView.getContext(),select);
-                           pop.showAtLocation(leQiTextView, Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-//                            CustomTranslateDialog customTranslateDialog =
-//                                    new CustomTranslateDialog(leQiTextView.getContext(),
-//                                            new View.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(View view) {
-//                                                    //  customTranslateDialog.dismiss();
-//                                                }
-//                                            }, select);
-//                            customTranslateDialog.show();
+                            pop.showAtLocation(PlayAudioController.this.getView(), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
 
                         }
                         return false;
