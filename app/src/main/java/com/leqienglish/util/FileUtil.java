@@ -2,6 +2,7 @@ package com.leqienglish.util;
 
 import android.app.Application;
 import android.content.ContextWrapper;
+import android.os.Environment;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,12 +26,35 @@ public class FileUtil {
     public static Application application;
 
     public static String appRootPath() {
-        String userDir = application.getBaseContext().getFilesDir().getAbsolutePath();
+        File file = Environment.getExternalStorageDirectory();
+        String userDir = "";
+        if(file!=null){
+            userDir = file.getAbsolutePath();
+        }else{
+            userDir = application.getBaseContext().getFilesDir().getAbsolutePath();
+        }
         StringBuffer sb = new StringBuffer();
         sb.append(userDir).append(File.separatorChar).append(APP_NAME);
         String rootpath = sb.toString();
         initDirectory(rootpath);
         return rootpath;
+    }
+
+    /**
+     * 文件是否存在
+     * @param filePath
+     * @return
+     */
+    public static  boolean exists(String filePath){
+        try {
+            String file = getFileAbsolutePath(filePath);
+            File file1 = new File(file);
+            return file1.exists();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     /**

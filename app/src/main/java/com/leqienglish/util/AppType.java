@@ -39,9 +39,10 @@ public class AppType {
     /**
      * 下载文件的长度
      */
-    public final static String URL_DOWNLOAD_ALLLEGTH = "allLength";
-    public final static int URL_IMAGE_DOWNLOAD = 103;
-    public final static int URL_IMAGE_DOWNLOAD_OVER = 104;
+    public final static int DOWNLOAD_ALLLEGTH = 102;
+    public final static int HAS_DOWNLOAD = 103;
+    public final static int DOWNLOAD_ERROR = -1;
+    public final static int DOWNLOAD_OVER = 104;
     public final static String URL_IMAGE_NAME = "imageName";
     /**
      * 已经下载的JSON的数据

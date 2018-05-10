@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leqienglish.R;
+import com.leqienglish.activity.LoadingActivity;
 import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.database.ExecuteSQL;
 
@@ -93,7 +94,18 @@ public class HomeListViewController extends Controller<View>{
                 Content content = homeListViewAdapter.getItem(i);
                 Intent intent = new Intent();
                 intent.putExtras(BundleUtil.create(BundleUtil.DATA,content));
-                intent.setClass(gridView.getContext(), PlayAudioActivity.class);
+                try {
+                    final String filePath = FileUtil.getFileAbsolutePath(content.getAudioPath());
+                    File file = new File(filePath);
+                   // if(file.exists()){
+                      //  intent.setClass(gridView.getContext(), PlayAudioActivity.class);
+                   // }else{
+                        intent.setClass(gridView.getContext(), LoadingActivity.class);
+                   // }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 getView().getContext().startActivity(intent);
             }
         });
@@ -104,6 +116,9 @@ public class HomeListViewController extends Controller<View>{
             LQService.get("/english/content/findAll", Content[].class, null, new LQHandler.Consumer<Content[]>() {
                 @Override
                 public void applay(Content[] users) {
+                    if(users == null ){
+                        return;
+                    }
                     try {
                         ExecuteSQL.getInstance().insertLearnE(ExecuteSQL.getInstance().toSQLEntitys(asList(users)),null);
                     } catch (JsonProcessingException e) {
@@ -145,15 +160,7 @@ public class HomeListViewController extends Controller<View>{
         }
     }
 
-    private void loadAudioFile(Content actical,LQHandler.Consumer<String> consumer) throws IOException {
-        final String filePath = FileUtil.getFileAbsolutePath(actical.getAudioPath());
-        File file = new File(filePath);
-        if(file.exists()){
-            consumer.applay(filePath);
-        }else{
-            LQService.download(HomeListViewController.this.getView().getResources().getString(R.string.AUDIO_PATH)+actical.getId(),filePath,MediaType.ALL,null, consumer);
-        }
-    }
+
 
     private HomeListViewAdapter addAdapter(List<Content> users){
          homeListViewAdapter = new HomeListViewAdapter(LayoutInflater.from(this.getView().getContext()));
@@ -234,12 +241,7 @@ public class HomeListViewController extends Controller<View>{
                             }
                         });
 
-                loadAudioFile(actical,new LQHandler.Consumer<String>() {
-                            @Override
-                            public void applay(String s) {
-                         //   Log.v("downfile",s);
-                            }
-                        });
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,5 +1,7 @@
 package com.leqienglish.sf;
 
+import android.os.Handler;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leqienglish.entity.Message;
@@ -17,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +32,7 @@ import java.util.Objects;
 public class LQService {
     private HttpURLConnection hipClient;
 
-    private static String http = "http://192.168.1.115:8080";
+    public static String http = "http://192.168.1.115:8080";
 
     public static  <T> void  get(String path , Class claz, Map<String,?> variables, LQHandler.Consumer<T> consumer){
          new HttpGetTask(http+path,claz,consumer,variables).execute();
@@ -40,6 +44,21 @@ public class LQService {
 
     public static <T> void post(String path , Class claz,Map<String,?> variables,LQHandler.Consumer<T> consumer){
         new HttpPostTask<>(http+path,claz,consumer,variables).execute();
+    }
+
+    public static void download(String path , Handler handler) throws IOException {
+        //创建一个URL对象
+        URL url=new URL(http+path);
+        //创建一个HTTP链接
+        HttpURLConnection urlConn=(HttpURLConnection)url.openConnection();
+        urlConn.setConnectTimeout(10000);
+        urlConn.connect();
+
+        if(urlConn.getResponseCode() != HttpURLConnection.HTTP_OK){
+            return;
+        }
+
+        urlConn.getContentLength();
     }
 
     public static <T>  Object post(String path , Class claz,Map<String,?> variables,T data) throws IOException {
