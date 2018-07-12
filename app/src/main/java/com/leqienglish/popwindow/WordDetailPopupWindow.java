@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.entity.english.TranslateEntity;
+
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.TransApiUtil;
 
@@ -64,26 +64,26 @@ public class WordDetailPopupWindow extends PopupWindow {
     }
 
     private void loadTrans(){
-        TransApiUtil.transResult(this.select, TransApiUtil.FROM, TransApiUtil.TO, new LQHandler.Consumer<List<TranslateEntity>>() {
-            @Override
-            public void applay(final List<TranslateEntity> translateEntities) {
-                if(translateEntities == null || translateEntities.isEmpty()){
-                    return;
-                }
-                Observable.fromIterable(translateEntities).map(new Function<TranslateEntity, String>() {
-                    @Override
-                    public String apply(@NonNull TranslateEntity translateEntity) throws Exception {
-                        return translateEntity.getDst();
-                    }
-                }).subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        transTextView.setText(transTextView.getText()+"\n"+s);
-                    }
-                });
-
-            }
-        });
+//        TransApiUtil.transResult(this.select, TransApiUtil.FROM, TransApiUtil.TO, new LQHandler.Consumer<List<TranslateEntity>>() {
+//            @Override
+//            public void applay(final List<TranslateEntity> translateEntities) {
+//                if(translateEntities == null || translateEntities.isEmpty()){
+//                    return;
+//                }
+//                Observable.fromIterable(translateEntities).map(new Function<TranslateEntity, String>() {
+//                    @Override
+//                    public String apply(@NonNull TranslateEntity translateEntity) throws Exception {
+//                        return translateEntity.getDst();
+//                    }
+//                }).subscribe(new Consumer<String>() {
+//                    @Override
+//                    public void accept(String s) throws Exception {
+//                        transTextView.setText(transTextView.getText()+"\n"+s);
+//                    }
+//                });
+//
+//            }
+//        });
     }
 
     private void initSave() {

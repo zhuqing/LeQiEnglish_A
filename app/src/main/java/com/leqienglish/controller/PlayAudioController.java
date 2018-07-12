@@ -15,8 +15,7 @@ import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.entity.PlayEntity;
-import com.leqienglish.entity.english.Content;
-import com.leqienglish.entity.english.TranslateEntity;
+
 import com.leqienglish.playandrecord.PlayAudioThread;
 import com.leqienglish.playandrecord.PlayMediaPlayerThread;
 import com.leqienglish.playandrecord.RecordAudioThread;
@@ -33,6 +32,7 @@ import java.io.IOException;
 import java.util.List;
 
 import io.reactivex.android.plugins.RxAndroidPlugins;
+import xyz.tobebetter.entity.english.Content;
 
 /**
  * Created by zhuqing on 2018/4/21.

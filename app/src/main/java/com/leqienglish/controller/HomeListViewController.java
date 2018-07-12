@@ -19,7 +19,7 @@ import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.database.ExecuteSQL;
 
 import com.leqienglish.entity.SQLEntity;
-import com.leqienglish.entity.english.Content;
+
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import xyz.tobebetter.entity.english.Content;
 
 import static java.util.Arrays.*;
 

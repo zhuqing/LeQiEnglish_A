@@ -11,7 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.leqienglish.entity.SQLEntity;
-import com.leqienglish.entity.english.Content;
+
 import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
@@ -20,6 +20,8 @@ import com.leqienglish.util.LQHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import xyz.tobebetter.entity.english.Content;
 
 import static android.R.attr.codes;
 import static android.R.attr.id;

@@ -1,5 +1,7 @@
 <resources>
 
+
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -14,18 +16,45 @@
     </style>
 
 
+    <style name="app_background">
+        <item name="android:color">@color/no1_gray_light</item>
+    </style>
+
     <!-- Base application theme. -->
     <style name="title" parent="base_title">
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="user_board_button">
+        <item name="android:layout_height">30dp</item>
+        <item name="android:textSize">12dp</item>
     </style>
 
     <style name="base_title">
         <item name="android:textSize">25dp</item>
         <item name="android:textColor">#000000</item>
     </style>
-    <style name="btn_blue_selector" >
-        <item name="android:background">@color/selector_blue</item>
+
+    <style name="btn_blue_selector">
+        <item name="android:background">@color/selector_background_blue</item>
     </style>
+
+    <style name="user_reciting_big">
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="user_reciting_big_green">
+        <item name="android:textSize">25dp</item>
+        <item name="android:textColor">@color/green</item>
+    </style>
+
+
+    <style name="button_white">
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
     <style name="readContent_fromwhere">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">#9370DB</item>

@@ -8,8 +8,10 @@ import android.widget.ListView;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.PlayAudioController;
-import com.leqienglish.entity.english.Content;
+
 import com.leqienglish.util.BundleUtil;
+
+import xyz.tobebetter.entity.english.Content;
 
 /**
  * Created by zhuqing on 2018/4/21.

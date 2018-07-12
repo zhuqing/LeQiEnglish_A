@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.HomeListViewController;
-import com.leqienglish.entity.english.Content;
+
 import com.leqienglish.sf.LQService;
 import com.leqienglish.sf.task.HttpDownLoadProcessTask;
 import com.leqienglish.util.AppType;
@@ -21,6 +21,8 @@ import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.io.IOException;
+
+import xyz.tobebetter.entity.english.Content;
 
 /**
  * Created by zhuqing on 2018/5/9.

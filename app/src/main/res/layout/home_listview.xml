@@ -1,12 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<GridView
-    android:numColumns="1"
-    android:id="@+id/home_listview"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_background">
+
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</GridView>
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.leqienglish.view.UserBoardView
+                android:id="@+id/user_board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+               >
+
+            </com.leqienglish.view.UserBoardView>
+
+            <com.leqienglish.view.aricle.UserRecitingArticle
+                android:layout_marginTop="10dp"
+                android:id="@+id/user_reciting"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_board">
+
+
+            </com.leqienglish.view.aricle.UserRecitingArticle>
+
+            <com.leqienglish.view.recommend.RecommendArticle
+                android:id="@+id/recommend_article"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/user_reciting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </com.leqienglish.view.recommend.RecommendArticle>
+            <GridView
+                android:id="@+id/home_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/recommend_article"
+                android:numColumns="1">
+
+            </GridView>
+        </RelativeLayout>
+</ScrollView>
+</RelativeLayout>

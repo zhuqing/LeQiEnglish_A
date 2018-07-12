@@ -7,6 +7,15 @@
 
     <string name="word_detail_save">加入单词本</string>
 
+    <string name="user_board_text_recit">已背诵(分钟)</string>
+    <string name="puntch">打卡</string>
+
+    <string name="my_recite_article">我的背诵(7)</string>
+    <string name="add_recite_article">添加背诵文章</string>
+    <string name="show_all_recite_article">查看全部></string>
+
+    <string name="recommend_article">推荐文章</string>
+
     <string name="HOST">http:////192.168.1.115:8080</string>
     <string name="IMAGE_PATH">/english/content/download/image/</string>
     <string name="AUDIO_PATH">/english/content/download/audio/</string>
