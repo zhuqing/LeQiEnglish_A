@@ -24,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/user_board_button"
             android:layout_toRightOf="@id/user_board_image">
 
             <TextView
@@ -33,30 +34,32 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
+                style="@style/font_size_12_gray"
                 android:text="@string/user_board_text_recit" />
 
             <TextView
                 android:id="@+id/user_board_recite_minutes"
-                style="@style/user_reciting_big_green"
+                style="@style/font_size_25_green"
                 android:layout_marginRight="10dp"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
 
                 android:layout_below="@id/user_board_text_recite"
-                android:text="14，000" />
+                android:text="14,000" />
 
             <TextView
                 android:id="@+id/user_board_recite_days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-
-                android:text="累计打卡100天" />
+                style="@style/font_size_12_gray"
+                android:text="累计打卡 100 天" />
 
         </RelativeLayout>
 
         <Button
+            android:id="@+id/user_board_button"
             style="@style/user_board_button"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"

@@ -61,7 +61,7 @@ public class HomeListViewController extends Controller<View>{
        this.gridView = (GridView) this.getView().findViewById(R.id.home_listview);
         ExecuteSQL.getInstance().getDatasByType(ExecuteSQL.CONTENT_TYPE, new LQHandler.Consumer<List< SQLEntity>>(){
             @Override
-            public void applay(List<SQLEntity> sqlEnities) {
+            public void accept(List<SQLEntity> sqlEnities) {
                 if(sqlEnities == null || sqlEnities.isEmpty()){
                    // findData(null);
                     return;
@@ -83,7 +83,7 @@ public class HomeListViewController extends Controller<View>{
 
         ExecuteSQL.getInstance().getNewsetByType(ExecuteSQL.CONTENT_TYPE, new LQHandler.Consumer<SQLEntity>() {
             @Override
-            public void applay(SQLEntity sqlEnity) {
+            public void accept(SQLEntity sqlEnity) {
                 findData(sqlEnity);
             }
         });
@@ -117,7 +117,7 @@ public class HomeListViewController extends Controller<View>{
         if(sqlEntity == null){
             LQService.get("/english/content/findAll", Content[].class, null, new LQHandler.Consumer<Content[]>() {
                 @Override
-                public void applay(Content[] users) {
+                public void accept(Content[] users) {
                     if(users == null ){
                         return;
                     }
@@ -132,7 +132,7 @@ public class HomeListViewController extends Controller<View>{
         }else{
             LQService.get("/english/content/findNew/"+sqlEntity.getCreateTime(), Content[].class, null, new LQHandler.Consumer<Content[]>() {
                 @Override
-                public void applay(Content[] users) {
+                public void accept(Content[] users) {
                     try {
                         ExecuteSQL.getInstance().insertLearnE(ExecuteSQL.getInstance().toSQLEntitys(asList(users)),null);
                     } catch (JsonProcessingException e) {
@@ -156,7 +156,7 @@ public class HomeListViewController extends Controller<View>{
         final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
         File file = new File(filePath);
         if(file.exists()){
-            consumer.applay(filePath);
+            consumer.accept(filePath);
         }else{
             LQService.download(HomeListViewController.this.getView().getResources().getString(R.string.IMAGE_PATH)+actical.getId(),filePath,MediaType.IMAGE_JPEG,null, consumer);
         }
@@ -234,14 +234,7 @@ public class HomeListViewController extends Controller<View>{
             final  ViewHolder fviewHolder = holder;
             try {
                 final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
-                loadImageFile(actical,new LQHandler.Consumer<String>() {
-                            @Override
-                            public void applay(String s) {
-                                if(Objects.equals(filePath,s)){
-                                    fviewHolder.imageView.setImageURI( Uri.parse(filePath));
-                                }
-                            }
-                        });
+
 
 
             } catch (IOException e) {

@@ -36,7 +36,7 @@ public class TransApiUtil {
       //  return HttpGet.get(TRANS_API_HOST, params);
         LQService.getTrans(TRANS_API_HOST+"?"+params, String.class, null, new LQHandler.Consumer<String>() {
             @Override
-            public void applay(String s) {
+            public void accept(String s) {
                 if(s == null){
                     return;
                 }
@@ -59,8 +59,9 @@ public class TransApiUtil {
 //                } catch (JSONException e) {
 //                    e.printStackTrace();
 //                }
-                consumer.applay(null);
+                consumer.accept(null);
             }
+
         });
         return "";
     }

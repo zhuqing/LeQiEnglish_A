@@ -45,7 +45,7 @@ public abstract   class HttpTask<T> extends AsyncTask<Object, Object, T> {
 
     @Override
     protected void onPostExecute(T t) {
-        this.consumer.applay(t);
+        this.consumer.accept(t);
     }
 
     public String getPath() {

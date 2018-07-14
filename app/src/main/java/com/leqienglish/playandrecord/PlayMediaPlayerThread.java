@@ -89,13 +89,13 @@ public class PlayMediaPlayerThread extends Thread {
             while (true) {
                 if (!mediaPlayer.isPlaying()) {
                     if (playComplete != null)
-                        playComplete.applay(getPlayEntity());
+                        playComplete.accept(getPlayEntity());
                     break;
                 }
                 if (mediaPlayer.getCurrentPosition() > end) {
                     mediaPlayer.pause();
                     if (playComplete != null)
-                        playComplete.applay(getPlayEntity());
+                        playComplete.accept(getPlayEntity());
                     break;
 
                 }

@@ -15,4 +15,12 @@ public class MessageUtil {
         message.getData().putString(key,data);
         return message;
     }
+
+    public static Message createMessage(int what ,String key , double data){
+        Message message = new Message();
+        message.what = what;
+        message.setData(new Bundle());
+        message.getData().putDouble(key,data);
+        return message;
+    }
 }

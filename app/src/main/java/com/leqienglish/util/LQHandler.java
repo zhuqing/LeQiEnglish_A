@@ -10,7 +10,8 @@ public class LQHandler{
     }
 
     public interface Consumer<T>{
-        public void applay(T t);
+
+        public void accept(T t);
     }
 }
 

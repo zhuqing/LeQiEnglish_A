@@ -20,6 +20,6 @@ public abstract class DataBaseTask<T> extends AsyncTask<Object, Object, T> {
         if(this.consumer == null){
             return;
         }
-        this.consumer.applay(t);
+        this.consumer.accept(t);
     }
 }

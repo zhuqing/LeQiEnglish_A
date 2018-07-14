@@ -7,7 +7,14 @@
     <!--name为声明的"属性集合"名，可以随便取，但是最好是设置为跟我们的View一样的名称-->
     <declare-styleable name="RoundImageView">
         <!--声明我们的属性，名称为default_size,取值类型为尺寸类型（dp,px等）-->
-        <attr name="radius" format="integer"></attr>
+        <attr name="roundRadius" format="integer"></attr>
         <attr name="type" format="integer"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="CirclePrecentView">
+        <!--声明我们的属性，名称为default_size,取值类型为尺寸类型（dp,px等）-->
+        <attr name="background_color" format="color"></attr>
+        <attr name="front_color" format="color"></attr>
+        <attr name="precent" format="float"></attr>
     </declare-styleable>
 </resources>

@@ -16,6 +16,7 @@
 
     <string name="recommend_article">推荐文章</string>
 
+    <string name="recommend_book">推荐书</string>
     <string name="HOST">http:////192.168.1.115:8080</string>
     <string name="IMAGE_PATH">/english/content/download/image/</string>
     <string name="AUDIO_PATH">/english/content/download/audio/</string>

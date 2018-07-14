@@ -47,21 +47,21 @@ android {
 
 
 dependencies {
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     // (see https://github.com/ReactiveX/RxJava/releases for latest 2.x.x version)
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:design:26.+'
-    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
-    compile 'com.zzhoujay.richtext:richtext:2.5.4'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.13'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
-    compile files('libs/LQ-CLIENT-UTIL-1.0-SNAPSHOT.jar')
-    compile files('libs/LQ-ENTITY-1.0-SNAPSHOT.jar')
+    implementation 'com.android.support:appcompat-v7:26.+'
+    implementation 'com.android.support:design:26.+'
+    implementation 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
+    implementation 'com.zzhoujay.richtext:richtext:2.5.4'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.13'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    implementation files('libs/LQ-CLIENT-UTIL-1.0-SNAPSHOT.jar')
+    implementation files('libs/LQ-ENTITY-1.0-SNAPSHOT.jar')
 }

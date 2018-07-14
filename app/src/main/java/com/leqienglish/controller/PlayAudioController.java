@@ -164,16 +164,16 @@ public class PlayAudioController extends Controller<GridView> {
             playMediaPlayerThread.setPlayEntity(pe);
             playMediaPlayerThread.setPlayComplete(new LQHandler.Consumer() {
                 @Override
-                public void applay(Object o) {
+                public void accept(Object o) {
                     logger.v("播放完成 录音");
 
                     RecordAudioThread thread = new RecordAudioThread(pe.getDuring() + 3000, new LQHandler.Consumer<List<short[]>>() {
                         @Override
-                        public void applay(List<short[]> shorts) {
+                        public void accept(List<short[]> shorts) {
 
                             new PlayAudioThread(shorts, new LQHandler.Consumer() {
                                 @Override
-                                public void applay(Object o) {
+                                public void accept(Object o) {
                                     logger.v("录音播放完成 ");
                                     playMediaPlayerThread.setPlayComplete(null);
                                     playMediaPlayerThread.start();

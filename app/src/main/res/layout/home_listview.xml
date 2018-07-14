@@ -41,11 +41,22 @@
                 android:layout_height="wrap_content">
 
             </com.leqienglish.view.recommend.RecommendArticle>
+
+            <com.leqienglish.view.recommend.RecommendBook
+                android:id="@+id/recommend_book"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+
+                android:layout_width="wrap_content"
+                android:layout_below="@id/recommend_article"
+                android:layout_height="wrap_content">
+
+            </com.leqienglish.view.recommend.RecommendBook>
             <GridView
                 android:id="@+id/home_listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/recommend_article"
+                android:layout_below="@id/recommend_book"
                 android:numColumns="1">
 
             </GridView>

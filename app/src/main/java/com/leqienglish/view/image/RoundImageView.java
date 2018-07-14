@@ -1,6 +1,7 @@
 package com.leqienglish.view.image;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapShader;
@@ -8,12 +9,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+
+import com.leqienglish.R;
 
 
 /**
@@ -44,7 +49,7 @@ public class RoundImageView extends android.support.v7.widget.AppCompatImageView
     public static final int TYPE_CIRCLE = 0;// 圆形
     public static final int TYPE_ROUND = 1;// 圆角矩形
     public static final int TYPE_OVAL = 2;//椭圆形
-    public static final int DEFAUT_ROUND_RADIUS = 10;//默认圆角大小
+
 
     public RoundImageView(Context context) {
         this(context, null);
@@ -58,14 +63,19 @@ public class RoundImageView extends android.support.v7.widget.AppCompatImageView
 
     public RoundImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundImageView);
+        this.type = typedArray.getInt(R.styleable.RoundImageView_type,1);
+        this.roundRadius = typedArray.getInt(R.styleable.RoundImageView_roundRadius,10);
         initView();
+        typedArray.recycle();
     }
 
     private void initView() {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mMatrix = new Matrix();
-        roundRadius = DEFAUT_ROUND_RADIUS;
+
     }
 
     @Override
@@ -92,7 +102,9 @@ public class RoundImageView extends android.support.v7.widget.AppCompatImageView
             canvas.drawCircle(mRadius, mRadius, mRadius, mPaint);
         } else if (type == TYPE_ROUND) {
             mPaint.setColor(Color.RED);
+            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
             canvas.drawRoundRect(mRect, roundRadius, roundRadius, mPaint);
+
         }else if(type == TYPE_OVAL){
             canvas.drawOval(mRect, mPaint);
         }

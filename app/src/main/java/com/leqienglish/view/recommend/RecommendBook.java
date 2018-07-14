@@ -1,6 +1,7 @@
 package com.leqienglish.view.recommend;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,72 +13,43 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.sf.RestClient;
 import com.leqienglish.util.FileUtil;
+import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.task.FutureTaskUtil;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Objects;
 
 import xyz.tobebetter.entity.User;
 import xyz.tobebetter.entity.english.Content;
 
-public class RecommendArticle  extends RelativeLayout {
+public class RecommendBook extends RelativeLayout {
     private User user;
-    private GridView gridView;
-    private TextView showAllTextView;
-    private GridViewAdapter gridViewAdapter;
-    public RecommendArticle(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        LayoutInflater.from(context).inflate(R.layout.recommend_aritcle, this);
-        this.gridView = this.findViewById(R.id.recommend_article_gridView);
-        this.showAllTextView = this.findViewById(R.id.recommend_article_show_all);
-        gridViewAdapter = new GridViewAdapter(LayoutInflater.from(this.gridView.getContext()));
-        this.gridView.setAdapter(gridViewAdapter);
 
+    private GridView gridView;
+
+    private TextView showAll;
+
+
+    public RecommendBook(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        LayoutInflater.from(context).inflate(R.layout.recommend_book, this);
+
+        this.gridView = this.findViewById(R.id.recommend_book_gridView);
+        this.showAll = this.findViewById(R.id.recommend_book_show_all);
     }
 
-    private void init(){
-        this.showAllTextView.setOnClickListener(new OnClickListener() {
+    public void init(){
+        this.showAll.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
+
+       // FutureTaskUtil.run()
     }
-
-    private void reloadArticle(){
-        try {
-           List<Content> contentList =   FutureTaskUtil.run(()->{
-                RestClient restClient = new RestClient();
-
-                Content[] contents= restClient.get("recommend/recommendArticle",null,Content[].class);
-
-                return Arrays.asList(contents);
-            });
-
-           this.gridViewAdapter.setItems(contentList);
-           this.gridView.invalidate();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        this.reloadArticle();
-    }
-
     final class ViewHolder{
         ImageView imageView;
         TextView title;
@@ -118,11 +90,11 @@ public class RecommendArticle  extends RelativeLayout {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            RecommendArticle.ViewHolder holder = null;
+            RecommendBook.ViewHolder holder = null;
             if(view!=null){
-                holder = (RecommendArticle.ViewHolder) view.getTag();
+                holder = (RecommendBook.ViewHolder) view.getTag();
             }else{
-                holder = new RecommendArticle.ViewHolder();
+                holder = new RecommendBook.ViewHolder();
                 view =this.mInflater.inflate(R.layout.article_item,null);
                 holder.imageView=view.findViewById(R.id.article_item_image);
                 holder.title = view.findViewById(R.id.article_item_title);
@@ -137,7 +109,7 @@ public class RecommendArticle  extends RelativeLayout {
             }
 
             holder.title.setText(actical.getTitle());
-            final RecommendArticle.ViewHolder fviewHolder = holder;
+            final RecommendBook.ViewHolder fviewHolder = holder;
             try {
                 final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
 
@@ -150,4 +122,5 @@ public class RecommendArticle  extends RelativeLayout {
             return view;
         }
     }
+
 }

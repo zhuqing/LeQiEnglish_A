@@ -77,6 +77,18 @@ public class FileUtil {
         return  fileAbsolutePath;
     }
 
+    /**
+     *
+     * @param path
+     * @return
+     */
+    public static String toLocalPath(String path){
+        path = path.replaceAll("\\\\","/");
+        StringBuffer sb = new StringBuffer();
+        sb.append(appRootPath()).append(File.separatorChar).append(path);
+        return sb.toString();
+    }
+
     public static void initDirectory(String rootpath) {
         File file = new File(rootpath);
 

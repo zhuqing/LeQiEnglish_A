@@ -31,7 +31,7 @@ public class PlayAudioThread extends DataBaseTask {
 
     public void run() {
 
-        this.consumer.applay(AppType.PLAY_RECORD_OVER);
+        this.consumer.accept(AppType.PLAY_RECORD_OVER);
     }
 
     @Override

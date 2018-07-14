@@ -8,17 +8,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
-        android:id="@+id/recommend_article_top"
+        android:id="@+id/recommend_book_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="@string/recommend_article"
+            android:text="@string/recommend_book"
             android:layout_width="wrap_content"
             style="@style/user_reciting_big"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"/>
         <TextView
-            android:id="@+id/recommend_article_show_all"
+            android:id="@+id/recommend_book_show_all"
             android:text="@string/show_all_recite_article"
             android:layout_width="wrap_content"
              style="@style/font_size_12_gray"
@@ -27,8 +27,8 @@
     </RelativeLayout>
 
     <GridView
-        android:id="@+id/recommend_article_gridView"
-        android:layout_below="@id/recommend_article_top"
+        android:id="@+id/recommend_book_gridView"
+        android:layout_below="@id/recommend_book_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></GridView>
 </RelativeLayout>
