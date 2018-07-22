@@ -13,7 +13,7 @@
             android:layout_height="match_parent">
 
             <com.leqienglish.view.UserBoardView
-                android:id="@+id/user_board"
+                android:id="@+id/home_view_user_board"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -21,45 +21,38 @@
 
             </com.leqienglish.view.UserBoardView>
 
-            <com.leqienglish.view.aricle.UserRecitingArticle
+            <com.leqienglish.view.article.UserRecitingArticle
                 android:layout_marginTop="10dp"
-                android:id="@+id/user_reciting"
+                android:id="@+id/home_view_user_reciting"
                 android:layout_centerHorizontal="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/user_board">
+                android:layout_below="@id/home_view_user_board">
 
 
-            </com.leqienglish.view.aricle.UserRecitingArticle>
+            </com.leqienglish.view.article.UserRecitingArticle>
 
             <com.leqienglish.view.recommend.RecommendArticle
-                android:id="@+id/recommend_article"
+                android:id="@+id/home_view_recommend_article"
                 android:layout_marginTop="10dp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/user_reciting"
+                android:layout_below="@id/home_view_user_reciting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
             </com.leqienglish.view.recommend.RecommendArticle>
 
             <com.leqienglish.view.recommend.RecommendBook
-                android:id="@+id/recommend_book"
+                android:id="@+id/home_view_recommend_book"
                 android:layout_marginTop="10dp"
                 android:layout_centerHorizontal="true"
 
                 android:layout_width="wrap_content"
-                android:layout_below="@id/recommend_article"
+                android:layout_below="@id/home_view_recommend_article"
                 android:layout_height="wrap_content">
 
             </com.leqienglish.view.recommend.RecommendBook>
-            <GridView
-                android:id="@+id/home_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/recommend_book"
-                android:numColumns="1">
 
-            </GridView>
         </RelativeLayout>
 </ScrollView>
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.leqienglish.sf.image;
+package com.leqienglish.sf;
 
 import android.os.Handler;
 
@@ -29,7 +29,7 @@ public class LoadFile {
 
         try {
             FutureTaskUtil.run(() -> {
-                RestClient restClient = new RestClient();
+                RestClient restClient = new RestClient("");
                 restClient.downLoad(path, filePath, null);
                 return null;
             });
@@ -50,7 +50,7 @@ public class LoadFile {
         }
         try {
             FutureTaskUtil.run(() -> {
-                RestClient restClient = new RestClient();
+                RestClient restClient = new RestClient("");
                 restClient.downLoad(path, filePath, new LQHandler.Consumer<Double>() {
                     @Override
                     public void accept(Double aDouble) {

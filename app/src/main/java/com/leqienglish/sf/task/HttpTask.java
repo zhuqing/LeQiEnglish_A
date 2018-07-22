@@ -3,6 +3,7 @@ package com.leqienglish.sf.task;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.leqienglish.sf.RestClient;
 import com.leqienglish.util.LQHandler;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -20,20 +21,24 @@ public abstract   class HttpTask<T> extends AsyncTask<Object, Object, T> {
     private  String path;
     private LQHandler.Consumer<T> consumer;
     private Class<T> claz;
-    private Map<String,?> variables;
+    private Map<String,String> variables;
 
-    public HttpTask(String path , Class<T> claz, LQHandler.Consumer<T> consumer,Map<String,?> variables){
+    protected  String host;
+
+    protected RestClient restClient;
+
+    public HttpTask(String path , Class<T> claz, LQHandler.Consumer<T> consumer,Map<String,String> variables){
         this.path = path;
         this.claz = claz;
         this.consumer = consumer;
         this.variables = variables;
+        this.restClient = new RestClient("");
     }
     @Override
     protected T doInBackground(Object... params) {
         try {
-            RestTemplate restTemplate = new RestTemplate();
 
-            return this.getT(restTemplate);
+            return this.getT();
         } catch (Exception e) {
             Log.e("MainActivity", e.getMessage(), e);
         }
@@ -41,10 +46,13 @@ public abstract   class HttpTask<T> extends AsyncTask<Object, Object, T> {
         return null;
     }
 
-    protected abstract T getT(RestTemplate restTemplate) throws Exception;
+    protected abstract T getT() throws Exception;
 
     @Override
     protected void onPostExecute(T t) {
+        if(this.consumer !=null){
+            return;
+        }
         this.consumer.accept(t);
     }
 
@@ -72,14 +80,14 @@ public abstract   class HttpTask<T> extends AsyncTask<Object, Object, T> {
         this.claz = claz;
     }
 
-    public Map<String, ?> getVariables() {
+    public Map<String, String> getVariables() {
         if(this.variables == null){
             return Collections.EMPTY_MAP;
         }
         return variables;
     }
 
-    public void setVariables(Map<String, ?> variables) {
+    public void setVariables(Map<String, String> variables) {
 
         this.variables = variables;
     }

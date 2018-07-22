@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/add_recite_article_info_root"
+    android:layout_height="match_parent">
+  <com.leqienglish.view.article.ArticleInfoView
+      android:id="@+id/add_recite_article_info_view"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent">
+
+  </com.leqienglish.view.article.ArticleInfoView>
+
+  <Button
+      android:id="@+id/add_recite_article_info_button"
+      android:text="@string/add_article_to_recite"
+      style="@style/button_white"
+      android:background="@drawable/boarder_blue_corner_selected"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="10dp"/>
+</RelativeLayout>

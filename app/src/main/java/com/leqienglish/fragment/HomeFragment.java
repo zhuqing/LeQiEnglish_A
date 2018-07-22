@@ -20,7 +20,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if(this.homeView == null){
-            homeView = inflater.inflate(R.layout.home_listview,null);
+            homeView = inflater.inflate(R.layout.home_view,null);
             new HomeListViewController(homeView).init();
         }
 

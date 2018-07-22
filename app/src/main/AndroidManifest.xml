@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.PlayAudioActivity" />
+        <activity android:name=".activity.ArticleInfoActivity" />
         <activity android:name=".activity.LoadingActivity"></activity>
     </application>
 

@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.leqienglish.util.AppType;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.message.MessageUtil;
 
@@ -32,37 +33,15 @@ public class HttpDownLoadProcessTask extends HttpTask {
     }
 
     @Override
-    protected Object getT(RestTemplate restTemplate) throws Exception {
-        //创建一个URL对象
-        URL url = new URL(this.getPath());
-        //创建一个HTTP链接
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        urlConn.setConnectTimeout(10000);
-        urlConn.connect();
+    protected Object getT() throws Exception {
 
-        if (urlConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            handler.sendEmptyMessage(AppType.DOWNLOAD_ERROR);
-            return null;
-        }
-
-        handler.sendMessage(MessageUtil.createMessage(AppType.DOWNLOAD_ALLLEGTH, AppType.DATA, urlConn.getContentLength() + ""));
-        InputStream inputStream = urlConn.getInputStream();
-        OutputStream os = new FileOutputStream(this.filePath);
-        int length;
-        int lengtsh = 0;
-        byte[] bytes = new byte[1024];
-        while ((length = inputStream.read(bytes)) != -1) {
-            os.write(bytes, 0, length);
-            //获取当前进度值
-            lengtsh += length;
-            //把值传给handler
-            handler.sendMessage(MessageUtil.createMessage(AppType.HAS_DOWNLOAD,AppType.DATA,lengtsh+""));
-        }
-        //关闭流
-        inputStream.close();
-        os.close();
-        os.flush();
-        handler.sendEmptyMessage(AppType.DOWNLOAD_OVER);
+        this.restClient.downLoad(getPath(), filePath, new LQHandler.Consumer<Double>() {
+            @Override
+            public void accept(Double aDouble) {
+               handler.sendMessage(MessageUtil.createMessage(AppType.HAS_DOWNLOAD,AppType.DATA,aDouble));
+            }
+        });
+        handler.sendMessage(MessageUtil.createMessage(AppType.DOWNLOAD_OVER,AppType.DATA,""));
         return null;
     }
 }

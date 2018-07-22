@@ -40,6 +40,36 @@ public class FileUtil {
         return rootpath;
     }
 
+
+    public static String wordDirectory(String word) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(appRootPath()).append(File.separatorChar).append("word").append(File.separatorChar).append(word);
+        initDirectory(sb.toString());
+        sb = new StringBuffer();
+        sb.append("word").append(File.separatorChar).append(word);
+        return sb.toString();
+    }
+
+    public static String wordFilelPath(String word) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(appRootPath()).append(File.separatorChar).append("word").append(File.separatorChar).append(word);
+        initDirectory(sb.toString());
+        sb.append(File.separatorChar).append(fileName("mp3"));
+        return sb.toString();
+    }
+
+    /**
+     * 如果文件存在 ，删除
+     * @param filePath
+     */
+    public static void delete(String filePath){
+        File file = new File(filePath);
+
+        if(file.exists()){
+            file.delete();
+        }
+    }
+
     /**
      * 文件是否存在
      * @param filePath

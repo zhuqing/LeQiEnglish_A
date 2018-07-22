@@ -1,9 +1,12 @@
 package com.leqienglish.database;
+import static com.leqienglish.database.Constants.CREATE_TIME;
+import static com.leqienglish.database.Constants.PARENT_ID;
 import static com.leqienglish.database.Constants.TYPE;
+import static com.leqienglish.database.Constants.UPDATE_TIME;
 import static com.leqienglish.database.Constants.URL;
 import static com.leqienglish.database.Constants.CACHE_TABLE;
 import static com.leqienglish.database.Constants.ID;
-import static com.leqienglish.database.Constants.CREATETIME;
+
 
 import static com.leqienglish.database.Constants.JSON;
 import static com.leqienglish.database.Constants.DATAVersion;
@@ -34,8 +37,10 @@ public class SqlData extends SQLiteOpenHelper {
         StringBuffer strTable = new StringBuffer();
         strTable.append("create table " + CACHE_TABLE + " ( ");
         strTable.append(ID+" text,");
+        strTable.append(PARENT_ID+" text,");
         strTable.append(URL+" text  ,");
-        strTable.append(CREATETIME+" text  ,");
+        strTable.append(CREATE_TIME+" text  ,");
+        strTable.append(UPDATE_TIME+" text  ,");
         strTable.append(JSON+" text,");
         strTable.append(TYPE+" text");
         strTable.append(");");

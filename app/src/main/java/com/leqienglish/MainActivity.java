@@ -8,15 +8,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.controller.HomeListViewController;
+import com.leqienglish.database.Constants;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.database.SqlData;
+import com.leqienglish.entity.SQLEntity;
 import com.leqienglish.fragment.HomeFragment;
 import com.leqienglish.fragment.LQFragmentAdapter;
 import com.leqienglish.fragment.SecondFrament;
 import com.leqienglish.fragment.ThirdFrament;
 import com.leqienglish.R;
 import com.leqienglish.util.FileUtil;
+import com.leqienglish.util.LQHandler;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import xyz.tobebetter.entity.user.User;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -92,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FileUtil.application = this.getApplication();
         ExecuteSQL.init(new SqlData(this.getBaseContext()));
+        findOrCreateUser();
         setContentView(R.layout.activity_main);
         this.content = (FrameLayout) this.findViewById(R.id.content);
 
@@ -101,6 +114,35 @@ public class MainActivity extends AppCompatActivity {
          navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    /**
+     * 检验当前有没有用户登陆
+     */
+    private void findOrCreateUser(){
+        ExecuteSQL.getInstance().getDatasByType(Constants.USER_TYPE, new LQHandler.Consumer<List<SQLEntity>>(){
+            @Override
+            public void accept(List<SQLEntity> sqlEntities) {
+                try {
+                   List<User> users =  ExecuteSQL.toEntity(sqlEntities,User.class);
+                   if(users.isEmpty()){
+                       addTempUser();
+                   }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void addTempUser() throws JsonProcessingException {
+        User user = new User();
+        user.setId(UUID.randomUUID().toString());
+        user.setName("Friend");
+        user.setCreateDate(System.currentTimeMillis());
+        user.setUpdateDate(System.currentTimeMillis());
+        List<SQLEntity> sqlEntities = ExecuteSQL.toSQLEntitys(Constants.USER_TYPE,null, Arrays.asList(user));
+        ExecuteSQL.getInstance().insertLearnE(sqlEntities,null);
     }
 
 }

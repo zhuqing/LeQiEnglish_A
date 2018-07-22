@@ -1,16 +1,19 @@
 package com.leqienglish.sf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LQHandler;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,12 +37,13 @@ public class RestClient {
 
     private static RestTemplate restTemplate;
 
-    private String serverPath = "http://192.168.0.109:8080";
+    private String serverPath = "http://192.168.1.108:8080";
 
     protected final ObjectMapper mapper = new ObjectMapper();
 
-   public RestClient(){
+   public RestClient(String host){
        restTemplate = new RestTemplate();
+       this.serverPath = host;
    }
 
     public <T> T post(String path, Object obj, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
@@ -76,7 +80,10 @@ public class RestClient {
 
     private <T> T excute(HttpMethod method, String path, Object obj, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serverPath + "/" + path).queryParams(parameter);
+       if(parameter == null){
+           parameter  = new LinkedMultiValueMap<>();
+       }
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serverPath + path).queryParams(parameter);
         HttpEntity entity = new HttpEntity(obj, initHeaders());
         ResponseEntity resEntity = restTemplate.exchange(builder.toUriString(), method, entity, Message.class);
         Message resultMessage = (Message) resEntity.getBody();
@@ -107,6 +114,7 @@ public class RestClient {
      * @throws Exception
      */
     public void downLoad(String path, String filePath, LQHandler.Consumer<Double> hasdownload) throws MalformedURLException, IOException, Exception {
+        FileUtil.delete(filePath);
         //创建一个URL对象
         URL url = new URL(serverPath + "/" + path);
         //创建一个HTTP链接
@@ -117,6 +125,8 @@ public class RestClient {
         if (urlConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
             throw new Exception(urlConn.getResponseMessage());
         }
+
+
 
         InputStream inputStream = urlConn.getInputStream();
         int totalLength = inputStream.available();

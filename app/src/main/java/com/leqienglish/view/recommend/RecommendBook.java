@@ -21,8 +21,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-import xyz.tobebetter.entity.User;
+
 import xyz.tobebetter.entity.english.Content;
+import xyz.tobebetter.entity.user.User;
 
 public class RecommendBook extends RelativeLayout {
     private User user;

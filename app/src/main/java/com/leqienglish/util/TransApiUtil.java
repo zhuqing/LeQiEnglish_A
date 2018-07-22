@@ -34,36 +34,7 @@ public class TransApiUtil {
     public static String transResult(String query, String from, String to, final LQHandler.Consumer<List<Object>> consumer) {
        String params = buildParams(query);
       //  return HttpGet.get(TRANS_API_HOST, params);
-        LQService.getTrans(TRANS_API_HOST+"?"+params, String.class, null, new LQHandler.Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                if(s == null){
-                    return;
-                }
-//                try {
-////                    JSONObject jsonObject = new JSONObject(s);
-////
-////                    JSONArray arr = jsonObject.getJSONArray(TRANS_RESULT);
-////                    List<TranslateEntity> trans = new ArrayList<TranslateEntity>(arr.length());
-////                    for (int i = 0 ; i < arr.length() ; i++){
-////                        JSONObject json = arr.getJSONObject(i);
-////                        TranslateEntity translateEntity = new TranslateEntity();
-////                        translateEntity.setDst(json.getString(DST));
-////                        translateEntity.setSrc(json.getString(SRC));
-////
-////                        trans.add(translateEntity);
-////
-////                    }
-//
-////                    consumer.applay(trans);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-                consumer.accept(null);
-            }
-
-        });
-        return "";
+       return "";
     }
 
     private static String buildParams(String query) {

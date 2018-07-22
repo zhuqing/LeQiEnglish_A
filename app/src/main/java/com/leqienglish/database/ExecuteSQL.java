@@ -2,40 +2,34 @@ package com.leqienglish.database;
 
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.leqienglish.entity.SQLEntity;
-
 import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import xyz.tobebetter.entity.english.Content;
+import xyz.tobebetter.entity.Entity;
 
-import static android.R.attr.codes;
-import static android.R.attr.id;
 import static com.leqienglish.database.Constants.CACHE_TABLE;
-import static com.leqienglish.database.Constants.CREATETIME;
+import static com.leqienglish.database.Constants.CREATE_TIME;
 import static com.leqienglish.database.Constants.ID;
 import static com.leqienglish.database.Constants.JSON;
-
+import static com.leqienglish.database.Constants.PARENT_ID;
 import static com.leqienglish.database.Constants.TYPE;
+import static com.leqienglish.database.Constants.UPDATE_TIME;
 import static com.leqienglish.database.Constants.URL;
 
 public class ExecuteSQL {
-    public final static String CONTENT_TYPE = "content";
-    public final static String USER_TYPE = "user";
+
     private LOGGER log = new LOGGER(ExecuteSQL.class);
 
     private SqlData sqlData;
@@ -57,6 +51,20 @@ public class ExecuteSQL {
         return executeSQL;
     }
 
+    public static <T> List<T> toEntity(List<SQLEntity> sqlEntities,Class<T> claz) throws IOException {
+        if(sqlEntities == null|| sqlEntities.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+
+        List<T> contents = new ArrayList<>(sqlEntities.size());
+        ObjectMapper mapper = new ObjectMapper();
+        for(SQLEntity sqlEntity :sqlEntities){
+            contents.add(mapper.readValue(sqlEntity.getJson(),claz));
+        }
+
+        return contents;
+    }
+
     /**
      * contents 转换成SQLEntitys
      *
@@ -64,18 +72,20 @@ public class ExecuteSQL {
      * @return
      * @throws JsonProcessingException
      */
-    public List<SQLEntity> toSQLEntitys(List<Content> contents) throws JsonProcessingException {
+    public static <T extends Entity> List<SQLEntity> toSQLEntitys(String type,String parentId, List<T> contents) throws JsonProcessingException {
         if (contents == null || contents.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
         List<SQLEntity> datas = new ArrayList<>(contents.size());
         ObjectMapper mapper = new ObjectMapper();
-        for (Content content : contents) {
+        for (T content : contents) {
             SQLEntity sqlEnity = new SQLEntity();
             sqlEnity.setUrl("");
-            sqlEnity.setType(CONTENT_TYPE);
+            sqlEnity.setParentId(parentId);
+            sqlEnity.setType(type);
             sqlEnity.setId(content.getId());
             sqlEnity.setCreateTime(content.getUpdateDate()+"");
+            sqlEnity.setUpdateTime(System.currentTimeMillis()+"");
             sqlEnity.setJson(mapper.writeValueAsString(content));
             datas.add(sqlEnity);
 
@@ -83,6 +93,25 @@ public class ExecuteSQL {
 
         return datas;
     }
+
+    public static <T> List<T> sqlEntity2Content(List<SQLEntity> sqlEntities,Class<T> claz){
+        if(sqlEntities == null || sqlEntities.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        List<T> datas = new ArrayList<>(sqlEntities.size());
+        ObjectMapper mapper = new ObjectMapper();
+        for(SQLEntity sqlEntity : sqlEntities){
+            try {
+                datas.add(mapper.readValue(sqlEntity.getJson(),claz));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+       return datas;
+    }
+
+
+
 
     public void insertLearnE(final List<SQLEntity> sqlEnities, LQHandler.Consumer consumer) {
         DataBaseTask dataBaseTask =   new DataBaseTask<String>(consumer) {
@@ -158,6 +187,45 @@ public class ExecuteSQL {
     /**
      * 删除数据
      *
+     * @param type
+     * @return
+     */
+    public boolean delete(String type) {
+        try {
+            SQLiteDatabase db = sqlData.getWritableDatabase();
+            db.delete(CACHE_TABLE, "type=" + type, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * 删除数据
+     *
+     * @param type
+     * @return
+     */
+    public boolean delete(String type,String parentId) {
+        try {
+            SQLiteDatabase db = sqlData.getWritableDatabase();
+            db.delete(CACHE_TABLE, Constants.TYPE+"=? AND " +Constants.PARENT_ID+" =?" , new String[]{type,parentId});
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 删除数据
+     *
      * @param id
      * @return
      */
@@ -185,8 +253,10 @@ public class ExecuteSQL {
         values.put(JSON, sqlEnity.getJson());
         values.put(URL, sqlEnity.getUrl());
         values.put(ID, sqlEnity.getId());
+        values.put(PARENT_ID, sqlEnity.getParentId());
         values.put(TYPE, sqlEnity.getType());
-        values.put(CREATETIME, sqlEnity.getCreateTime());
+        values.put(CREATE_TIME, sqlEnity.getCreateTime());
+        values.put(UPDATE_TIME, sqlEnity.getUpdateTime());
         return values;
     }
 
@@ -194,9 +264,11 @@ public class ExecuteSQL {
         SQLEntity sqlEnity = new SQLEntity();
         sqlEnity.setJson(cursor.getString(cursor.getColumnIndex(JSON)));
         sqlEnity.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        sqlEnity.setParentId(cursor.getString(cursor.getColumnIndex(PARENT_ID)));
         sqlEnity.setType(cursor.getString(cursor.getColumnIndex(TYPE)));
         sqlEnity.setUrl(cursor.getString(cursor.getColumnIndex(URL)));
-        sqlEnity.setCreateTime(cursor.getString(cursor.getColumnIndex(CREATETIME)));
+        sqlEnity.setCreateTime(cursor.getString(cursor.getColumnIndex(CREATE_TIME)));
+        sqlEnity.setUpdateTime(cursor.getString(cursor.getColumnIndex(UPDATE_TIME)));
         return sqlEnity;
     }
 
@@ -266,6 +338,45 @@ public class ExecuteSQL {
 
     }
 
+    /**
+     * 根据数据类型获取数据
+     *
+     * @param type
+     * @return
+     */
+    public void getDatasByTypeAndParentId(final String parentId,final String type, LQHandler.Consumer<List<SQLEntity>> consumer) {
+
+        DataBaseTask dataBaseTask =  new DataBaseTask<List<SQLEntity>>(consumer) {
+            @Override
+            protected List<SQLEntity> doInBackground(Object... objects) {
+                SQLiteDatabase db = sqlData.getReadableDatabase();
+                Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=? AND "+PARENT_ID+"=?",
+                        new String[]{type,parentId}, null, null, "CREATETIME desc");
+                List<SQLEntity> jsonDatas = new ArrayList<>();
+                if (cursor.getCount() <= 0) {
+                    cursor.close();
+                    return null;
+                }
+                if (!cursor.moveToFirst()) {
+                    log.d("!cursor.moveToFirst()");
+                    cursor.close();
+                    return null;
+                }
+                String jsonData = null;
+                while (cursor.moveToNext()) {
+                    jsonDatas.add(toSqlEntity(cursor));
+                }
+                log.d("getJSONDataById jsonData=" + jsonData);
+                cursor.close();
+
+                return jsonDatas;
+            }
+        };
+
+        dataBaseTask.execute();
+
+    }
+
     public void  getNewsetByType(final String type , LQHandler.Consumer<SQLEntity> consumer){
         DataBaseTask dataBaseTask =    new DataBaseTask<SQLEntity>(consumer){
             @Override
@@ -295,6 +406,8 @@ public class ExecuteSQL {
         };
         dataBaseTask.execute();
     }
+
+
 
 
     /**
