@@ -50,7 +50,7 @@ public abstract   class HttpTask<T> extends AsyncTask<Object, Object, T> {
 
     @Override
     protected void onPostExecute(T t) {
-        if(this.consumer !=null){
+        if(this.consumer ==null){
             return;
         }
         this.consumer.accept(t);

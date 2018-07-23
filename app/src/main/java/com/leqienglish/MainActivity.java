@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.controller.HomeListViewController;
+import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.Constants;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.database.SqlData;
@@ -102,47 +103,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FileUtil.application = this.getApplication();
-        ExecuteSQL.init(new SqlData(this.getBaseContext()));
-        findOrCreateUser();
+        initData();
         setContentView(R.layout.activity_main);
         this.content = (FrameLayout) this.findViewById(R.id.content);
 
         this.initViewPage();
 
-      //  mTextMessage = (TextView) findViewById(R.id.message);
          navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
-    /**
-     * 检验当前有没有用户登陆
-     */
-    private void findOrCreateUser(){
-        ExecuteSQL.getInstance().getDatasByType(Constants.USER_TYPE, new LQHandler.Consumer<List<SQLEntity>>(){
-            @Override
-            public void accept(List<SQLEntity> sqlEntities) {
-                try {
-                   List<User> users =  ExecuteSQL.toEntity(sqlEntities,User.class);
-                   if(users.isEmpty()){
-                       addTempUser();
-                   }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    private void initData(){
+        FileUtil.application = this.getApplication();
+        ExecuteSQL.init(new SqlData(this.getBaseContext()));
+        UserDataCache.getInstance().load(null);
     }
 
-    private void addTempUser() throws JsonProcessingException {
-        User user = new User();
-        user.setId(UUID.randomUUID().toString());
-        user.setName("Friend");
-        user.setCreateDate(System.currentTimeMillis());
-        user.setUpdateDate(System.currentTimeMillis());
-        List<SQLEntity> sqlEntities = ExecuteSQL.toSQLEntitys(Constants.USER_TYPE,null, Arrays.asList(user));
-        ExecuteSQL.getInstance().insertLearnE(sqlEntities,null);
-    }
+
 
 }

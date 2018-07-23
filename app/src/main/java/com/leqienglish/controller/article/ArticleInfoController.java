@@ -50,13 +50,14 @@ public class ArticleInfoController extends Controller {
             return;
         }
 
-        if(button.getText().equals(Resources.getSystem().getString(R.string.has_add_article_to_recite))){
+        if(button.getText().equals(this.getView().getResources().getString(R.string.has_add_article_to_recite))){
             return;
         }
 
         UserAndContent userAndContent = new UserAndContent();
         userAndContent.setContentId(this.getContent().getId());
         userAndContent.setUserId(this.getUser().getId());
+        userAndContent.setFinishedPercent(0);
 
 
         LQService.post("/userAndContent/create",userAndContent,UserAndContent.class,null, new LQHandler.Consumer<UserAndContent>() {

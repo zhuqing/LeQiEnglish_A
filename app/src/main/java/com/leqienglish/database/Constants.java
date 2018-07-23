@@ -16,7 +16,7 @@ public interface Constants extends BaseColumns {
     /**
      * 我要背诵的单词
      */
-    public static final String MY_WORDS_TYPE="MY_WORDS";
+    public static final String MY_WORDS_TYPE="MY_WORDS_TYPE";
     /**
      *我正在背诵的单词
      */
@@ -31,6 +31,16 @@ public interface Constants extends BaseColumns {
      * 文章下的段
      */
     public static final String MY_SEGMENT_TYPE = "MY_SEGMENT_TYPE";
+
+    /**
+     * CONTENT下的word列表
+     */
+    public static final String CONTENT_WORD_TYPE = "CONTENT_WORD_TYPE";
+
+    /**
+     * 文章下的段
+     */
+    public static final String USER_RECITE_RECORD_TYPE = "USER_RECITE_RECORD_TYPE";
 
 
     /**

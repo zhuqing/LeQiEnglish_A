@@ -14,9 +14,10 @@
     <GridView
         android:id="@+id/article_info_gridview"
         android:layout_width="match_parent"
+
         android:layout_height="200dp"
         android:layout_below="@id/article_info_title"
-        android:numColumns="10"></GridView>
+        android:numColumns="1"></GridView>
 
 
 </RelativeLayout>

@@ -8,9 +8,13 @@ import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.article.ArticleInfoController;
+
+import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.util.BundleUtil;
+import com.leqienglish.util.LQHandler;
 
 import xyz.tobebetter.entity.english.Content;
+import xyz.tobebetter.entity.user.User;
 
 /**
  * 文章详情，段列表
@@ -28,6 +32,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
         ArticleInfoController articleInfoController = new ArticleInfoController(view);
         articleInfoController.init();
         articleInfoController.setContent(content);
+        UserDataCache.getInstance().load(new LQHandler.Consumer<User>() {
+            @Override
+            public void accept(User user) {
+                articleInfoController.setUser(user);
+            }
+        });
+
 
 
     }

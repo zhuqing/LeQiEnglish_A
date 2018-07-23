@@ -22,6 +22,7 @@ import com.leqienglish.R;
 import com.leqienglish.activity.ArticleInfoActivity;
 import com.leqienglish.activity.LoadingActivity;
 import com.leqienglish.activity.PlayAudioActivity;
+import com.leqienglish.data.content.RecommendContentDataCache;
 import com.leqienglish.database.Constants;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.entity.SQLEntity;
@@ -51,7 +52,7 @@ import static com.leqienglish.database.Constants.MY_RECOMMEND_TYPE;
 
 public class RecommendArticle extends RelativeLayout {
     private LOGGER logger = new LOGGER(RecommendArticle.class);
-    private User user;
+
     private GridView gridView;
     private TextView showAllTextView;
     private GridViewAdapter gridViewAdapter;
@@ -70,7 +71,7 @@ public class RecommendArticle extends RelativeLayout {
         this.showAllTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-               // reloadArticle();
+                load();
             }
         });
 
@@ -78,91 +79,44 @@ public class RecommendArticle extends RelativeLayout {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Content content = gridViewAdapter.getItem(position);
-                if(content == null){
+                if (content == null) {
                     return;
                 }
 
                 Intent intent = new Intent();
                 intent.putExtras(BundleUtil.create(BundleUtil.DATA, content));
                 intent.setClass(getContext(), ArticleInfoActivity.class);
-
+                getContext().startActivity(intent);
 
             }
         });
 
     }
 
-    public void reloadArticle() {
-        if (this.getUser() == null) {
-            return;
-        }
-        try {
-
-            ExecuteSQL.getInstance().getDatasByTypeAndParentId(this.getUser().getId(),MY_RECOMMEND_TYPE, new LQHandler.Consumer<List<SQLEntity>>() {
-                @Override
-                public void accept(List<SQLEntity> sqlEntities) {
-                    try {
-                        List<Content> contents = ExecuteSQL.toEntity(sqlEntities, Content.class);
-                        logger.d("query data Content "+contents.size());
-                        if (contents.isEmpty()) {
-                            queryAndUpdate(true);
-                        } else {
-                            showData(contents);
-                            queryAndUpdate(false);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+    public void load() {
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void queryAndUpdate(boolean isShow) throws ExecutionException, InterruptedException, JsonProcessingException {
-        logger.d("queryAndUpdate data Content ");
-
-        Map<String,String> param = new HashMap<>();
-        param.put("userId", this.getUser().getId());
-        LQService.get("recommend/recommendArticle",Content[].class, param,  new LQHandler.Consumer<Content[]>() {
+        RecommendContentDataCache.getInstance().load(new LQHandler.Consumer<List<Content>>() {
             @Override
-            public void accept(Content[] ts) {
-                logger.d("queryAndUpdate data Content ts= "+ts.length);
-                if(isShow){
-                    showData(Arrays.asList(ts));
-                }
-
-                List<SQLEntity> sqlEntities = null;
-                try {
-                    sqlEntities = ExecuteSQL.toSQLEntitys(MY_RECOMMEND_TYPE, getUser().getId(),  Arrays.asList(ts));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-                // ExecuteSQL.getInstance().delete(MY_RECOMMEND_TYPE, this.getUser().getId());
-                ExecuteSQL.getInstance().insertLearnE(sqlEntities, null);
+            public void accept(List<Content> contents) {
+                showData(contents);
             }
         });
 
 
-
-
-
     }
+
 
     private void showData(List<Content> contents) {
 
-        logger.d("showData data Content "+contents.size());
+        logger.d("showData data Content " + contents.size());
 
         this.gridViewAdapter.setItems(contents);
 
         this.gridView.setAdapter(gridViewAdapter);
 
         int size = contents.size();
-        int length = 180;
+        int length = 170;
 
         float density = Resources.getSystem().getDisplayMetrics().density;
 
@@ -173,24 +127,14 @@ public class RecommendArticle extends RelativeLayout {
                 gridviewWidth, LinearLayout.LayoutParams.MATCH_PARENT);
         gridView.setLayoutParams(params); // 设置GirdView布局参数,横向布局的关键
         gridView.setColumnWidth(itemWidth); // 设置列表项宽
-        gridView.setHorizontalSpacing(5); // 设置列表项水平间距
+        gridView.setHorizontalSpacing(4); // 设置列表项水平间距
         gridView.setStretchMode(GridView.NO_STRETCH);
         gridView.setNumColumns(size); // 设置列数量=列表集合数
 
 
-
     }
 
 
-    public User getUser() {
-
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        this.reloadArticle();
-    }
 
     final class ViewHolder {
         ImageView imageView;

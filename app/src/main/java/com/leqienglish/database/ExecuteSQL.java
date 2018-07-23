@@ -30,7 +30,7 @@ import static com.leqienglish.database.Constants.URL;
 
 public class ExecuteSQL {
 
-    private LOGGER log = new LOGGER(ExecuteSQL.class);
+    private static final LOGGER log = new LOGGER(ExecuteSQL.class);
 
     private SqlData sqlData;
 
@@ -51,15 +51,15 @@ public class ExecuteSQL {
         return executeSQL;
     }
 
-    public static <T> List<T> toEntity(List<SQLEntity> sqlEntities,Class<T> claz) throws IOException {
-        if(sqlEntities == null|| sqlEntities.isEmpty()){
+    public static <T> List<T> toEntity(List<SQLEntity> sqlEntities, Class<T> claz) throws IOException {
+        if (sqlEntities == null || sqlEntities.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
 
         List<T> contents = new ArrayList<>(sqlEntities.size());
         ObjectMapper mapper = new ObjectMapper();
-        for(SQLEntity sqlEntity :sqlEntities){
-            contents.add(mapper.readValue(sqlEntity.getJson(),claz));
+        for (SQLEntity sqlEntity : sqlEntities) {
+            contents.add(mapper.readValue(sqlEntity.getJson(), claz));
         }
 
         return contents;
@@ -72,20 +72,23 @@ public class ExecuteSQL {
      * @return
      * @throws JsonProcessingException
      */
-    public static <T extends Entity> List<SQLEntity> toSQLEntitys(String type,String parentId, List<T> contents) throws JsonProcessingException {
+    public static <T extends Entity> List<SQLEntity> toSQLEntitys(String type, String parentId, List<T> contents) throws JsonProcessingException {
         if (contents == null || contents.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
         List<SQLEntity> datas = new ArrayList<>(contents.size());
         ObjectMapper mapper = new ObjectMapper();
         for (T content : contents) {
+            if(content == null){
+                continue;
+            }
             SQLEntity sqlEnity = new SQLEntity();
             sqlEnity.setUrl("");
             sqlEnity.setParentId(parentId);
             sqlEnity.setType(type);
             sqlEnity.setId(content.getId());
-            sqlEnity.setCreateTime(content.getUpdateDate()+"");
-            sqlEnity.setUpdateTime(System.currentTimeMillis()+"");
+            sqlEnity.setCreateTime(content.getUpdateDate() + "");
+            sqlEnity.setUpdateTime(System.currentTimeMillis() + "");
             sqlEnity.setJson(mapper.writeValueAsString(content));
             datas.add(sqlEnity);
 
@@ -94,37 +97,52 @@ public class ExecuteSQL {
         return datas;
     }
 
-    public static <T> List<T> sqlEntity2Content(List<SQLEntity> sqlEntities,Class<T> claz){
-        if(sqlEntities == null || sqlEntities.isEmpty()){
+    public static <T> List<T> sqlEntity2Content(List<SQLEntity> sqlEntities, Class<T> claz) {
+        if (sqlEntities == null || sqlEntities.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
         List<T> datas = new ArrayList<>(sqlEntities.size());
         ObjectMapper mapper = new ObjectMapper();
-        for(SQLEntity sqlEntity : sqlEntities){
+        for (SQLEntity sqlEntity : sqlEntities) {
             try {
-                datas.add(mapper.readValue(sqlEntity.getJson(),claz));
+                datas.add(mapper.readValue(sqlEntity.getJson(), claz));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-       return datas;
+        return datas;
     }
 
 
-
-
     public void insertLearnE(final List<SQLEntity> sqlEnities, LQHandler.Consumer consumer) {
-        DataBaseTask dataBaseTask =   new DataBaseTask<String>(consumer) {
+        DataBaseTask dataBaseTask = new DataBaseTask<String>(consumer) {
             @Override
             protected String doInBackground(Object... objects) {
                 SQLiteDatabase db = sqlData.getWritableDatabase();
                 for (SQLEntity sqlEnity : sqlEnities) {
-                    insert(sqlEnity,db);
+                    insert(sqlEnity, db);
                 }
                 return null;
             }
         };
         dataBaseTask.execute();
+    }
+
+
+    public static <T extends Entity> void insertLearnE(final List<T> data, String parentId, String type) {
+        try {
+            List<SQLEntity> sqlEntities = toSQLEntitys(type, parentId, data);
+            SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
+            for (SQLEntity sqlEnity : sqlEntities) {
+                executeSQL.insert(sqlEnity, db);
+            }
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+
     }
 
     /**
@@ -135,11 +153,11 @@ public class ExecuteSQL {
      */
     public void insertLearnE(final SQLEntity sqlEnity, LQHandler.Consumer consumer) {
         log.d("start insertLearnE ");
-        DataBaseTask dataBaseTask =   new DataBaseTask(consumer) {
+        DataBaseTask dataBaseTask = new DataBaseTask(consumer) {
             @Override
             protected Object doInBackground(Object[] objects) {
                 SQLiteDatabase db = sqlData.getWritableDatabase();
-                insert(sqlEnity,db);
+                insert(sqlEnity, db);
                 db.close();
 
                 return sqlEnity.getId();
@@ -210,10 +228,10 @@ public class ExecuteSQL {
      * @param type
      * @return
      */
-    public boolean delete(String type,String parentId) {
+    public boolean delete(String type, String parentId) {
         try {
             SQLiteDatabase db = sqlData.getWritableDatabase();
-            db.delete(CACHE_TABLE, Constants.TYPE+"=? AND " +Constants.PARENT_ID+" =?" , new String[]{type,parentId});
+            db.delete(CACHE_TABLE, Constants.TYPE + "=? AND " + Constants.PARENT_ID + " =?", new String[]{type, parentId});
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -307,7 +325,7 @@ public class ExecuteSQL {
      */
     public void getDatasByType(final String type, LQHandler.Consumer<List<SQLEntity>> consumer) {
 
-       DataBaseTask dataBaseTask =  new DataBaseTask<List<SQLEntity>>(consumer) {
+        DataBaseTask dataBaseTask = new DataBaseTask<List<SQLEntity>>(consumer) {
             @Override
             protected List<SQLEntity> doInBackground(Object... objects) {
                 SQLiteDatabase db = sqlData.getReadableDatabase();
@@ -344,14 +362,55 @@ public class ExecuteSQL {
      * @param type
      * @return
      */
-    public void getDatasByTypeAndParentId(final String parentId,final String type, LQHandler.Consumer<List<SQLEntity>> consumer) {
+    public static <T> List<T> getDatasByType(String type, String parentId, Class<T> claz) {
 
-        DataBaseTask dataBaseTask =  new DataBaseTask<List<SQLEntity>>(consumer) {
+        SQLiteDatabase db = executeSQL.sqlData.getReadableDatabase();
+        Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=?",
+                new String[]{type}, null, null, "CREATETIME desc");
+
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return Collections.EMPTY_LIST;
+        }
+        if (!cursor.moveToFirst()) {
+            log.d("!cursor.moveToFirst()");
+            cursor.close();
+            return Collections.EMPTY_LIST;
+        }
+        String jsonData = null;
+        List<SQLEntity> jsonDatas = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            jsonDatas.add(executeSQL.toSqlEntity(cursor));
+        }
+        log.d("getJSONDataById jsonData=" + jsonData);
+        cursor.close();
+
+        try {
+            return ExecuteSQL.toEntity(jsonDatas, claz);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.e(e.getMessage());
+        }
+
+        return Collections.EMPTY_LIST;
+
+
+    }
+
+    /**
+     * 根据数据类型获取数据
+     *
+     * @param type
+     * @return
+     */
+    public void getDatasByTypeAndParentId(final String parentId, final String type, LQHandler.Consumer<List<SQLEntity>> consumer) {
+
+        DataBaseTask dataBaseTask = new DataBaseTask<List<SQLEntity>>(consumer) {
             @Override
             protected List<SQLEntity> doInBackground(Object... objects) {
                 SQLiteDatabase db = sqlData.getReadableDatabase();
-                Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=? AND "+PARENT_ID+"=?",
-                        new String[]{type,parentId}, null, null, "CREATETIME desc");
+                Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=? AND " + PARENT_ID + "=?",
+                        new String[]{type, parentId}, null, null, "CREATETIME desc");
                 List<SQLEntity> jsonDatas = new ArrayList<>();
                 if (cursor.getCount() <= 0) {
                     cursor.close();
@@ -377,13 +436,13 @@ public class ExecuteSQL {
 
     }
 
-    public void  getNewsetByType(final String type , LQHandler.Consumer<SQLEntity> consumer){
-        DataBaseTask dataBaseTask =    new DataBaseTask<SQLEntity>(consumer){
+    public void getNewsetByType(final String type, LQHandler.Consumer<SQLEntity> consumer) {
+        DataBaseTask dataBaseTask = new DataBaseTask<SQLEntity>(consumer) {
             @Override
             protected SQLEntity doInBackground(Object... objects) {
                 SQLiteDatabase db = sqlData.getReadableDatabase();
                 Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=?",
-                        new String[]{type}, null, null, "CREATETIME desc","1");
+                        new String[]{type}, null, null, "CREATETIME desc", "1");
 
                 if (cursor.getCount() <= 0) {
                     cursor.close();
@@ -406,8 +465,6 @@ public class ExecuteSQL {
         };
         dataBaseTask.execute();
     }
-
-
 
 
     /**

@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leqienglish.R;
 import com.leqienglish.activity.LoadingActivity;
 import com.leqienglish.activity.PlayAudioActivity;
+import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.ExecuteSQL;
 
 import com.leqienglish.entity.SQLEntity;
@@ -76,34 +77,23 @@ public class HomeListViewController extends Controller<View> {
         this.recommendArticle = this.getView().findViewById(R.id.home_view_recommend_article);
         this.recommendBook = this.getView().findViewById(R.id.home_view_recommend_book);
 
-        findUser();
+        loadUser();
 
     }
 
 
 
-    public void findUser(){
-        ExecuteSQL.getInstance().getDatasByType(USER_TYPE, new LQHandler.Consumer<List<SQLEntity>>() {
+    public void loadUser(){
+        UserDataCache.getInstance().load(new LQHandler.Consumer<User>() {
             @Override
-            public void accept(List<SQLEntity> sqlEntities) {
-                try {
-                    List<User> users = ExecuteSQL.toEntity(sqlEntities,User.class);
-                    if(users.isEmpty()){
-                        return;
-                    }
+            public void accept(User user) {
+                recommendArticle.load();
+                userBoardView.load();
+                userRecitingArticle.load();
 
-                    User user = users.get(0);
-                    recommendArticle.setUser(user);
-
-                    userBoardView.setUser(user);
-
-                    userRecitingArticle.setUser(user);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         });
+
     }
 
 
