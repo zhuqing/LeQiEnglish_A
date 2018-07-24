@@ -370,19 +370,19 @@ public class ExecuteSQL {
 
         if (cursor.getCount() <= 0) {
             cursor.close();
-            return Collections.EMPTY_LIST;
+            return null;
         }
         if (!cursor.moveToFirst()) {
             log.d("!cursor.moveToFirst()");
             cursor.close();
-            return Collections.EMPTY_LIST;
+            return null;
         }
         String jsonData = null;
         List<SQLEntity> jsonDatas = new ArrayList<>();
         while (cursor.moveToNext()) {
             jsonDatas.add(executeSQL.toSqlEntity(cursor));
         }
-        log.d("getJSONDataById jsonData=" + jsonData);
+       // log.d("getJSONDataById jsonData=" + jsonData);
         cursor.close();
 
         try {

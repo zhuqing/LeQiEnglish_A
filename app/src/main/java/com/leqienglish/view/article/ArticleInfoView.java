@@ -200,7 +200,7 @@ public class ArticleInfoView extends RelativeLayout {
             } else {
                 holder = new ArticleInfoView.ViewHolder();
                 view = this.mInflater.inflate(R.layout.article_info_item, null);
-                holder.button = view.findViewById(R.id.article_info_item_button);
+               // holder.button = view.findViewById(R.id.article_info_item_button);
                 holder.title = view.findViewById(R.id.article_info_item_title);
 
                 view.setTag(holder);
@@ -212,7 +212,7 @@ public class ArticleInfoView extends RelativeLayout {
                 return view;
             }
 
-            holder.title.setText(actical.getTitle());
+            holder.title.setText(actical.getTitle().substring(actical.getTitle().length()-4));
             final ArticleInfoView.ViewHolder fviewHolder = holder;
 
 

@@ -1,6 +1,7 @@
 package com.leqienglish.util;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Environment;
 
@@ -27,6 +28,7 @@ public class FileUtil {
 
     public static String appRootPath() {
         File file = Environment.getExternalStorageDirectory();
+
         String userDir = "";
         if(file!=null){
             userDir = file.getAbsolutePath();

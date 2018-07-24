@@ -44,7 +44,7 @@ public class UserBoardView extends RelativeLayout {
                     return;
                 }
                 allMinute.setText(userReciteRecord.getLearnTime()+"");
-                allDays.setText(userReciteRecord.getLearnDay()+"");
+                allDays.setText("累计打卡"+userReciteRecord.getLearnDay()+"天");
             }
         });
 

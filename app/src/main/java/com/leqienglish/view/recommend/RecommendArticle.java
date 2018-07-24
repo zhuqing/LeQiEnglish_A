@@ -3,6 +3,7 @@ package com.leqienglish.view.recommend;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.leqienglish.database.Constants;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.entity.SQLEntity;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.sf.LoadFile;
 import com.leqienglish.sf.RestClient;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
@@ -37,6 +39,7 @@ import com.leqienglish.util.task.FutureTaskUtil;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -196,16 +199,16 @@ public class RecommendArticle extends RelativeLayout {
             }
 
             holder.title.setText(actical.getTitle());
-            final RecommendArticle.ViewHolder fviewHolder = holder;
-            try {
-                if (actical.getImagePath() != null) {
-                    final String filePath = FileUtil.getFileAbsolutePath(actical.getImagePath());
-                }
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            final RecommendArticle.ViewHolder viewHolder = holder;
+            if (actical.getImagePath() != null) {
+                LoadFile.loadFile(actical.getImagePath(), new LQHandler.Consumer<String>() {
+                    @Override
+                    public void accept(String s) {
+                        viewHolder.imageView.setImageURI(Uri.fromFile(new File(s)));
+                    }
+                });
             }
+
 
             return view;
         }

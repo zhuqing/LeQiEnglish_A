@@ -1,50 +1,18 @@
 package com.leqienglish.controller;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leqienglish.R;
-import com.leqienglish.activity.LoadingActivity;
-import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.data.user.UserDataCache;
-import com.leqienglish.database.ExecuteSQL;
 
-import com.leqienglish.entity.SQLEntity;
-
-import com.leqienglish.sf.LQService;
-import com.leqienglish.util.BundleUtil;
-import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.view.UserBoardView;
-import com.leqienglish.view.article.UserRecitingArticle;
+import com.leqienglish.view.article.UserRecitingArticleView;
 import com.leqienglish.view.recommend.RecommendArticle;
 import com.leqienglish.view.recommend.RecommendBook;
 
-import org.springframework.http.MediaType;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-
-import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.user.User;
-
-import static com.leqienglish.database.Constants.USER_TYPE;
-import static java.util.Arrays.*;
 
 /**
  * private
@@ -54,7 +22,7 @@ import static java.util.Arrays.*;
 public class HomeListViewController extends Controller<View> {
     private UserBoardView userBoardView;
 
-    private UserRecitingArticle userRecitingArticle;
+    private UserRecitingArticleView userRecitingArticleView;
 
     private RecommendArticle recommendArticle;
 
@@ -72,7 +40,7 @@ public class HomeListViewController extends Controller<View> {
     public void init() {
 
         this.userBoardView = this.getView().findViewById(R.id.home_view_user_board);
-        this.userRecitingArticle = this.getView().findViewById(R.id.home_view_user_reciting);
+        this.userRecitingArticleView = this.getView().findViewById(R.id.home_view_user_reciting);
 
         this.recommendArticle = this.getView().findViewById(R.id.home_view_recommend_article);
         this.recommendBook = this.getView().findViewById(R.id.home_view_recommend_book);
@@ -89,7 +57,7 @@ public class HomeListViewController extends Controller<View> {
             public void accept(User user) {
                 recommendArticle.load();
                 userBoardView.load();
-                userRecitingArticle.load();
+                userRecitingArticleView.load();
 
             }
         });

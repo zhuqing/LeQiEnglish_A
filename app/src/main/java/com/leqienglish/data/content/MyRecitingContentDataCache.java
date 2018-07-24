@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import xyz.tobebetter.entity.english.Content;
+import xyz.tobebetter.entity.english.content.ReciteContentVO;
 import xyz.tobebetter.entity.user.User;
 
 import static com.leqienglish.database.Constants.MY_RECITING_ARITCLE_TYPE;
@@ -22,7 +23,7 @@ import static com.leqienglish.database.Constants.MY_RECOMMEND_TYPE;
 /**
  * 正在背诵的文章的缓存
  */
-public class MyRecitingContentDataCache extends DataCacheAbstract<List<Content>> {
+public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteContentVO>> {
 
     private LOGGER logger = new LOGGER(MyRecitingContentDataCache.class);
 
@@ -49,30 +50,33 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<Content>>
     }
 
     @Override
-    protected List<Content> getFromCache() {
+    protected List<ReciteContentVO> getFromCache() {
         User user = UserDataCache.getInstance().getCacheData();
         if(user == null){
             return null;
         }
-        List<Content> contents = ExecuteSQL.getDatasByType(MY_RECITING_ARITCLE_TYPE,user.getId(),Content.class);
+        List<ReciteContentVO> contents = ExecuteSQL.getDatasByType(MY_RECITING_ARITCLE_TYPE,user.getId(),ReciteContentVO.class);
+
         return contents;
     }
 
     @Override
-    protected void putCache(List<Content> constantsList) {
+    protected void putCache(List<ReciteContentVO> constantsList) {
         User user = UserDataCache.getInstance().getCacheData();
         ExecuteSQL.insertLearnE(constantsList,user.getId(),MY_RECITING_ARITCLE_TYPE);
     }
 
     @Override
-    protected List<Content> getFromService() {
+    protected List<ReciteContentVO> getFromService() {
         User user = UserDataCache.getInstance().getCacheData();
 
         MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
         param.add("userId", user.getId());
 
+        logger.d("param="+param);
+
         try {
-            Content[] contents = this.getRestClient().get("/userAndContent/findByUserId",param,Content[].class);
+            ReciteContentVO[] contents = this.getRestClient().get("/english/content/findUserReciting",param,ReciteContentVO[].class);
             return Arrays.asList(contents);
         } catch (Exception e) {
             e.printStackTrace();
