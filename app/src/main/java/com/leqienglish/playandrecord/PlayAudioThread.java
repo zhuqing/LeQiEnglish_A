@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.AppType;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 
 
@@ -20,6 +21,7 @@ import java.util.List;
  * 播放录音
  */
 public class PlayAudioThread extends DataBaseTask {
+    private LOGGER logger = new LOGGER(RecordAudioThread.class);
     private List<short[]> list;
    private LQHandler.Consumer consumer;
 
@@ -53,7 +55,7 @@ public class PlayAudioThread extends DataBaseTask {
             for( int i = 0;  i < this.list.size() ; i++){
 
                 short[] buffer = this.list.get(i);
-              //  Log.d(this.getName(), "====start play=====bufferSize=" + buffer.length);
+                logger.d("====start play=====bufferSize=" + buffer.length);
                 track.write(buffer, 0, buffer.length);
             }
             track.stop();

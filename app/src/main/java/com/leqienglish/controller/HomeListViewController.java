@@ -19,7 +19,7 @@ import xyz.tobebetter.entity.user.User;
  * Created by zhuqing on 2017/8/19.
  */
 
-public class HomeListViewController extends Controller<View> {
+public class HomeListViewController extends ControllerAbstract<View> {
     private UserBoardView userBoardView;
 
     private UserRecitingArticleView userRecitingArticleView;
@@ -49,6 +49,10 @@ public class HomeListViewController extends Controller<View> {
 
     }
 
+    @Override
+    public void reload() {
+
+    }
 
 
     public void loadUser(){

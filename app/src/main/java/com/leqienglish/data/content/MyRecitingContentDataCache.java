@@ -84,4 +84,14 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
         return null;
 
     }
+
+    @Override
+    public void add(List<ReciteContentVO> reciteContentVOS) {
+
+    }
+
+    @Override
+    public void remove(List<ReciteContentVO> reciteContentVOS) {
+
+    }
 }

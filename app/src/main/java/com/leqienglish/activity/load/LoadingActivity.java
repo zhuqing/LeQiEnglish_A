@@ -1,4 +1,4 @@
-package com.leqienglish.activity;
+package com.leqienglish.activity.load;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,77 +7,82 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 
 import com.leqienglish.R;
-import com.leqienglish.controller.HomeListViewController;
+import com.leqienglish.activity.PlayAudioActivity;
 
-import com.leqienglish.sf.LQService;
-import com.leqienglish.sf.task.HttpDownLoadProcessTask;
+import com.leqienglish.data.content.MyRecitingContentDataCache;
+import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.AppType;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
-import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.view.LoadingView;
 
-import org.springframework.http.MediaType;
-
-import java.io.File;
 import java.io.IOException;
 
 import xyz.tobebetter.entity.english.Content;
+import xyz.tobebetter.entity.english.Segment;
 
 /**
  * Created by zhuqing on 2018/5/9.
  */
 
 public class LoadingActivity extends AppCompatActivity {
-
+    private LOGGER logger = new LOGGER(LoadingActivity.class);
     private LoadingView loadingView;
-    private Content content;
+    private Segment content;
+
+    private String path;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
-        content = (Content) this.getIntent().getExtras().getSerializable(BundleUtil.DATA);
+        content = (Segment) this.getIntent().getExtras().getSerializable(BundleUtil.DATA);
+        this.path = this.getIntent().getExtras().getString(BundleUtil.PATH);
+        loadingView = this.findViewById(R.id.loading_progress_view);
 
-        loadingView = (LoadingView) this.findViewById(R.id.dp_game_progress);
-        loadAudioFile(content);
+        loadingView.setMaxValue(1.0f);
+        loadAudioFile(path);
     }
 
 
     /**
      * 加载图片
      *
-     * @param content
+     * @param path
      * @throws IOException
      */
-    private void loadAudioFile(Content content) {
+    private void loadAudioFile(String path) {
         final String filePath;
-        try {
-            filePath = FileUtil.getFileAbsolutePath(content.getAudioPath());
-            if (!FileUtil.exists(content.getAudioPath())) {
-                new HttpDownLoadProcessTask("http://192.168.1.115:8080"+getResources().getString(R.string.AUDIO_PATH) + content.getId(), filePath, new LoadingHandler(), null).execute();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        filePath = FileUtil.toLocalPath(path);
+        //  if (!FileUtil.exists(content.getAudioPath())) {
+        logger.d("loadAudioFile path=" + filePath);
+        LoadFile.loadFile( path, new LoadingHandler());
+
+        // }
+
 
     }
 
     public class LoadingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            String data = msg.getData() == null ? "0" : msg.getData().getString(AppType.DATA);
+            Double data = msg.getData() == null ? 0.0 : msg.getData().getDouble(AppType.DATA);
             switch (msg.what) {
                 case AppType.DOWNLOAD_ALLLEGTH:
-                    loadingView.setMaxValue(Float.valueOf(data));
+                    loadingView.setMaxValue(data.floatValue());
                     break;
                 case AppType.HAS_DOWNLOAD:
-                    loadingView.setCurrentValue(Float.valueOf(data));
+
+                    loadingView.setCurrentValue(data.floatValue());
                     break;
                 case AppType.DOWNLOAD_OVER:
                     Intent intent = new Intent();
-                    intent.putExtras(BundleUtil.create(BundleUtil.DATA, content));
+                    Bundle bundle = BundleUtil.create(BundleUtil.DATA, content);
+                    BundleUtil.create(bundle, BundleUtil.PATH, path);
+                    intent.putExtras(bundle);
                     intent.setClass(LoadingActivity.this, PlayAudioActivity.class);
-                  //  intent.
+                    //  intent.
                     LoadingActivity.this.startActivity(intent);
                     break;
                 case AppType.DOWNLOAD_ERROR:

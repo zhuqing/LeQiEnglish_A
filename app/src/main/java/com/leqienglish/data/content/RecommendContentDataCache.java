@@ -82,4 +82,14 @@ public class RecommendContentDataCache extends DataCacheAbstract<List<Content>> 
         return null;
 
     }
+
+    @Override
+    public void add(List<Content> contents) {
+
+    }
+
+    @Override
+    public void remove(List<Content> contents) {
+
+    }
 }

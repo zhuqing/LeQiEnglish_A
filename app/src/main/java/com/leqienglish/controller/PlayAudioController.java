@@ -27,26 +27,32 @@ import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.PlayEntityUitl;
 import com.leqienglish.util.TransApiUtil;
 import com.leqienglish.view.LeQiTextView;
+import com.leqienglish.view.adapter.LeQiBaseAdapter;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import xyz.tobebetter.entity.english.Content;
+import xyz.tobebetter.entity.english.Segment;
+import xyz.tobebetter.entity.english.play.AudioPlayPoint;
 
 /**
  * Created by zhuqing on 2018/4/21.
  */
 
-public class PlayAudioController extends Controller<GridView> {
+public class PlayAudioController extends ControllerAbstract<GridView> {
     private LOGGER logger = new LOGGER(PlayAudioController.class);
-    private Content content;
+    private Segment segment;
+    private String filePath;
     private HomeListViewAdapter homeListViewAdapter;
     private PlayMediaPlayerThread playMediaPlayerThread;
 
-    public PlayAudioController(GridView view, Content content) {
+    public PlayAudioController(GridView view, Segment segment,String path) {
         super(view);
-        this.content = content;
+        this.segment = segment;
+        this.filePath = path;
 
     }
 
@@ -57,15 +63,35 @@ public class PlayAudioController extends Controller<GridView> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<PlayEntity> playEntities = PlayEntityUitl.createEntitys(this.content.getContent());
+        List<AudioPlayPoint> playEntities = null;
+        try {
+            playEntities = AudioPlayPoint.toAudioPlays(segment.getContent());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         homeListViewAdapter = new HomeListViewAdapter(LayoutInflater.from(this.getView().getContext()));
         homeListViewAdapter.setItems(playEntities);
         this.getView().setAdapter(homeListViewAdapter);
     }
 
+    @Override
+    public void reload() {
+
+    }
+
     private void loadAudioFile() throws IOException {
-        final String filePath = FileUtil.getFileAbsolutePath(content.getAudioPath());
+        final String filePath = FileUtil.getFileAbsolutePath(this.filePath);
+        File file = new File(filePath);
+        logger.d(filePath+"\nfile exit() "+file.exists());
         this.playMediaPlayerThread = new PlayMediaPlayerThread(filePath);
+    }
+
+    public PlayMediaPlayerThread create() throws IOException {
+        final String filePath = FileUtil.getFileAbsolutePath(this.filePath);
+        File file = new File(filePath);
+        logger.d(filePath+"\nfile exit() "+file.exists());
+        return new PlayMediaPlayerThread(filePath);
     }
 
 
@@ -77,38 +103,15 @@ public class PlayAudioController extends Controller<GridView> {
 
     }
 
-    class HomeListViewAdapter extends BaseAdapter {
+    class HomeListViewAdapter extends LeQiBaseAdapter<AudioPlayPoint> {
 
-        private LayoutInflater mInflater;
+
 
         public HomeListViewAdapter(LayoutInflater mInflater) {
-            this.mInflater = mInflater;
+            super(mInflater);
         }
 
-        private List<PlayEntity> items;
 
-        public List<PlayEntity> getItems() {
-            return items;
-        }
-
-        public void setItems(List<PlayEntity> items) {
-            this.items = items;
-        }
-
-        @Override
-        public int getCount() {
-            return items.size();
-        }
-
-        @Override
-        public PlayEntity getItem(int i) {
-            return items.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0L;
-        }
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
@@ -125,7 +128,7 @@ public class PlayAudioController extends Controller<GridView> {
                 holder.playButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PlayEntity pe = (PlayEntity) view.getTag();
+                        AudioPlayPoint pe = (AudioPlayPoint) view.getTag();
                         play(pe);
                     }
                 });
@@ -141,8 +144,8 @@ public class PlayAudioController extends Controller<GridView> {
                             if (select == null || select.isEmpty()) {
                                 return false;
                             }
-                            WordDetailPopupWindow pop = new WordDetailPopupWindow(leQiTextView.getContext(),select);
-                            pop.showAtLocation(PlayAudioController.this.getView(), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+                          //  WordDetailPopupWindow pop = new WordDetailPopupWindow(leQiTextView.getContext(),select);
+                           // pop.showAtLocation(PlayAudioController.this.getView(), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
 
                         }
                         return false;
@@ -150,24 +153,31 @@ public class PlayAudioController extends Controller<GridView> {
                 });
 
             }
-            PlayEntity playEntity = this.getItem(i);
-            holder.title.setText(playEntity.getText());
+            AudioPlayPoint playEntity = this.getItem(i);
+            holder.title.setText(playEntity.getEnText());
             holder.playButton.setTag(playEntity);
             holder.recodeButton.setTag(playEntity);
             return view;
         }
 
-        private void play(final PlayEntity pe) {
+        private void play(final AudioPlayPoint pe) {
             if (pe == null) {
                 return;
             }
+            try {
+                playMediaPlayerThread = create();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
             playMediaPlayerThread.setPlayEntity(pe);
+            logger.d(pe.getStartTime()+":"+pe.getEndTime());
             playMediaPlayerThread.setPlayComplete(new LQHandler.Consumer() {
                 @Override
                 public void accept(Object o) {
                     logger.v("播放完成 录音");
 
-                    RecordAudioThread thread = new RecordAudioThread(pe.getDuring() + 3000, new LQHandler.Consumer<List<short[]>>() {
+                    RecordAudioThread thread = new RecordAudioThread(pe.getEndTime()-pe.getStartTime() + 3000, new LQHandler.Consumer<List<short[]>>() {
                         @Override
                         public void accept(List<short[]> shorts) {
 
@@ -175,6 +185,13 @@ public class PlayAudioController extends Controller<GridView> {
                                 @Override
                                 public void accept(Object o) {
                                     logger.v("录音播放完成 ");
+                                    try {
+                                        playMediaPlayerThread = create();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                        return;
+                                    }
+                                    playMediaPlayerThread.setPlayEntity(pe);
                                     playMediaPlayerThread.setPlayComplete(null);
                                     playMediaPlayerThread.start();
                                 }
@@ -185,6 +202,7 @@ public class PlayAudioController extends Controller<GridView> {
                     thread.execute();
                 }
             });
+
             playMediaPlayerThread.start();
         }
     }

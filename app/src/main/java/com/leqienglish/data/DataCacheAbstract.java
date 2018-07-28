@@ -52,6 +52,20 @@ public abstract class DataCacheAbstract<T> {
     protected abstract T getFromService();
 
     /**
+     * 从服务端取数据
+     *
+     * @return
+     */
+    public abstract void add(T t);
+
+    /**
+     * 从服务端取数据
+     *
+     * @return
+     */
+    public abstract void remove(T t);
+
+    /**
      * 向缓存中增加数据
      * @param t
      */
@@ -68,7 +82,6 @@ public abstract class DataCacheAbstract<T> {
             if (consumer != null) {
                 consumer.accept(this.cacheData);
             }
-
         }
 
         AsyncTask asyncTask = new AsyncTask<Object, Object, T>() {

@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         FileUtil.application = this.getApplication();
         ExecuteSQL.init(new SqlData(this.getBaseContext()));
         UserDataCache.getInstance().load(null);
+     //   this.getBaseContext().get
     }
 
 

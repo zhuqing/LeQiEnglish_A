@@ -75,6 +75,16 @@ public class UserDataCache extends DataCacheAbstract<User> {
         return null;
     }
 
+    @Override
+    public void add(User user) {
+
+    }
+
+    @Override
+    public void remove(User user) {
+
+    }
+
     public boolean login(String name, String password) {
         return false;
     }
@@ -86,7 +96,7 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
         List<User> users = ExecuteSQL.getDatasByType(USER_TYPE, null, User.class);
 
-        if (!users.isEmpty()) {
+        if (users!=null && !users.isEmpty()) {
             return users.get(0);
         }
 

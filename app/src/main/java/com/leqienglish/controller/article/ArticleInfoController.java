@@ -5,7 +5,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.leqienglish.R;
-import com.leqienglish.controller.Controller;
+
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.view.article.ArticleInfoView;
@@ -17,7 +18,7 @@ import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.user.User;
 import xyz.tobebetter.entity.user.content.UserAndContent;
 
-public class ArticleInfoController extends Controller {
+public class ArticleInfoController extends ControllerAbstract {
 
     private User user;
     private Content content;
@@ -42,6 +43,11 @@ public class ArticleInfoController extends Controller {
               add();
           }
       });
+
+    }
+
+    @Override
+    public void reload() {
 
     }
 

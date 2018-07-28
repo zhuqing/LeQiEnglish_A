@@ -8,7 +8,7 @@ import android.widget.TextView;
  * Created by zhuqing on 2017/8/19.
  */
 
-public class SecondViewController extends Controller<View> {
+public class SecondViewController extends ControllerAbstract<View> {
     private TextView textView;
     private Button button;
     public SecondViewController(View fragment) {
@@ -17,6 +17,11 @@ public class SecondViewController extends Controller<View> {
 
     @Override
     public void init() {
+
+    }
+
+    @Override
+    public void reload() {
 
     }
 }

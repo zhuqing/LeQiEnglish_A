@@ -24,4 +24,14 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
     protected List<Word> getFromService() {
         return null;
     }
+
+    @Override
+    public void add(List<Word> words) {
+
+    }
+
+    @Override
+    public void remove(List<Word> words) {
+
+    }
 }

@@ -1,6 +1,13 @@
 package com.leqienglish.view.article;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,19 +17,29 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.R;
+import com.leqienglish.activity.ArticleInfoActivity;
+import com.leqienglish.activity.load.LoadingActivity;
+import com.leqienglish.data.content.ContentWordsDataCache;
+import com.leqienglish.data.segment.SegmentDataCache;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.entity.SQLEntity;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.image.ImageUtil;
+import com.leqienglish.view.adapter.LeQiBaseAdapter;
 import com.leqienglish.view.recommend.RecommendArticle;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,21 +48,25 @@ import java.util.Map;
 
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
+import xyz.tobebetter.entity.word.Word;
 
-import static com.leqienglish.database.Constants.MY_SEGMENT_TYPE;
+
 import static xyz.tobebetter.entity.Consistent.SEGMENT_TYPE;
 
 public class ArticleInfoView extends RelativeLayout {
-
+    private LOGGER logger = new LOGGER(ArticleInfoView.class);
     private Content content;
 
-    private List<Segment> segments;
 
     private TextView titleView;
 
     private GridView gridView;
 
+    private Bitmap roundBlurBitMap;
+
     private GridViewAdapter gridViewAdapter;
+
+    private Bitmap blurBitMap;
 
     public ArticleInfoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -65,10 +86,29 @@ public class ArticleInfoView extends RelativeLayout {
                 if (segment == null) {
                     return;
                 }
+
+                if(position == 0){
+                    return;
+                }
+
+                Intent intent = new Intent();
+                Bundle bundle = BundleUtil.create(BundleUtil.DATA, segment);
+                BundleUtil.create(bundle, BundleUtil.PATH, content.getAudioPath());
+                intent.putExtras(bundle);
+                intent.setClass(getContext(), LoadingActivity.class);
+                getContext().startActivity(intent);
             }
         });
     }
 
+    /**
+     * 创建模糊图片
+     * @return
+     */
+    private Bitmap buildBlurBitmap() {
+        Bitmap sbit = BitmapFactory.decodeResource(this.getResources(), R.drawable.obm);
+        return ImageUtil.fastBlur( sbit, 30);
+    }
 
     public void load() {
 
@@ -76,62 +116,71 @@ public class ArticleInfoView extends RelativeLayout {
             return;
         }
 
+        this.blurBitMap = this.buildBlurBitmap();
+        this.roundBlurBitMap = ImageUtil.createRoundCornerImage(blurBitMap,30, ImageUtil.HalfType.ALL);
+        this.getRootView().setBackground(new BitmapDrawable(this.getResources(),blurBitMap));
         this.titleView.setText(this.getContent().getTitle());
 
+        SegmentDataCache segmentDataCache = new SegmentDataCache(this.getContent());
 
-        ExecuteSQL.getInstance().getDatasByTypeAndParentId(content.getId(), MY_SEGMENT_TYPE, new LQHandler.Consumer<List<SQLEntity>>() {
+        segmentDataCache.load(new LQHandler.Consumer<List<Segment>>() {
             @Override
-            public void accept(List<SQLEntity> sqlEntities) {
-                try {
-                    List<Segment> segments = ExecuteSQL.toEntity(sqlEntities, Segment.class);
-                    if (segments.isEmpty()) {
-                        query(true);
-                    } else {
-                        showSegments(segments);
-                        query(false);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+            public void accept(List<Segment> segmentList) {
+                showSegments(segmentList);
             }
         });
 
 
-    }
-
-    private void query(boolean isShow) {
-        Map<String, String> param = new HashMap<>();
-        param.put("contentId", this.getContent().getId());
-
-        LQService.get("/segment/findByContentId", Segment[].class, param, new LQHandler.Consumer<Segment[]>() {
+        ContentWordsDataCache contentWordsDataCache = new ContentWordsDataCache(this.getContent());
+        contentWordsDataCache.load(new LQHandler.Consumer<List<Word>>() {
             @Override
-            public void accept(Segment[] segments) {
-                List<Segment> segmentList = Collections.EMPTY_LIST;
-                if (segments != null && segments.length != 0) {
-
-                    segmentList = Arrays.asList(segments);
-                }
-
-                if (isShow) {
-                    showSegments(segmentList);
-                }
-
-                try {
-                   List<SQLEntity> sqlEntities =  ExecuteSQL.toSQLEntitys(MY_SEGMENT_TYPE,content.getId(),segmentList);
-                    ExecuteSQL.getInstance().insertLearnE(sqlEntities,null);
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-
+            public void accept(List<Word> words) {
+                logger.d(words.toString());
             }
         });
+
     }
+
+    private Segment getWordsSegment(){
+        Segment word = new Segment();
+
+        word.setTitle("单词列表");
+        return  word;
+    }
+
 
     private void showSegments(List<Segment> segmentList) {
+
+        if (segmentList == null || segmentList.isEmpty()) {
+            return;
+        }
+
+        List<Segment> newList = new ArrayList<>();
+
+        newList.add(this.getWordsSegment());
+        newList.addAll(segmentList);
+
+        segmentList = newList;
+
+
         this.gridViewAdapter.setItems(segmentList);
         this.gridView.setAdapter(this.gridViewAdapter);
 
+        int size = segmentList.size();
+        int length = 200;
+
+        float density = Resources.getSystem().getDisplayMetrics().density;
+
+        int gridviewWidth = (int) (size * (length + 40) * density);
+        int itemWidth = (int) (length * density);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                gridviewWidth, LinearLayout.LayoutParams.MATCH_PARENT);
+        gridView.setLayoutParams(params); // 设置GirdView布局参数,横向布局的关键
+        gridView.setColumnWidth(itemWidth); // 设置列表项宽
+        gridView.setHorizontalSpacing(70); // 设置列表项水平间距
+        gridView.setStretchMode(GridView.NO_STRETCH);
+        gridView.setNumColumns(size); // 设置列数量=列表集合数
     }
 
 
@@ -144,14 +193,6 @@ public class ArticleInfoView extends RelativeLayout {
         this.load();
     }
 
-    public List<Segment> getSegments() {
-        return segments;
-    }
-
-    public void setSegments(List<Segment> segments) {
-        this.segments = segments;
-    }
-
 
     final class ViewHolder {
         Button button;
@@ -159,37 +200,10 @@ public class ArticleInfoView extends RelativeLayout {
 
     }
 
-    class GridViewAdapter<T> extends BaseAdapter {
-
-        private LayoutInflater mInflater;
+    class GridViewAdapter extends LeQiBaseAdapter<Segment> {
 
         public GridViewAdapter(LayoutInflater mInflater) {
-            this.mInflater = mInflater;
-        }
-
-        private List<Segment> items;
-
-        public List<Segment> getItems() {
-            return items;
-        }
-
-        public void setItems(List<Segment> items) {
-            this.items = items;
-        }
-
-        @Override
-        public int getCount() {
-            return items.size();
-        }
-
-        @Override
-        public Segment getItem(int i) {
-            return items.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0L;
+            super(mInflater);
         }
 
         @Override
@@ -200,8 +214,10 @@ public class ArticleInfoView extends RelativeLayout {
             } else {
                 holder = new ArticleInfoView.ViewHolder();
                 view = this.mInflater.inflate(R.layout.article_info_item, null);
-               // holder.button = view.findViewById(R.id.article_info_item_button);
+                // holder.button = view.findViewById(R.id.article_info_item_button);
                 holder.title = view.findViewById(R.id.article_info_item_title);
+
+                view.setBackground(new BitmapDrawable(view.getResources(), roundBlurBitMap));
 
                 view.setTag(holder);
 
@@ -212,7 +228,7 @@ public class ArticleInfoView extends RelativeLayout {
                 return view;
             }
 
-            holder.title.setText(actical.getTitle().substring(actical.getTitle().length()-4));
+            holder.title.setText(actical.getTitle().substring(actical.getTitle().length() - 4));
             final ArticleInfoView.ViewHolder fviewHolder = holder;
 
 

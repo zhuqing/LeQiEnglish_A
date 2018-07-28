@@ -44,7 +44,7 @@ public class UserReciteRecordDataCache extends DataCacheAbstract<UserReciteRecor
     protected UserReciteRecord getFromCache() {
 
         List<UserReciteRecord> users = ExecuteSQL.getDatasByType(USER_RECITE_RECORD_TYPE, null, UserReciteRecord.class);
-        if(users.isEmpty()){
+        if(users == null || users.isEmpty()){
             return null;
         }
         return users.get(0);
@@ -69,5 +69,15 @@ public class UserReciteRecordDataCache extends DataCacheAbstract<UserReciteRecor
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void add(UserReciteRecord userReciteRecord) {
+
+    }
+
+    @Override
+    public void remove(UserReciteRecord userReciteRecord) {
+
     }
 }

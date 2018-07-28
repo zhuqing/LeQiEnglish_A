@@ -10,8 +10,10 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.util.Log;
 
+import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.AppType;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.List;
  *
  */
 public class RecordAudioThread extends DataBaseTask<List<short[]>> {
+    private LOGGER logger = new LOGGER(RecordAudioThread.class);
     private List<short[]> byteBufferList;
     private long duration;
 
@@ -34,6 +37,7 @@ public class RecordAudioThread extends DataBaseTask<List<short[]>> {
                         LQHandler.Consumer< List<short[]>> handler) {
         super(handler);
         this.duration = duration;
+        logger.v("时长："+duration);
        // this.consumer = handler;
         this.byteBufferList= new ArrayList<>();
     }

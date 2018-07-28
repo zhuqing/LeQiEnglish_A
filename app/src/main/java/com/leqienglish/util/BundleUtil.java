@@ -9,9 +9,21 @@ import java.io.Serializable;
  */
 public class BundleUtil {
     public static final String DATA = "DATA";
+    public static final String PATH = "PATH";
+
+    public static final String CONTENT = "CONTENT";
+    public static final String SEGMENT = "SEGMENT";
 
     public static Bundle create(String key , Serializable serializable){
         Bundle bundle = new Bundle();
+        bundle.putSerializable(key , serializable);
+        return bundle;
+    }
+
+    public static Bundle create(Bundle bundle,String key , Serializable serializable){
+        if(bundle == null){
+             bundle = new Bundle();
+        }
         bundle.putSerializable(key , serializable);
         return bundle;
     }

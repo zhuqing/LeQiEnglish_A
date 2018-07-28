@@ -17,22 +17,22 @@ import java.util.concurrent.ExecutionException;
 
 public class LoadFile {
 
-    public static void loadFile(String path , LQHandler.Consumer<String> consumer){
+    public static void loadFile(String path, LQHandler.Consumer<String> consumer) {
 
         try {
             String filePath = FileUtil.getFileAbsolutePath(path);
             File file = new File(filePath);
-            if(file.exists()){
+            if (file.exists()) {
                 consumer.accept(filePath);
                 return;
             }
 
-            AsyncTask asyncTask = new AsyncTask<Object, Object, String>(){
+            AsyncTask asyncTask = new AsyncTask<Object, Object, String>() {
                 @Override
                 protected String doInBackground(Object... objects) {
                     RestClient restClient = new RestClient(LQService.getHttp());
                     try {
-                        restClient.downLoad(path,filePath,null);
+                        restClient.downLoad(path, filePath, null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -53,29 +53,30 @@ public class LoadFile {
         }
     }
 
-    public static void loadFile(String path , Handler handler){
+    public static void loadFile(String path, Handler handler) {
 
         try {
             String filePath = FileUtil.getFileAbsolutePath(path);
-            File file = new File(filePath);
-            if(file.exists()){
-                handler.sendMessage(MessageUtil.createMessage(AppType.DOWNLOAD_OVER,AppType.DATA,""));
-                return;
-            }
+//            File file = new File(filePath);
+//            if (file.exists()) {
+//                handler.sendMessage(MessageUtil.createMessage(AppType.DOWNLOAD_OVER, AppType.DATA, 1.0));
+//                return;
+//            }
 
-            AsyncTask asyncTask = new AsyncTask<Object, Object, String>(){
+            AsyncTask asyncTask = new AsyncTask<Object, Object, String>() {
                 @Override
                 protected String doInBackground(Object... objects) {
                     RestClient restClient = new RestClient(LQService.getHttp());
                     try {
-                        restClient.downLoad(path, filePath, new LQHandler.Consumer<Double>() {
-                            @Override
-                            public void accept(Double aDouble) {
-                                handler.sendMessage(MessageUtil.createMessage(AppType.HAS_DOWNLOAD,AppType.DATA,aDouble));
-                            }
-                        });
+                        restClient.downLoad("/file/download?path=" +path, filePath
+                                , new LQHandler.Consumer<Double>() {
+                                    @Override
+                                    public void accept(Double aDouble) {
+                                        handler.sendMessage(MessageUtil.createMessage(AppType.HAS_DOWNLOAD, AppType.DATA, aDouble));
+                                    }
+                                });
 
-                        handler.sendMessage(MessageUtil.createMessage(AppType.DOWNLOAD_OVER,AppType.DATA,""));
+                        handler.sendMessage(MessageUtil.createMessage(AppType.DOWNLOAD_OVER, AppType.DATA, 1.0));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -91,7 +92,6 @@ public class LoadFile {
             e.printStackTrace();
         }
     }
-
 
 
 }

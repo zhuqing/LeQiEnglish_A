@@ -6,13 +6,13 @@ import android.view.View;
  * Created by zhuqing on 2017/8/19.
  */
 
-public abstract class Controller<F extends View>{
+public abstract class ControllerAbstract<F extends View>{
 
 
     private F view;
 
 
-    public  Controller(F view){
+    public  ControllerAbstract(F view){
        this.view = view;
     }
 
@@ -22,4 +22,6 @@ public abstract class Controller<F extends View>{
     }
 
     public abstract void init();
+
+    public abstract void reload();
 }

@@ -27,6 +27,7 @@ public class FileUtil {
     public static Application application;
 
     public static String appRootPath() {
+
         File file = Environment.getExternalStorageDirectory();
 
         String userDir = "";
@@ -105,7 +106,7 @@ public class FileUtil {
         if(!parentFile.exists()){
             parentFile.mkdirs();
         }
-        file.deleteOnExit();
+        //file.deleteOnExit();
         return  fileAbsolutePath;
     }
 

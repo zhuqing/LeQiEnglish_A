@@ -2,25 +2,30 @@ package com.leqienglish.playandrecord;
 
 import android.media.MediaPlayer;
 
+import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.entity.PlayEntity;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 
 import java.io.IOException;
+
+import xyz.tobebetter.entity.english.play.AudioPlayPoint;
 
 /**
  * Created by zhuqing on 2018/4/24.
  */
 
 public class PlayMediaPlayerThread extends Thread {
-    private PlayEntity playEntity;
+    private LOGGER logger = new LOGGER(PlayMediaPlayerThread.class);
+    private AudioPlayPoint playEntity;
     private String resource;
     private LQHandler.Consumer playComplete;
 
-    public PlayEntity getPlayEntity() {
+    public AudioPlayPoint getPlayEntity() {
         return playEntity;
     }
 
-    public void setPlayEntity(PlayEntity playEntity) {
+    public void setPlayEntity(AudioPlayPoint playEntity) {
         this.playEntity = playEntity;
     }
 
@@ -38,7 +43,7 @@ public class PlayMediaPlayerThread extends Thread {
         }
         try {
             this.initMediaPlayer();
-            this.mediaPlayer.seekTo(Integer.valueOf(this.getPlayEntity().getStart() + ""));
+            this.mediaPlayer.seekTo(Integer.valueOf(this.getPlayEntity().getStartTime() + ""));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,7 +53,7 @@ public class PlayMediaPlayerThread extends Thread {
         if (this.mediaPlayer != null) {
             return;
         }
-
+        logger.d("initMediaPlayer source="+resource);
         this.mediaPlayer = new MediaPlayer();
         this.mediaPlayer.setDataSource(resource);
         this.mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
@@ -85,7 +90,7 @@ public class PlayMediaPlayerThread extends Thread {
         }
 
         public void run() {
-            int end = Integer.valueOf(getPlayEntity().getEnd() + "");
+            int end = Integer.valueOf(getPlayEntity().getEndTime() + "");
             while (true) {
                 if (!mediaPlayer.isPlaying()) {
                     if (playComplete != null)

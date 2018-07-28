@@ -5,53 +5,31 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.R;
 import com.leqienglish.activity.ArticleInfoActivity;
-import com.leqienglish.activity.LoadingActivity;
-import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.data.content.RecommendContentDataCache;
-import com.leqienglish.database.Constants;
-import com.leqienglish.database.ExecuteSQL;
-import com.leqienglish.entity.SQLEntity;
-import com.leqienglish.sf.LQService;
 import com.leqienglish.sf.LoadFile;
-import com.leqienglish.sf.RestClient;
 import com.leqienglish.util.BundleUtil;
-import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
-import com.leqienglish.util.task.FutureTaskUtil;
-
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import com.leqienglish.view.adapter.LeQiBaseAdapter;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 
 import xyz.tobebetter.entity.english.Content;
-import xyz.tobebetter.entity.user.User;
-
-import static com.leqienglish.database.Constants.MY_RECOMMEND_TYPE;
 
 public class RecommendArticle extends RelativeLayout {
     private LOGGER logger = new LOGGER(RecommendArticle.class);
@@ -94,7 +72,10 @@ public class RecommendArticle extends RelativeLayout {
             }
         });
 
+
     }
+
+
 
     public void load() {
 
@@ -107,10 +88,15 @@ public class RecommendArticle extends RelativeLayout {
         });
 
 
+
+
     }
 
 
     private void showData(List<Content> contents) {
+        if(contents == null){
+            return;
+        }
 
         logger.d("showData data Content " + contents.size());
 
@@ -145,38 +131,13 @@ public class RecommendArticle extends RelativeLayout {
 
     }
 
-    class GridViewAdapter extends BaseAdapter {
+    class GridViewAdapter extends LeQiBaseAdapter<Content> {
 
-        private LayoutInflater mInflater;
 
         public GridViewAdapter(LayoutInflater mInflater) {
-            this.mInflater = mInflater;
+            super(mInflater);
         }
 
-        private List<Content> items;
-
-        public List<Content> getItems() {
-            return items;
-        }
-
-        public void setItems(List<Content> items) {
-            this.items = items;
-        }
-
-        @Override
-        public int getCount() {
-            return items.size();
-        }
-
-        @Override
-        public Content getItem(int i) {
-            return items.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0L;
-        }
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {

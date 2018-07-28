@@ -392,7 +392,7 @@ public class ExecuteSQL {
             log.e(e.getMessage());
         }
 
-        return Collections.EMPTY_LIST;
+        return null;
 
 
     }
