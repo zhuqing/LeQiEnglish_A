@@ -117,7 +117,7 @@ public class ExecuteSQL {
     public void insertLearnE(final List<SQLEntity> sqlEnities, LQHandler.Consumer consumer) {
         DataBaseTask dataBaseTask = new DataBaseTask<String>(consumer) {
             @Override
-            protected String doInBackground(Object... objects) {
+            protected String run(Object... objects) {
                 SQLiteDatabase db = sqlData.getWritableDatabase();
                 for (SQLEntity sqlEnity : sqlEnities) {
                     insert(sqlEnity, db);
@@ -155,7 +155,7 @@ public class ExecuteSQL {
         log.d("start insertLearnE ");
         DataBaseTask dataBaseTask = new DataBaseTask(consumer) {
             @Override
-            protected Object doInBackground(Object[] objects) {
+            protected Object run(Object[] objects) {
                 SQLiteDatabase db = sqlData.getWritableDatabase();
                 insert(sqlEnity, db);
                 db.close();
@@ -300,7 +300,7 @@ public class ExecuteSQL {
         DataBaseTask dataBaseTask = new DataBaseTask(consumer) {
 
             @Override
-            protected Object doInBackground(Object[] objects) {
+            protected Object run(Object[] objects) {
                 try {
                     SQLiteDatabase db = sqlData.getWritableDatabase();
                     ContentValues values = createValues(sqlEnity);
@@ -327,7 +327,7 @@ public class ExecuteSQL {
 
         DataBaseTask dataBaseTask = new DataBaseTask<List<SQLEntity>>(consumer) {
             @Override
-            protected List<SQLEntity> doInBackground(Object... objects) {
+            protected List<SQLEntity> run(Object... objects) {
                 SQLiteDatabase db = sqlData.getReadableDatabase();
                 Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=?",
                         new String[]{type}, null, null, "CREATETIME desc");
@@ -407,7 +407,7 @@ public class ExecuteSQL {
 
         DataBaseTask dataBaseTask = new DataBaseTask<List<SQLEntity>>(consumer) {
             @Override
-            protected List<SQLEntity> doInBackground(Object... objects) {
+            protected List<SQLEntity> run(Object... objects) {
                 SQLiteDatabase db = sqlData.getReadableDatabase();
                 Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=? AND " + PARENT_ID + "=?",
                         new String[]{type, parentId}, null, null, "CREATETIME desc");
@@ -439,7 +439,7 @@ public class ExecuteSQL {
     public void getNewsetByType(final String type, LQHandler.Consumer<SQLEntity> consumer) {
         DataBaseTask dataBaseTask = new DataBaseTask<SQLEntity>(consumer) {
             @Override
-            protected SQLEntity doInBackground(Object... objects) {
+            protected SQLEntity run(Object... objects) {
                 SQLiteDatabase db = sqlData.getReadableDatabase();
                 Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=?",
                         new String[]{type}, null, null, "CREATETIME desc", "1");

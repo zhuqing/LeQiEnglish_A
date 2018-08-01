@@ -3,6 +3,7 @@ package com.leqienglish.playandrecord;
 /**
  * Created by zhuqing on 2018/4/24.
  */
+
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -20,30 +21,40 @@ import java.util.List;
 /**
  * 播放录音
  */
-public class PlayAudioThread extends DataBaseTask {
+public class PlayAudioThread extends DataBaseTask<String> {
     private LOGGER logger = new LOGGER(RecordAudioThread.class);
     private List<short[]> list;
-   private LQHandler.Consumer consumer;
+    private LQHandler.Consumer consumer;
 
-    public PlayAudioThread(List<short[]> list, LQHandler.Consumer handler) {
-        super(handler);
+    private static  PlayAudioThread playAudioThread;
+
+
+
+
+    public void playRecord(List<short[]> list, LQHandler.Consumer handler){
+        if(this.isRunning()){
+            this.destroy();
+        }
         this.list = list;
-        this.consumer = handler;
+        this.setConsumer(handler);
+        this.execute();
+
     }
 
-    public void run() {
+    public PlayAudioThread() {
 
-        this.consumer.accept(AppType.PLAY_RECORD_OVER);
+
     }
+
+
 
     @Override
-    protected Object doInBackground(Object[] objects) {
+    protected String run(Object... objects) {
 
 
         try {
             int bufferSize = AudioTrack.getMinBufferSize(AppType.frequence,
                     AudioFormat.CHANNEL_OUT_MONO, AppType.audioEncoding);
-         //   Log.d(this.getName(), "====start play=====bufferSize=" + bufferSize);
             // 实例AudioTrack
             AudioTrack track = new AudioTrack(AudioManager.STREAM_MUSIC,
                     AppType.frequence, AudioFormat.CHANNEL_OUT_MONO, AppType.audioEncoding,
@@ -52,11 +63,14 @@ public class PlayAudioThread extends DataBaseTask {
             track.setStereoVolume(0.7f, 0.7f);
             track.play();
 
-            for( int i = 0;  i < this.list.size() ; i++){
+            for (int i = 0; i < this.list.size(); i++) {
 
                 short[] buffer = this.list.get(i);
                 logger.d("====start play=====bufferSize=" + buffer.length);
                 track.write(buffer, 0, buffer.length);
+                if(this.stop){
+                    break;
+                }
             }
             track.stop();
             track.release();

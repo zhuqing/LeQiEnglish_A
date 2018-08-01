@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+    <Button
+        android:id="@+id/play_record_bar_play"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_width="40dp"
+        android:background="@drawable/leqi_play"
+        android:layout_height="40dp" />
+    <Button
+        android:id="@+id/play_record_bar_record"
+        android:layout_centerHorizontal="true"
+        android:layout_width="40dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/leqi_record"
+        android:layout_height="40dp" />
+
+    <Button
+        android:id="@+id/play_record_bar_play_record"
+        android:layout_alignParentRight="true"
+        android:layout_width="40dp"
+        android:layout_marginRight="20dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/leqi_play_record"
+        android:layout_height="40dp" />
+</RelativeLayout>
+

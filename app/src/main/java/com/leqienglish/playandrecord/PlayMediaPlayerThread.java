@@ -60,7 +60,7 @@ public class PlayMediaPlayerThread extends Thread {
 
             @Override
             public void onSeekComplete(MediaPlayer mp) {
-                // TODO Auto-generated method stub
+
                 mediaPlayer.start();
                 new PlayThread(mediaPlayer, getPlayComplete()).start();
 

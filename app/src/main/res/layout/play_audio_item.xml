@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="180dp">
-    <com.leqienglish.view.LeQiTextView
-        android:paddingTop="10dp"
-        android:id="@+id/play_audio_text"
-        android:layout_width="match_parent"
-        android:layout_height="120dp" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrond_round_grey"
+    >
 
 
-    <RelativeLayout
-        android:paddingBottom="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
 
-        <Button
-            android:id="@+id/play_audio_play"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="play"
-            android:layout_marginStart="50dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp">
 
-        <Button
-            android:id="@+id/play_audio_record"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="50dp"
-            android:text="record" />
-    </RelativeLayout>
-</LinearLayout>
+            <TextView
+                android:id="@+id/play_audio_text"
+                style="@style/font_size_24_black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true" />
+
+            <TextView
+                android:id="@+id/play_audio_text_ch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/play_audio_text"
+                android:layout_marginTop="10dp" />
+
+            <RelativeLayout
+                android:id="@+id/play_audio_playerpane"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+            </RelativeLayout>
+        </RelativeLayout>
+</RelativeLayout>
