@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:id="@+id/word_info_root"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_alignParentTop="true"
+    android:id="@+id/word_info_word_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:text="Person"
+        style="@style/font_size_24_black"
+        android:id="@+id/word_info_word"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/word_info_tts_paly"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/playing_word"
+        android:layout_width="20dp"
+        android:layout_height="20dp" />
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:id="@+id/word_info_pro_layout"
+
+        android:layout_below="@id/word_info_word_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            style="@style/font_size_14_black"
+            android:text="美 [ˈpɜ:rsn]"
+            android:id="@+id/word_info_am_pro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+       <ImageView
+           android:layout_marginLeft="10dp"
+           android:id="@+id/word_info_am_paly"
+           android:src="@drawable/playing_word"
+           android:layout_gravity="center_vertical"
+           android:layout_width="20dp"
+           android:layout_height="20dp" />
+
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            style="@style/font_size_14_black"
+            android:text="英 [ˈpɜ:rsn]"
+            android:id="@+id/word_info_en_pro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/word_info_en_paly"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/playing_word"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:id="@+id/word_info_mean"
+        android:layout_below="@id/word_info_pro_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/word_info_wordmean"
+            style="@style/font_size_16_black"
+            android:text="n. 人;（语法）人称;身体;容貌"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/word_info_mean"
+        android:id="@+id/word_info_sentences"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
+</RelativeLayout>

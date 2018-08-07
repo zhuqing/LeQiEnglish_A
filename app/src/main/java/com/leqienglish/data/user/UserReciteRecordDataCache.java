@@ -43,7 +43,7 @@ public class UserReciteRecordDataCache extends DataCacheAbstract<UserReciteRecor
     @Override
     protected UserReciteRecord getFromCache() {
 
-        List<UserReciteRecord> users = ExecuteSQL.getDatasByType(USER_RECITE_RECORD_TYPE, null, UserReciteRecord.class);
+        List<UserReciteRecord> users = ExecuteSQL.getDatasByType(USER_RECITE_RECORD_TYPE, UserReciteRecord.class);
         if(users == null || users.isEmpty()){
             return null;
         }

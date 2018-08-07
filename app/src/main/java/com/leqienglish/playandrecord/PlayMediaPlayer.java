@@ -15,15 +15,19 @@ import xyz.tobebetter.entity.english.play.AudioPlayPoint;
 
 public class PlayMediaPlayer {
 
-    private static LOGGER logger = new LOGGER(PlayMediaPlayerThread.class);
+    private static LOGGER logger = new LOGGER(PlayMediaPlayer.class);
 
+    public final static String COMPLETE = "COMPLETE";
+    public final static String PAUSE_CHAGNE = "PAUSE_CHAGNE";
+    public final static String PAUSE_NOT_CHAGNE = "PAUSE_NOT_CHAGNE";
     private static PlayMediaPlayer playMediaPlayer;
 
     private AudioPlayPoint audioPlayPoint;
 
     private String resource;
 
-    private boolean isplaying = false;
+
+    private String completeType = COMPLETE;
 
     private MediaPlayer mediaPlayer;
 
@@ -42,18 +46,26 @@ public class PlayMediaPlayer {
         return playMediaPlayer;
     }
 
-    public void destory() {
+    public void destory(String type) {
+        if(!mediaPlayer.isPlaying()){
+            return;
+        }
+        completeType = type;
+
         mediaPlayer.pause();
     }
 
     public void play(AudioPlayPoint audioPlayPoint, LQHandler.Consumer playComplete) {
         this.setAudioPlayPoint(audioPlayPoint);
         this.setPlayComplete(playComplete);
+        if(this.mediaPlayer.isPlaying()){
+            completeType = PAUSE_NOT_CHAGNE;
+            mediaPlayer.pause();
+        }
+
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                logger.d("play" + audioPlayPoint.getStartTime());
-                isplaying = true;
                 mediaPlayer.seekTo((int) audioPlayPoint.getStartTime());
                 return null;
             }
@@ -76,6 +88,7 @@ public class PlayMediaPlayer {
 
                 mediaPlayer.start();
                 new PlayMediaPlayer.PlayThread(mediaPlayer, getPlayComplete()).start();
+                completeType = COMPLETE;
 
             }
         });
@@ -101,8 +114,8 @@ public class PlayMediaPlayer {
         this.audioPlayPoint = audioPlayPoint;
     }
 
-    public boolean isIsplaying() {
-        return isplaying;
+    public boolean isplaying() {
+        return mediaPlayer.isPlaying();
     }
 
     /**
@@ -137,15 +150,15 @@ public class PlayMediaPlayer {
 
     private void commit() {
         if (playComplete == null) {
-            isplaying = false;
+
             return;
         }
         AndroidSchedulers.mainThread().scheduleDirect(new Runnable() {
             @Override
             public void run() {
 
-                playComplete.accept(getAudioPlayPoint());
-                isplaying = false;
+                playComplete.accept(completeType);
+
             }
         });
     }

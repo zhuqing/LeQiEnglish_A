@@ -32,7 +32,7 @@ public class LoadFile {
                 protected String doInBackground(Object... objects) {
                     RestClient restClient = new RestClient(LQService.getHttp());
                     try {
-                        restClient.downLoad(path, filePath, null);
+                        restClient.downLoad("/file/download?path=" +path, filePath, null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -24,4 +24,6 @@ public abstract class ControllerAbstract<F extends View>{
     public abstract void init();
 
     public abstract void reload();
+
+    public abstract void destory();
 }

@@ -4,8 +4,6 @@ import android.os.AsyncTask;
 
 import com.leqienglish.util.LQHandler;
 
-import java.util.List;
-
 /**
  * Created by zhuqing on 2018/4/29.
  */
@@ -13,21 +11,22 @@ import java.util.List;
 public abstract class DataBaseTask<T> extends AsyncTask<Object, Object, T> {
     private LQHandler.Consumer consumer;
     private Boolean running = false;
-    protected boolean stop = false;
-    public DataBaseTask(LQHandler.Consumer consumer){
+    protected boolean cancel = false;
+
+    public DataBaseTask(LQHandler.Consumer consumer) {
         this.setConsumer(consumer);
     }
 
-    public DataBaseTask(){
+    public DataBaseTask() {
 
     }
 
-    public void destroy(){
-       this.stop = true;
+    public void destroy() {
+        this.cancel = true;
         this.running = false;
     }
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return running;
     }
 
@@ -43,7 +42,12 @@ public abstract class DataBaseTask<T> extends AsyncTask<Object, Object, T> {
 
     @Override
     protected void onPostExecute(T t) {
-        if(this.getConsumer() == null){
+
+        if (cancel) {
+            cancel = false;
+            return;
+        }
+        if (this.getConsumer() == null) {
             return;
         }
         this.getConsumer().accept(t);

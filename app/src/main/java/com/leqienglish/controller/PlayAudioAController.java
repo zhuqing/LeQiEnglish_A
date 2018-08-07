@@ -2,21 +2,16 @@ package com.leqienglish.controller;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AbsoluteLayout;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.playandrecord.PlayMediaPlayerThread;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.view.play.PlayerPaneView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +66,7 @@ public class PlayAudioAController extends ControllerAbstract {
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.title = view.findViewById(R.id.play_audio_text);
             viewHolder.play_audio_playerpane = view.findViewById(R.id.play_audio_playerpane);
-            logger.d("title");
+
             viewHolder.view = view;
 
 
@@ -87,6 +82,7 @@ public class PlayAudioAController extends ControllerAbstract {
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), lastView.getHeight() - 300);
                         lastView.setLayoutParams(layoutParams);
                         ViewHolder viewHolder = (ViewHolder) lastView.getTag();
+                        lastView.setBackgroundResource(R.drawable.backgrond_top_bottom_grey);
                         viewHolder.play_audio_playerpane.removeAllViews();
                         paneView.destroy();
                     }
@@ -94,7 +90,7 @@ public class PlayAudioAController extends ControllerAbstract {
 
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), view.getHeight() + 300);
                     view.setLayoutParams(layoutParams);
-
+                    view.setBackgroundResource(R.drawable.backgrond_top_bottom_white);
                     ViewHolder viewHolder = (ViewHolder) view.getTag();
                     viewHolder.play_audio_playerpane.addView(paneView);
                     paneView.play(viewHolder.audioPlayPoint);
@@ -118,7 +114,10 @@ public class PlayAudioAController extends ControllerAbstract {
     public void reload() {
 
     }
+    @Override
+    public void destory() {
 
+    }
     final class ViewHolder {
         View view;
         TextView title;

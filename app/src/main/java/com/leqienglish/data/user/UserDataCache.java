@@ -62,7 +62,7 @@ public class UserDataCache extends DataCacheAbstract<User> {
     @Override
     protected User getFromService() {
 
-        if (this.getCacheData()!=null && this.getCacheData().getStatus() != Consistent.UN_SAVED_STATUS) {
+        if (this.getCacheData()!=null && !this.getCacheData().getStatus().equals(Consistent.UN_SAVED_STATUS)) {
             return this.getCacheData();
         }
 
@@ -94,7 +94,7 @@ public class UserDataCache extends DataCacheAbstract<User> {
      */
     private User findOrCreateUser() {
 
-        List<User> users = ExecuteSQL.getDatasByType(USER_TYPE, null, User.class);
+        List<User> users = ExecuteSQL.getDatasByType(USER_TYPE, User.class);
 
         if (users!=null && !users.isEmpty()) {
             return users.get(0);

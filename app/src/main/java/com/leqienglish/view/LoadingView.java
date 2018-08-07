@@ -60,13 +60,13 @@ public class LoadingView extends View {
         paint.setStrokeWidth(1);
         canvas.drawLine(0, offsetTop, getWidth(), offsetTop, paint);
         // 绘制进度条颜色
-        paint.setColor(getResources().getColor(R.color.no2_orange));
+        paint.setColor(getResources().getColor(R.color.black));
         paint.setStrokeWidth(2);
         canvas.drawLine(0, offsetTop, offset, offsetTop, paint);
         // 绘制白色区域及百分比
         paint.setColor(getResources().getColor(R.color.no3_white));
         paint.setStrokeWidth(1);
-        paintText.setColor(getResources().getColor(R.color.no2_orange));
+        paintText.setColor(getResources().getColor(R.color.black));
         paintText.setTextSize(textSize);
         paintText.setAntiAlias(true);
         paintText.getTextBounds(percentValue, 0, percentValue.length(), mBound);

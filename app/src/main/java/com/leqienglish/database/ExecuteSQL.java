@@ -356,6 +356,30 @@ public class ExecuteSQL {
 
     }
 
+
+    /**
+     * 根据数据类型获取数据
+     *
+     * @param type
+     * @return
+     */
+    public static <T> List<T> getDatasByType(String type, Class<T> claz) {
+
+       return  getDatasByType(type,null,claz);
+
+    }
+
+    private static Cursor createCursor(String type ,String parentId){
+        SQLiteDatabase db = executeSQL.sqlData.getReadableDatabase();
+        if(parentId == null){
+            return db.query(CACHE_TABLE, null, TYPE + "=? " ,
+                    new String[]{type}, null, null, "CREATETIME desc");
+        }else{
+            return db.query(CACHE_TABLE, null, TYPE + "=? AND " + PARENT_ID + "=?",
+                    new String[]{type, parentId}, null, null, "CREATETIME desc");
+        }
+    }
+
     /**
      * 根据数据类型获取数据
      *
@@ -364,9 +388,10 @@ public class ExecuteSQL {
      */
     public static <T> List<T> getDatasByType(String type, String parentId, Class<T> claz) {
 
+
+
         SQLiteDatabase db = executeSQL.sqlData.getReadableDatabase();
-        Cursor cursor = db.query(CACHE_TABLE, null, TYPE + "=?",
-                new String[]{type}, null, null, "CREATETIME desc");
+        Cursor cursor = createCursor(type,parentId);
 
         if (cursor.getCount() <= 0) {
             cursor.close();

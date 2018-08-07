@@ -32,10 +32,17 @@ public interface Constants extends BaseColumns {
      */
     public static final String SEGMENT_TYPE = "SEGMENT_TYPE";
 
+    public static final String CONTENT_TYPE="CONTENT_TYPE";
+
     /**
      * CONTENT下的word列表
      */
     public static final String CONTENT_WORD_TYPE = "CONTENT_WORD_TYPE";
+
+    /**
+     * CONTENT下的word列表
+     */
+    public static final String WORD_SEGMENT_TYPE = "WORD_SEGMENT_TYPE";
 
     /**
      * 文章下的段

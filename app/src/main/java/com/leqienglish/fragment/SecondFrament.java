@@ -6,10 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.controller.SecondViewController;
+import com.leqienglish.controller.WordListViewController;
 
 /**
  * Created by zhuqing on 2017/8/19.
@@ -17,13 +16,17 @@ import com.leqienglish.controller.SecondViewController;
 
 public class SecondFrament extends Fragment {
     private View homeView;
+    private WordListViewController wordListViewController;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if(this.homeView == null){
-            homeView = inflater.inflate(R.layout.second,null);
-            TextView textView = homeView.findViewById(R.id.second_text);
-            new SecondViewController(homeView).init();
+        if (this.homeView == null) {
+            homeView = inflater.inflate(R.layout.second, null);
+
+            wordListViewController = new WordListViewController(homeView);
+            wordListViewController.init();
+            wordListViewController.reload();
 
         }
 

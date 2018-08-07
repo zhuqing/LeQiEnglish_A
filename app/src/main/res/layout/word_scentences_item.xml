@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/no3_white"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/word_scentences_item_en_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.leqienglish.view.LeQiTextView
+            android:id="@+id/word_scentences_item_en"
+            style="@style/font_size_16_black"
+            android:layout_width="wrap_content"
+            android:layout_weight="9"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/word_scentences_item_play"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/playing_word" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/word_scentences_item_ch"
+        style="@style/font_size_14_black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/word_scentences_item_en_layout" />
+
+    <TextView
+        android:layout_below="@id/word_scentences_item_ch"
+        android:id="@+id/word_scentences_item_to_content"
+        style="@style/font_size_12_gray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

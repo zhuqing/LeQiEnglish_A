@@ -7,8 +7,6 @@ package com.leqienglish.playandrecord;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.os.Handler;
-import android.util.Log;
 
 import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.AppType;
@@ -66,9 +64,8 @@ public class PlayAudioThread extends DataBaseTask<String> {
             for (int i = 0; i < this.list.size(); i++) {
 
                 short[] buffer = this.list.get(i);
-                logger.d("====start play=====bufferSize=" + buffer.length);
                 track.write(buffer, 0, buffer.length);
-                if(this.stop){
+                if(this.cancel){
                     break;
                 }
             }

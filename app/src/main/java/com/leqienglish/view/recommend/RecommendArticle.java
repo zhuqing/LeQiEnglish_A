@@ -94,6 +94,7 @@ public class RecommendArticle extends RelativeLayout {
 
 
     private void showData(List<Content> contents) {
+        logger.d("showData data Content " );
         if(contents == null){
             return;
         }

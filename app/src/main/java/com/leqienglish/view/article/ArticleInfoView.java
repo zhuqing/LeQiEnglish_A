@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.R;
 import com.leqienglish.activity.ArticleInfoActivity;
+import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.activity.load.LoadingActivity;
 import com.leqienglish.data.content.ContentWordsDataCache;
 import com.leqienglish.data.segment.SegmentDataCache;
@@ -38,6 +39,7 @@ import com.leqienglish.util.image.ImageUtil;
 import com.leqienglish.view.adapter.LeQiBaseAdapter;
 import com.leqienglish.view.recommend.RecommendArticle;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,12 +92,20 @@ public class ArticleInfoView extends RelativeLayout {
                 if(position == 0){
                     return;
                 }
-
                 Intent intent = new Intent();
                 Bundle bundle = BundleUtil.create(BundleUtil.DATA, segment);
                 BundleUtil.create(bundle, BundleUtil.PATH, content.getAudioPath());
                 intent.putExtras(bundle);
-                intent.setClass(getContext(), LoadingActivity.class);
+
+                String filePath = FileUtil.toLocalPath(content.getAudioPath());
+                if(new File(filePath).exists()){
+                    intent.setClass(getContext(), PlayAudioActivity.class);
+                }else{
+                    intent.setClass(getContext(), LoadingActivity.class);
+                }
+
+
+
                 getContext().startActivity(intent);
             }
         });

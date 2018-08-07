@@ -7,10 +7,7 @@ package com.leqienglish.playandrecord;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Handler;
-import android.util.Log;
 
-import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.sf.databasetask.DataBaseTask;
 import com.leqienglish.util.AppType;
 import com.leqienglish.util.LOGGER;
@@ -36,19 +33,20 @@ public class RecordAudioThread extends DataBaseTask<List<short[]>> {
 
 
 
-    public void record(long duration, LQHandler.Consumer recordCommplete) {
+    public void record() {
         if (this.isRunning()) {
             this.destroy();
             return;
         }
 
-        this.duration = duration;
-        this.setConsumer(recordCommplete);
+
         this.byteBufferList = new ArrayList<>();
         this.execute();
     }
 
-    public RecordAudioThread() {
+    public RecordAudioThread(long duration, LQHandler.Consumer recordCommplete) {
+        super(recordCommplete);
+        this.duration = duration;
 
 
     }
@@ -91,7 +89,7 @@ public class RecordAudioThread extends DataBaseTask<List<short[]>> {
                 short[] data = new short[bufferReadResult];
                 System.arraycopy(buffer, 0, data, 0, bufferReadResult);
                 this.byteBufferList.add(data);
-                if(stop){
+                if(cancel){
                     break;
                 }
 
@@ -108,4 +106,9 @@ public class RecordAudioThread extends DataBaseTask<List<short[]>> {
 
         return byteBufferList;
     }
+
+    public List<short[]> getByteBufferList() {
+        return byteBufferList;
+    }
+
 }

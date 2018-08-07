@@ -16,7 +16,7 @@
             android:layout_height="@dimen/user_board_image"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/user_default_head"
+            android:src="@drawable/default_head"
             cus:type="0"/>
 
 

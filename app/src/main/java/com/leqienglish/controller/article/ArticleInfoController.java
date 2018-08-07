@@ -26,7 +26,7 @@ public class ArticleInfoController extends ControllerAbstract {
 
     private ArticleInfoView articleInfoView;
 
-    public Button button ;
+    public Button button;
 
     public ArticleInfoController(View view) {
         super(view);
@@ -34,15 +34,15 @@ public class ArticleInfoController extends ControllerAbstract {
 
     @Override
     public void init() {
-      this.button =  this.getView().findViewById(R.id.add_recite_article_info_button);
-      this.articleInfoView = this.getView().findViewById(R.id.add_recite_article_info_view);
+        this.button = this.getView().findViewById(R.id.add_recite_article_info_button);
+        this.articleInfoView = this.getView().findViewById(R.id.add_recite_article_info_view);
 
-      this.button.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              add();
-          }
-      });
+        this.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                add();
+            }
+        });
 
     }
 
@@ -51,12 +51,17 @@ public class ArticleInfoController extends ControllerAbstract {
 
     }
 
-    private void add(){
-        if(this.getUser() == null|| this.getContent() == null){
+    @Override
+    public void destory() {
+
+    }
+
+    private void add() {
+        if (this.getUser() == null || this.getContent() == null) {
             return;
         }
 
-        if(button.getText().equals(this.getView().getResources().getString(R.string.has_add_article_to_recite))){
+        if (button.getText().equals(this.getView().getResources().getString(R.string.has_add_article_to_recite))) {
             return;
         }
 
@@ -66,10 +71,10 @@ public class ArticleInfoController extends ControllerAbstract {
         userAndContent.setFinishedPercent(0);
 
 
-        LQService.post("/userAndContent/create",userAndContent,UserAndContent.class,null, new LQHandler.Consumer<UserAndContent>() {
+        LQService.post("/userAndContent/create", userAndContent, UserAndContent.class, null, new LQHandler.Consumer<UserAndContent>() {
             @Override
             public void accept(UserAndContent userAndContent) {
-                if(userAndContent == null){
+                if (userAndContent == null) {
                     return;
                 }
 

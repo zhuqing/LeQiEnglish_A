@@ -30,6 +30,14 @@ public abstract class DataCacheAbstract<T> {
     }
 
     /**
+     * 是否需要更新
+     * @return
+     */
+    protected boolean shouldUpdate(T t){
+        return true;
+    }
+
+    /**
      * 从缓存中取数据
      *
      * @return
@@ -89,6 +97,7 @@ public abstract class DataCacheAbstract<T> {
             protected T doInBackground(Object[] objects) {
 
                 T t = getFromCache();
+                setCacheData(t);
                 if (t == null) {
                     t = getFromService();
                     runTask(t);
@@ -121,9 +130,11 @@ public abstract class DataCacheAbstract<T> {
 
 
     private void runTask(T t) {
+
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
+
                 putCache(t);
                 return null;
             }
@@ -136,6 +147,9 @@ public abstract class DataCacheAbstract<T> {
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
+                if(!shouldUpdate(getCacheData())){
+                    return null;
+                }
                 T temp = getFromService();
                 putCache(temp);
                 return null;
@@ -144,6 +158,8 @@ public abstract class DataCacheAbstract<T> {
 
         asyncTask.execute();
     }
+
+
 
     public T getCacheData() {
         return cacheData;

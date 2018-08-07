@@ -67,6 +67,9 @@ public class HomeListViewController extends ControllerAbstract<View> {
         });
 
     }
+    @Override
+    public void destory() {
 
+    }
 
 }
