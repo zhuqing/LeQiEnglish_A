@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/boarder_blue_corner_selected"
+            android:background="@drawable/background_green_corner"
             android:text="@string/add_recite_article" />
     </RelativeLayout>
 </RelativeLayout>

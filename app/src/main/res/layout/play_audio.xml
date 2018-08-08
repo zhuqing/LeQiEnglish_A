@@ -33,7 +33,7 @@
                 style="@style/button_white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/boarder_blue_corner_selected"
+                android:background="@drawable/background_green_corner"
                 android:gravity="center"
                 android:text="         开始背诵         " />
         </RelativeLayout>

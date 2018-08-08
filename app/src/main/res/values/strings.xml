@@ -23,9 +23,9 @@
 
     <string name="recommend_book">推荐书</string>
 
-    <string name="HOST">http://192.168.43.9:8080</string>
-    <string name="IMAGE_PATH">/english/content/download/image/</string>
-    <string name="AUDIO_PATH">/english/content/download/audio/</string>
+    <string name="quit_relogin">退出并重新登录</string>
 
-    <string name="USER_CREATE">/user/create</string>
+    <string name="suggestion_contect_hint">邮箱/手机号/用户名</string>
+
+    <string name="suggestion_message_hint">请写下对我们的意见，谢谢</string>
 </resources>

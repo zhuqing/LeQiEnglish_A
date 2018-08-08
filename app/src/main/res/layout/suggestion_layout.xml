@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/suggestion_layout_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/suggestion_layout_contect"
+            android:hint="@string/suggestion_contect_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_marginTop="20dp"
+            android:minLines="8"
+            android:maxLines="10"
+            android:gravity="top"
+            android:scrollbars="vertical"
+            android:id="@+id/suggestion_layout_message"
+            android:hint="@string/suggestion_message_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_marginTop="30dp"
+            android:id="@+id/suggestion_layout_commit"
+            style="@style/font_size_20_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_green_selector_blue"
+            android:text="提交" />
+    </LinearLayout>
+</RelativeLayout>

@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 
 import com.leqienglish.R;
+import com.leqienglish.sf.LQService;
 import com.leqienglish.sf.RestClient;
 import com.leqienglish.util.LQHandler;
 
@@ -172,7 +173,7 @@ public abstract class DataCacheAbstract<T> {
     protected RestClient getRestClient() {
         if (this.restClient == null) {
             try {
-                this.restClient = new RestClient(this.getString(R.string.HOST));
+                this.restClient = new RestClient(LQService.getHttp());
             }catch (Exception ex){
                 this.restClient = new RestClient("http://192.168.43.9:8080");
             }

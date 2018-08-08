@@ -19,6 +19,9 @@ public class LoadFile {
 
     public static void loadFile(String path, LQHandler.Consumer<String> consumer) {
 
+        if(path ==null || path.isEmpty()){
+            return;
+        }
         try {
             String filePath = FileUtil.getFileAbsolutePath(path);
             File file = new File(filePath);
