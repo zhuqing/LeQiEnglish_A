@@ -53,7 +53,13 @@ public interface Constants extends BaseColumns {
     /**
      * 用户类型
      */
-    public static final String USER_TYPE = "USER_TYPE";
+    public static final String CURRENT_USER_TYPE = "CURRENT_USER_TYPE";
+
+
+    /**
+     * 分类
+     */
+    public static final String CATALOG_TYPE="CATALOG_TYPE";
 
     public static final String WORD_TYPE="WORD";
 }

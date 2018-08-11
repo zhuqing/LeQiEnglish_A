@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/login_main_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:digits="@string/letter_numberbl_digits"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/login_main_username"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/suggestion_contect_hint" />
+
+        <EditText
+            android:digits="@string/letter_numberbl_digits"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/login_main_password"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/password" />
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <Button
+                android:id="@+id/login_main_login"
+                style="@style/font_size_20_white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:background="@drawable/background_green_selector_blue"
+                android:text="@string/login" />
+
+            <TextView
+                android:layout_gravity="bottom"
+                android:id="@+id/login_main_regist"
+                style="@style/font_size_14_blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:text="@string/regist" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
+
+        <Button
+            android:id="@+id/login_main_weibo"
+            android:background="@drawable/weibo_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="30dp"/>
+
+        <Button
+            android:id="@+id/login_main_weixin"
+            android:background="@drawable/weixin_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp" />
+
+        <Button
+            android:id="@+id/login_main_qq"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/qq_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp" />
+    </LinearLayout>
+</RelativeLayout>

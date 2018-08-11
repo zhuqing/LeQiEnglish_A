@@ -97,6 +97,7 @@ public class RestClient {
             return null;
         }
 
+        logger.d(resultMessage.getData());
         return mapper.readValue(resultMessage.getData(), claz);
     }
 

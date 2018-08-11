@@ -1,6 +1,7 @@
 package com.leqienglish.controller;
 
 import android.view.View;
+import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.data.user.UserDataCache;
@@ -27,6 +28,8 @@ public class HomeListViewController extends ControllerAbstract<View> {
     private RecommendArticle recommendArticle;
 
     private RecommendBook recommendBook;
+
+    private TextView showAllContent;
 
 
     public HomeListViewController(View fragment) {

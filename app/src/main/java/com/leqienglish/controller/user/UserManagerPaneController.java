@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.ArticleInfoActivity;
 import com.leqienglish.activity.suggestion.SuggestionActivity;
+import com.leqienglish.activity.user.UserLoginActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.util.BundleUtil;
@@ -31,6 +33,8 @@ public class UserManagerPaneController extends ControllerAbstract {
     private TextView userNameTextView;
     private TextView registDateTextView;
 
+    private Button relogin;
+
     private ListView managerList;
 
     private List<Catalog> catalogs = new ArrayList<>();
@@ -46,6 +50,7 @@ public class UserManagerPaneController extends ControllerAbstract {
         userNameTextView = this.getView().findViewById(R.id.user_manager_pane_username);
         registDateTextView = this.getView().findViewById(R.id.user_manager_pane_regist_date);
         managerList = this.getView().findViewById(R.id.user_manager_pane_list);
+        this.relogin = this.getView().findViewById(R.id.user_manager_pane_relogin);
 
         simpleItemAdapter = new SimpleItemAdapter(LayoutInflater.from(this.getView().getContext()));
 
@@ -85,14 +90,23 @@ public class UserManagerPaneController extends ControllerAbstract {
                 getView().getContext().startActivity(intent);
             }
         });
-        UserDataCache.getInstance().load(new LQHandler.Consumer<User>() {
+
+        this.relogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void accept(User user) {
-                if(user == null){
-                    return;
-                }
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getView().getContext(), UserLoginActivity.class);
+                getView().getContext().startActivity(intent);
             }
         });
+//        UserDataCache.getInstance().load(new LQHandler.Consumer<User>() {
+//            @Override
+//            public void accept(User user) {
+//                if(user == null){
+//                    return;
+//                }
+//            }
+//        });
     }
 
     @Override

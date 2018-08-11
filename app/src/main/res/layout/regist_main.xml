@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/regist_main_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+
+    android:orientation="vertical"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp"
+    android:layout_centerInParent="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <EditText
+        android:background="@drawable/edittext_background"
+        android:id="@+id/regist_main_username"
+
+        android:layout_width="match_parent"
+        android:digits="@string/letter_numberbl_digits"
+        android:layout_height="50dp"
+        android:hint="@string/regist_user_name" />
+    <EditText
+        android:digits="@string/letter_numberbl_digits"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/edittext_background"
+        android:id="@+id/regist_main_password"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/regist_password" />
+    <EditText
+        android:digits="@string/letter_numberbl_digits"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/edittext_background"
+        android:id="@+id/regist_main_repassword"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/regist_confirm" />
+
+    <RelativeLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioGroup
+
+            android:id="@+id/regist_main_sex_rg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/regist_main_man_rb"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/man" />
+
+            <RadioButton
+                android:checked="true"
+                android:id="@+id/regist_main_woman_rb"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/woman" />
+        </RadioGroup>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/regist_main_regist"
+            android:layout_marginTop="30dp"
+            android:layout_weight="5"
+            android:text="@string/regist"
+            style="@style/font_size_20_white"
+            android:background="@drawable/background_green_selector_blue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
+</RelativeLayout>

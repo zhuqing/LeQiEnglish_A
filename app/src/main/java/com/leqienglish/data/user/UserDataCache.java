@@ -14,7 +14,7 @@ import java.util.UUID;
 import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.user.User;
 
-import static com.leqienglish.database.Constants.USER_TYPE;
+import static com.leqienglish.database.Constants.CURRENT_USER_TYPE;
 
 /**
  * 加载用户，或者默认创建一个临时用户。
@@ -56,13 +56,13 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
     @Override
     protected void putCache(User user) {
-        ExecuteSQL.insertLearnE(Arrays.asList(user), null, USER_TYPE);
+        ExecuteSQL.insertLearnE(Arrays.asList(user), null, CURRENT_USER_TYPE);
     }
 
     @Override
     protected User getFromService() {
 
-        if (this.getCacheData()!=null && !this.getCacheData().getStatus().equals(Consistent.UN_SAVED_STATUS)) {
+        if (this.getCacheData() != null && !this.getCacheData().getStatus().equals(Consistent.UN_SAVED_STATUS)) {
             return this.getCacheData();
         }
 
@@ -77,7 +77,8 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
     @Override
     public void add(User user) {
-
+        this.setCacheData(user);
+        this.putCache(user);
     }
 
     @Override
@@ -94,9 +95,9 @@ public class UserDataCache extends DataCacheAbstract<User> {
      */
     private User findOrCreateUser() {
 
-        List<User> users = ExecuteSQL.getDatasByType(USER_TYPE, User.class);
+        List<User> users = ExecuteSQL.getDatasByType(CURRENT_USER_TYPE, User.class);
 
-        if (users!=null && !users.isEmpty()) {
+        if (users != null && !users.isEmpty()) {
             return users.get(0);
         }
 

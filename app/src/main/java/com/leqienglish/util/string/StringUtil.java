@@ -1,4 +1,4 @@
-package com.leqienglish.util;
+package com.leqienglish.util.string;
 
 public class StringUtil {
 
@@ -16,5 +16,10 @@ public class StringUtil {
         }
 
         return stringBuilder.toString();
+    }
+
+
+    public static   boolean isNullOrEmpty(String str){
+        return str == null || str.isEmpty();
     }
 }

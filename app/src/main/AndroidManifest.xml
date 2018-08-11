@@ -26,6 +26,10 @@
         <activity android:name=".activity.PlayAudioActivity" />
         <activity android:name=".activity.ArticleInfoActivity" />
         <activity android:name=".activity.suggestion.SuggestionActivity" />
+        <activity android:name=".activity.user.UserLoginActivity" />
+        <activity android:name=".activity.user.UserRegistActivity" />
+        <activity android:name=".activity.content.ShowAllContentActiviey" />
+
         <activity android:name=".activity.load.LoadingActivity"></activity>
         <activity android:name=".activity.word.WordInfoActivity"></activity>
     </application>

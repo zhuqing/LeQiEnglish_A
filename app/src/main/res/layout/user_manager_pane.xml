@@ -59,6 +59,7 @@
                 android:layout_height="wrap_content"></ListView>
 
             <Button
+                android:id="@+id/user_manager_pane_relogin"
                 android:background="@drawable/background_red_corner"
                 style="@style/font_size_20_white"
                 android:text="@string/quit_relogin"

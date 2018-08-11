@@ -35,7 +35,7 @@ public abstract class DataCacheAbstract<T> {
      * @return
      */
     protected boolean shouldUpdate(T t){
-        return true;
+        return false;
     }
 
     /**
@@ -90,6 +90,7 @@ public abstract class DataCacheAbstract<T> {
         if (this.getCacheData() != null) {
             if (consumer != null) {
                 consumer.accept(this.cacheData);
+                return;
             }
         }
 

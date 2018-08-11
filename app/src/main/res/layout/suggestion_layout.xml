@@ -12,13 +12,15 @@
         android:orientation="vertical">
 
         <EditText
+            android:background="@drawable/edittext_background"
             android:id="@+id/suggestion_layout_contect"
             android:hint="@string/suggestion_contect_hint"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="50dp" />
 
         <EditText
             android:layout_marginTop="20dp"
+            android:background="@drawable/edittext_background"
             android:minLines="8"
             android:maxLines="10"
             android:gravity="top"

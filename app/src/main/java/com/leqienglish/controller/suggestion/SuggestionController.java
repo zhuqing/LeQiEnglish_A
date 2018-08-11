@@ -22,6 +22,8 @@ public class SuggestionController extends ControllerAbstract {
 
     private Button commit;
 
+    private boolean hasSave =false;
+
     public SuggestionController(View view) {
         super(view);
     }
@@ -34,6 +36,11 @@ public class SuggestionController extends ControllerAbstract {
         this.commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(hasSave){
+                    return;
+                }
+
+                hasSave = true;
                 save();
             }
         });
@@ -56,7 +63,7 @@ public class SuggestionController extends ControllerAbstract {
                 LQService.post("/suggestion/create", suggestion, Suggestion.class, null, new LQHandler.Consumer<Suggestion>() {
                     @Override
                     public void accept(Suggestion suggestion) {
-
+                        hasSave = false;
                     }
                 });
             }

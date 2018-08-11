@@ -24,8 +24,33 @@
     <string name="recommend_book">推荐书</string>
 
     <string name="quit_relogin">退出并重新登录</string>
+    <string name="suggestion_contect_hint">邮箱/用户名</string>
+    <string name="regist_user_name">用户名(由6-16位数字/大小写字母/下划线组成)</string>
 
-    <string name="suggestion_contect_hint">邮箱/手机号/用户名</string>
+    <string name="regist_password">密码(由6-16位数字/大小写字母/下划线组成)</string>
+    <string name="password">密码</string>
+    <string name="regist">注册</string>
+    <string name="regist_confirm">密码确认</string>
+    <string name="login">登录</string>
 
+    <string name="man">男</string>
+    <string name="woman">女</string>
     <string name="suggestion_message_hint">请写下对我们的意见，谢谢</string>
+
+    <string name="letter_numberbl_digits">0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW_</string>
+
+    <string name="message_regist_success">注册成功！</string>
+    <string name="message_regist_fail">注册失败！</string>
+    <string name="message_regist_password_not_match">两次密码不符！</string>
+
+    <string name="message_no_username">没有输入用户名！</string>
+    <string name="message_no_password">没有输入密码！</string>
+
+
+
+    <string name="message_username_unsuitable">用户名应由6-16位数字/大小写字母/下划线组成！</string>
+    <string name="message_password_unsuitable">密码应由6-16位数字/大小写字母/下划线组成！</string>
+
+
+    <string name="catalogs">分类：</string>
 </resources>
