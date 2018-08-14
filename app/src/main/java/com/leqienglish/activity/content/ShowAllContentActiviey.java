@@ -4,16 +4,14 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.leqienglish.MainActivity;
 import com.leqienglish.R;
-import com.leqienglish.controller.ShowAllContentController;
+import com.leqienglish.controller.content.ShowAllContentController;
 
 public class ShowAllContentActiviey extends AppCompatActivity {
 

@@ -56,7 +56,7 @@ public class CatalogCache extends DataCacheAbstract<List<Catalog>> {
         MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
         param.add("type", Consistent.CATALOG_TYPE+"");
         try {
-            Catalog[] contents = this.getRestClient().get("/catalog/findAllCatalogsByType",param,Catalog[].class);
+            Catalog[] contents = this.getRestClient().get("/english/catalog/getAllCatalogsByType",param,Catalog[].class);
 
             return Arrays.asList(contents);
         } catch (Exception e) {

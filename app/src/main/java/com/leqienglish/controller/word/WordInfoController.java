@@ -72,6 +72,10 @@ public class WordInfoController extends ControllerAbstract {
 
     }
 
+    public void search(String text){
+
+    }
+
     private void initListener() {
 
     }

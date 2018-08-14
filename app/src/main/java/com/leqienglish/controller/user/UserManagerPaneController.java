@@ -22,6 +22,7 @@ import com.leqienglish.view.adapter.simpleitem.SimpleItemAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.tobebetter.entity.Entity;
 import xyz.tobebetter.entity.english.Catalog;
 import xyz.tobebetter.entity.user.User;
 
@@ -38,7 +39,7 @@ public class UserManagerPaneController extends ControllerAbstract {
     private ListView managerList;
 
     private List<Catalog> catalogs = new ArrayList<>();
-    private SimpleItemAdapter simpleItemAdapter;
+    private SimpleItemAdapter<Catalog> simpleItemAdapter;
 
     public UserManagerPaneController(View view) {
         super(view);
@@ -52,7 +53,15 @@ public class UserManagerPaneController extends ControllerAbstract {
         managerList = this.getView().findViewById(R.id.user_manager_pane_list);
         this.relogin = this.getView().findViewById(R.id.user_manager_pane_relogin);
 
-        simpleItemAdapter = new SimpleItemAdapter(LayoutInflater.from(this.getView().getContext()));
+        simpleItemAdapter = new SimpleItemAdapter<Catalog>(LayoutInflater.from(this.getView().getContext())){
+            @Override
+            protected String toString(Catalog entity) {
+                if(entity == null){
+                    return "";
+                }
+                return entity.getTitle();
+            }
+        };
 
         managerList.setAdapter(simpleItemAdapter);
 

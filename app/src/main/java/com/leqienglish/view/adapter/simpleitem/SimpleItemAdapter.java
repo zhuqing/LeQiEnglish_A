@@ -8,13 +8,16 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.view.adapter.LeQiBaseAdapter;
 
+import xyz.tobebetter.entity.Entity;
 import xyz.tobebetter.entity.english.Catalog;
 
-public class SimpleItemAdapter extends LeQiBaseAdapter<Catalog> {
+public abstract class SimpleItemAdapter<T extends Entity> extends LeQiBaseAdapter<T> {
 
     class ViewHolder{
         TextView textView;
     }
+
+    protected abstract String toString(T t);
 
     public SimpleItemAdapter(LayoutInflater mInflater) {
         super(mInflater);
@@ -32,12 +35,12 @@ public class SimpleItemAdapter extends LeQiBaseAdapter<Catalog> {
             convertView.setTag(holder);
         }
 
-        Catalog catalog = this.getItem(position);
-        if(catalog == null){
+        T t = this.getItem(position);
+        if(t == null){
             return null;
         }
 
-        holder.textView.setText(catalog.getTitle());
+        holder.textView.setText(this.toString(t));
 
         return convertView;
 

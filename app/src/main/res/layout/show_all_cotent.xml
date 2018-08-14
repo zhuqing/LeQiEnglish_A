@@ -12,7 +12,7 @@
         android:layout_height="wrap_content" />
 <GridView
     android:id="@+id/show_all_content_catalogs"
-    android:numColumns="6"
+    android:numColumns="5"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"></GridView>
     <GridView
