@@ -19,6 +19,9 @@ public abstract class SimpleItemAdapter<T extends Entity> extends LeQiBaseAdapte
 
     protected abstract String toString(T t);
 
+    protected abstract void setStyle(TextView textView);
+
+
     public SimpleItemAdapter(LayoutInflater mInflater) {
         super(mInflater);
     }
@@ -32,6 +35,7 @@ public abstract class SimpleItemAdapter<T extends Entity> extends LeQiBaseAdapte
             holder = new SimpleItemAdapter.ViewHolder();
             convertView = this.mInflater.inflate(R.layout.simple_item, null);
             holder.textView = convertView.findViewById(R.id.simple_item_textview);
+            this.setStyle(holder.textView);
             convertView.setTag(holder);
         }
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recite_words_review_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<com.leqienglish.view.word.RecitingWordListView
+    android:id="@+id/recite_words_review_wordlist"
+    android:layout_marginTop="30dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+</com.leqienglish.view.word.RecitingWordListView>
+<TextView
+    android:layout_marginTop="10dp"
+    android:id="@+id/tip_message"
+    android:layout_below="@id/recite_words_review_wordlist"
+    android:layout_centerHorizontal="true"
+    android:gravity="center"
+    style="@style/font_size_12_gray"
+    android:text="@string/tip_choose_has_reciting"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+    
+    <LinearLayout
+
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/recite_words_review_continue"
+            style="@style/font_size_24_white_bold"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/background_green_selector_blue_50dp"
+            android:text="@string/continue_recite_word" />
+
+        <TextView
+            android:id="@+id/recite_words_review_close"
+            style="@style/font_size_14_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="20dp"
+
+            android:text="@string/close" />
+
+    </LinearLayout>
+</RelativeLayout>

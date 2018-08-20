@@ -21,6 +21,10 @@ public abstract class ControllerAbstract<F extends View>{
         return view;
     }
 
+    protected <T extends View> T  findViewById(int id){
+      return   this.getView().findViewById(id);
+    }
+
     public abstract void init();
 
     public abstract void reload();

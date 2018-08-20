@@ -3,12 +3,18 @@ package com.leqienglish;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.controller.HomeListViewController;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.Constants;
@@ -113,6 +119,33 @@ public class MainActivity extends AppCompatActivity {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.search, menu);
+//        MenuItem menuItem = menu.findItem(R.id.search);
+//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+//        //设置搜索的事件
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                Toast t = Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT);
+//                t.setGravity(Gravity.TOP, 0, 0);
+//                t.show();
+//
+//               //MainActivity wordInfoController.search(query);
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+//
+//        return super.onCreateOptionsMenu(menu);
+//    }
+
 
     private void initData(){
         FileUtil.application = this.getApplication();

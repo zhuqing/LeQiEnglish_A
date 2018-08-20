@@ -12,8 +12,11 @@ import android.widget.Toast;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.content.ShowAllContentController;
+import com.leqienglish.util.LOGGER;
+import com.leqienglish.view.recommend.RecommendArticle;
 
 public class ShowAllContentActiviey extends AppCompatActivity {
+    private LOGGER logger = new LOGGER(ShowAllContentActiviey.class);
 
     private ShowAllContentController showAllContentController;
 
@@ -24,13 +27,31 @@ public class ShowAllContentActiviey extends AppCompatActivity {
         View rootView = this.findViewById(R.id.show_all_content_root);
         this.showAllContentController = new ShowAllContentController(rootView);
         this.showAllContentController.init();
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_search_content);
+        }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search, menu);
         MenuItem menuItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        SearchView searchView = (SearchView) menuItem.getActionView();
         //设置搜索的事件
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -45,9 +66,25 @@ public class ShowAllContentActiviey extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
+                if(newText == null || newText.isEmpty()){
+                    showAllContentController.search("");
+                }
                 return false;
             }
         });
+
+
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String q = searchView.getQuery().toString();
+                logger.d("setOnSearchClickListener:"+q);
+            }
+        });
+
+
 
         return super.onCreateOptionsMenu(menu);
     }

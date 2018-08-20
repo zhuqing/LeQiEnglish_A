@@ -82,7 +82,14 @@ public class FileUtil {
         try {
             String file = getFileAbsolutePath(filePath);
             File file1 = new File(file);
-            return file1.exists();
+            if(!file1.exists()){
+                return false;
+            }
+
+            if(file1.length() == 0){
+                return false;
+            }
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }

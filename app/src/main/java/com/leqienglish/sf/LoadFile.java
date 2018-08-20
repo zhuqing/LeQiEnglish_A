@@ -19,14 +19,16 @@ public class LoadFile {
 
     public static void loadFile(String path, LQHandler.Consumer<String> consumer) {
 
-        if(path ==null || path.isEmpty()){
+        if (path == null || path.isEmpty()) {
             return;
         }
         try {
             String filePath = FileUtil.getFileAbsolutePath(path);
             File file = new File(filePath);
-            if (file.exists()) {
-                consumer.accept(filePath);
+            if (file.exists()&&file.length()!=0) {
+                if (consumer != null) {
+                    consumer.accept(filePath);
+                }
                 return;
             }
 
@@ -35,7 +37,7 @@ public class LoadFile {
                 protected String doInBackground(Object... objects) {
                     RestClient restClient = new RestClient(LQService.getHttp());
                     try {
-                        restClient.downLoad("/file/download?path=" +path, filePath, null);
+                        restClient.downLoad("/file/download?path=" + path, filePath, null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -46,7 +48,9 @@ public class LoadFile {
                 @Override
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
-                    consumer.accept(s);
+                    if(consumer!=null) {
+                        consumer.accept(s);
+                    }
                 }
             };
 
@@ -71,7 +75,7 @@ public class LoadFile {
                 protected String doInBackground(Object... objects) {
                     RestClient restClient = new RestClient(LQService.getHttp());
                     try {
-                        restClient.downLoad("/file/download?path=" +path, filePath
+                        restClient.downLoad("/file/download?path=" + path, filePath
                                 , new LQHandler.Consumer<Double>() {
                                     @Override
                                     public void accept(Double aDouble) {

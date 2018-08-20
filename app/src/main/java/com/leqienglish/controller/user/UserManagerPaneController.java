@@ -61,6 +61,11 @@ public class UserManagerPaneController extends ControllerAbstract {
                 }
                 return entity.getTitle();
             }
+
+            @Override
+            protected void setStyle(TextView textView) {
+
+            }
         };
 
         managerList.setAdapter(simpleItemAdapter);

@@ -30,11 +30,10 @@ public class PlayAudio {
 
     public void play( int id,LQHandler.Consumer playComplete) {
       soundPool.play(id,100,100,1,0,1);
-
-
     }
 
     public int load(String path ) {
+
 
        return soundPool.load(path,10);
 

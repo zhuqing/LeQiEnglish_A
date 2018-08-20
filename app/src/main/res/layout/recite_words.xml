@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recite_words_root"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/recite_words_wordinfo_framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_centerInParent="true">
+
+
+        <com.leqienglish.view.word.WordInfoView
+            android:id="@+id/recite_words_wordinfo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></com.leqienglish.view.word.WordInfoView>
+
+
+
+            <TextView
+                android:background="@color/no3_white"
+                android:id="@+id/recite_words_tip"
+                style="@style/font_size_12_gray"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/message_tip_show_word" />
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp">
+
+        <FrameLayout
+            android:id="@+id/recite_words_cancel_pause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/recite_words_cancel"
+                style="@style/font_size_24_white_bold"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="left"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/background_green_selector_blue_50dp"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/recite_words_pause"
+                style="@style/font_size_24_white_bold"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/background_red_selector_blue_50dp"
+                android:text="@string/pause" />
+
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/recite_words_start"
+            style="@style/font_size_24_white_bold"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:background="@drawable/background_green_selector_blue_50dp"
+            android:text="@string/start" />
+
+
+    </FrameLayout>
+
+</RelativeLayout>

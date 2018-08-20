@@ -1,47 +1,43 @@
 package com.leqienglish.activity.word;
 
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.content.ShowAllContentActiviey;
+import com.leqienglish.controller.word.ReciteWordsController;
 import com.leqienglish.controller.word.WordInfoController;
 import com.leqienglish.util.BundleUtil;
 
-import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.word.Word;
 
-public class WordInfoActivity extends AppCompatActivity {
+public class ReciteWordsActivity  extends AppCompatActivity {
 
-    private Word word;
-
-    private WordInfoController wordInfoController;
+    private ReciteWordsController reciteWordsController;
 
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_info);
+        setContentView(R.layout.recite_words);
+        View view  = this.findViewById(R.id.recite_words_root);
 
-        word = (Word) this.getIntent().getExtras().getSerializable(BundleUtil.DATA);
-        RelativeLayout view = this.findViewById(R.id.word_info_root);
-
-        wordInfoController = new WordInfoController(view,word);
-        wordInfoController.init();
+        reciteWordsController = new ReciteWordsController(view);
+        reciteWordsController.init();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(word.getWord());
+            actionBar.setTitle(R.string.title_word_recite);
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        reciteWordsController.destory();
     }
 
     @Override
@@ -52,12 +48,5 @@ public class WordInfoActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        wordInfoController.destory();
     }
 }

@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_toLeftOf="@id/user_board_button"
+            android:layout_toLeftOf="@id/user_board_recite_words"
             android:layout_toRightOf="@id/user_board_image">
 
             <TextView
@@ -59,12 +59,12 @@
         </RelativeLayout>
 
         <Button
-            android:id="@+id/user_board_button"
+            android:id="@+id/user_board_recite_words"
             style="@style/user_board_button"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/corner_button_selected"
-            android:text="@string/puntch" />
+            android:text="@string/recite_words" />
     </RelativeLayout>
 </RelativeLayout>

@@ -17,6 +17,11 @@ public interface Constants extends BaseColumns {
      * 我要背诵的单词
      */
     public static final String MY_WORDS_TYPE="MY_WORDS_TYPE";
+
+    /**
+     * 我要背诵的单词
+     */
+    public static final String RECITING_WORDS_TYPE="RECITING_WORDS_TYPE";
     /**
      *我正在背诵的单词
      */

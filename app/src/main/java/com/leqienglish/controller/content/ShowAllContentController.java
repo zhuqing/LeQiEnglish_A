@@ -1,10 +1,12 @@
 package com.leqienglish.controller.content;
 
 import android.content.Intent;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.ArticleInfoActivity;
@@ -64,6 +66,13 @@ public class ShowAllContentController extends ControllerAbstract {
                 }
                 return catalog.getTitle();
             }
+
+            @Override
+            protected void setStyle(TextView textView) {
+                textView.setGravity(Gravity.CENTER);
+            }
+
+
         };
 
         catalogGridView.setAdapter(simpleItemAdapter);
@@ -129,13 +138,17 @@ public class ShowAllContentController extends ControllerAbstract {
             param.put("catalogId", this.searchCatalog.getId());
         }
         if(!StringUtil.isNullOrEmpty(searchText)){
-            param.put("word", searchText);
+            param.put("title", searchText);
         }
 
-        LQService.get("/english/content/findAll", Content[].class, null, new LQHandler.Consumer<Content[]>() {
+        LQService.get("/english/content/findContentsByCatalogIdAndTitle", Content[].class, param, new LQHandler.Consumer<Content[]>() {
             @Override
             public void accept(Content[] contents) {
-                contentItemGridViewAdapter.updateListView(Arrays.asList(contents));
+                if(contents == null){
+                    contentItemGridViewAdapter.updateListView(null);
+                }else {
+                    contentItemGridViewAdapter.updateListView(Arrays.asList(contents));
+                }
             }
         });
     }
