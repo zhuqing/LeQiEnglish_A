@@ -9,6 +9,7 @@ import com.leqienglish.entity.Message;
 import com.leqienglish.sf.task.HttpGetTask;
 import com.leqienglish.sf.task.HttpGetTranslateTask;
 import com.leqienglish.sf.task.HttpPostTask;
+import com.leqienglish.sf.task.HttpPutTask;
 import com.leqienglish.util.LQHandler;
 
 import org.springframework.http.HttpEntity;
@@ -40,6 +41,10 @@ public class LQService {
         }
 
         return http;
+    }
+
+    public static <T> void put(String path ,Object value, Class claz,Map<String,?> variables,LQHandler.Consumer<T> consumer){
+        new HttpPutTask(getHttp()+path,value,claz,consumer,variables).execute();
     }
 
     public static  <T> void  get(String path , Class claz, Map<String,String> variables, LQHandler.Consumer<T> consumer){

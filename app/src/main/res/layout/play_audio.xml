@@ -25,17 +25,20 @@
                 android:orientation="vertical"></LinearLayout>
 
             <Button
+                android:id="@+id/play_audio_start_recite"
                 android:layout_marginTop="20dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
                 android:layout_marginBottom="20dp"
                 android:layout_below="@id/play_audio_layout"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
                 style="@style/button_white"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_green_corner"
                 android:gravity="center"
-                android:text="         开始背诵         " />
+                android:text="开始背诵" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

@@ -9,9 +9,12 @@ import com.leqienglish.R;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.toast.ToastUtil;
 import com.leqienglish.view.article.ArticleInfoView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
@@ -82,6 +85,8 @@ public class ArticleInfoController extends ControllerAbstract {
 
             }
         });
+
+
 
     }
 

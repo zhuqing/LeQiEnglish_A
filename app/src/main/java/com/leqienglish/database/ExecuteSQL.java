@@ -208,9 +208,9 @@ public class ExecuteSQL {
      * @param type
      * @return
      */
-    public boolean delete(String type) {
+    public static boolean delete(String type) {
         try {
-            SQLiteDatabase db = sqlData.getWritableDatabase();
+            SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
             db.delete(CACHE_TABLE, "type=" + type, null);
 
         } catch (Exception e) {
@@ -228,9 +228,9 @@ public class ExecuteSQL {
      * @param type
      * @return
      */
-    public boolean delete(String type, String parentId) {
+    public static boolean delete(String type, String parentId) {
         try {
-            SQLiteDatabase db = sqlData.getWritableDatabase();
+            SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
             db.delete(CACHE_TABLE, Constants.TYPE + "=? AND " + Constants.PARENT_ID + " =?", new String[]{type, parentId});
 
         } catch (Exception e) {

@@ -7,6 +7,9 @@ import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.sf.RestClient;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -56,23 +59,39 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
     @Override
     protected void putCache(User user) {
+        ExecuteSQL.delete(CURRENT_USER_TYPE);
         ExecuteSQL.insertLearnE(Arrays.asList(user), null, CURRENT_USER_TYPE);
     }
 
     @Override
     protected User getFromService() {
-
-        if (this.getCacheData() != null && !this.getCacheData().getStatus().equals(Consistent.UN_SAVED_STATUS)) {
-            return this.getCacheData();
+        if(this.getCacheData() == null){
+            return null;
         }
+        MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
+        param.add("userId", this.getCacheData().getId());
+
 
         try {
-            User user = this.getRestClient().post("/user/create", this.getCacheData(), null, User.class);
+            User user = this.getRestClient().get("/user/findById", param, User.class);
             return user;
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
         return null;
+    }
+
+    private User save(User user){
+        try {
+             user = this.getRestClient().post("/user/create", this.getCacheData(), null, User.class);
+            this.add(user);
+            return user;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -103,6 +122,8 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
         try {
             User user = addTempUser();
+            this.putCache(user);
+            save(user);
             return user;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -117,6 +138,7 @@ public class UserDataCache extends DataCacheAbstract<User> {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setName("Mine");
+        user.setSex(0);
         user.setStatus(Consistent.UN_SAVED_STATUS);
         return user;
     }

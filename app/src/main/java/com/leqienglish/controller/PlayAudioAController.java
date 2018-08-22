@@ -8,15 +8,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
+import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.data.user.UserReciteRecordDataCache;
+import com.leqienglish.sf.LQService;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
+import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.toast.ToastUtil;
 import com.leqienglish.view.play.PlayerPaneView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.english.play.AudioPlayPoint;
+import xyz.tobebetter.entity.user.User;
+import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 
 public class PlayAudioAController extends ControllerAbstract {
     private LOGGER logger = new LOGGER(PlayAudioAController.class);
@@ -33,6 +42,10 @@ public class PlayAudioAController extends ControllerAbstract {
 
     private View lastView;
 
+    private Button startReciteButton;
+
+    private int minutes;
+
     public PlayAudioAController(View view, Segment segment, String path) {
         super(view);
         this.segment = segment;
@@ -43,18 +56,79 @@ public class PlayAudioAController extends ControllerAbstract {
     public void init() {
         this.frameLayout = this.getView().findViewById(R.id.play_audio_layout);
         this.paneView = new PlayerPaneView(this.getView().getContext(), null);
+        this.startReciteButton = (Button) this.findViewById(R.id.play_audio_start_recite);
 
-        // this.titleView = this.getView().findViewById(R.id.play_audio_title);
         this.views = new ArrayList<>();
-        // titleView.setText(segment.getTitle());
 
         try {
             this.paneView.setMp3Path(FileUtil.getFileAbsolutePath(this.filePath));
             this.playEntities = AudioPlayPoint.toAudioPlays(segment.getContent());
             loadView(playEntities);
+            this.minutes = this.getMinute(playEntities);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        saveWord(segment, UserDataCache.getInstance().getUser());
+        this.initListener();
+    }
+
+    private int getMinute(List<AudioPlayPoint> playEntities){
+        AudioPlayPoint start = playEntities.get(0);
+
+        AudioPlayPoint end = playEntities.get(playEntities.size()-1);
+
+        int length = (int) (end.getEndTime()-start.getStartTime());
+
+        return length/60/1000;
+    }
+
+    private void initListener(){
+        startReciteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateTimes();
+            }
+        });
+    }
+
+    /**
+     * 更新背诵时间
+     */
+    private void updateTimes(){
+        Map<String,String> param = new HashMap<>();
+        param.put("id", UserReciteRecordDataCache.getInstance().getCacheData().getId());
+        param.put("minutes",this.minutes+"");
+
+        LQService.put("userReciteRecord/updateReciteMinutes", null, UserReciteRecord.class, param, new LQHandler.Consumer<UserReciteRecord>() {
+            @Override
+            public void accept(UserReciteRecord userReciteRecord) {
+                UserReciteRecordDataCache.getInstance().add(userReciteRecord);
+            }
+        });
+    }
+
+    /**
+     * 记录该段下的单词
+     * @param segment
+     * @param user
+     */
+    private void saveWord(Segment segment , User user){
+        if(segment == null|| user == null){
+            return;
+        }
+
+
+        Map<String,String> param = new HashMap<>();
+        param.put("userId",user.getId());
+        param.put("segmentId",segment.getId());
+        LQService.post("/userAndWord/insertAllBySegmentId", null, String.class, param, new LQHandler.Consumer<String>() {
+            @Override
+            public void accept(String userAndContent) {
+                ToastUtil.showShort(getView().getContext(),userAndContent);
+            }
+        });
+
     }
 
     public void loadView(List<AudioPlayPoint> playEntities) {
