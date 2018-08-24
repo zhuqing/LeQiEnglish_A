@@ -38,6 +38,8 @@
     <string name="cancel">取消</string>
     <string name="pause">暂停</string>
     <string name="close">关闭</string>
+    <string name="play">播放</string>
+
 
     <string name="man">男</string>
     <string name="woman">女</string>
@@ -53,6 +55,10 @@
     <string name="message_no_password">没有输入密码！</string>
 
 
+    <string name="message_tip_start_record">点击开始录音</string>
+
+    <string name="message_tip_start_ding_record">点击开始,叮叮两声后开始录音</string>
+
 
     <string name="message_username_unsuitable">用户名应由6-16位数字/大小写字母/下划线组成！</string>
     <string name="message_password_unsuitable">密码应由6-16位数字/大小写字母/下划线组成！</string>
@@ -61,6 +67,8 @@
 
 
     <string name="tip_choose_has_reciting">点击已经背会的单词</string>
+
+    <string name="check_information">查看详情</string>
 
     <string name="continue_recite_word">继续背诵单词</string>
 

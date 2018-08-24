@@ -1,6 +1,9 @@
 package com.leqienglish.controller;
 
+import android.content.Intent;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -8,13 +11,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
+import com.leqienglish.activity.segment.RecitingSegmentActivity;
+import com.leqienglish.activity.word.ReciteWordsActivity;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
+import com.leqienglish.pop.WordInfoDialog;
+import com.leqienglish.popwindow.WordInfoPopupWindow;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.toast.ToastUtil;
+import com.leqienglish.view.LeQiTextView;
 import com.leqienglish.view.play.PlayerPaneView;
 
 import java.util.ArrayList;
@@ -46,10 +55,15 @@ public class PlayAudioAController extends ControllerAbstract {
 
     private int minutes;
 
+    private WordInfoDialog wordInfoDialog;
+
+    private WordInfoPopupWindow wordInfoPopupWindow;
+
     public PlayAudioAController(View view, Segment segment, String path) {
         super(view);
         this.segment = segment;
         this.filePath = path;
+        wordInfoDialog = new WordInfoDialog(view.getContext());
     }
 
     @Override
@@ -58,6 +72,7 @@ public class PlayAudioAController extends ControllerAbstract {
         this.paneView = new PlayerPaneView(this.getView().getContext(), null);
         this.startReciteButton = (Button) this.findViewById(R.id.play_audio_start_recite);
 
+        this.wordInfoPopupWindow = new WordInfoPopupWindow(this.getView().getContext());
         this.views = new ArrayList<>();
 
         try {
@@ -88,6 +103,11 @@ public class PlayAudioAController extends ControllerAbstract {
             @Override
             public void onClick(View v) {
                 updateTimes();
+                paneView.destroy();
+                Intent intent = new Intent();
+                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
+                intent.setClass(getView().getContext(), RecitingSegmentActivity.class);
+                getView().getContext().startActivity(intent);
             }
         });
     }
@@ -125,7 +145,7 @@ public class PlayAudioAController extends ControllerAbstract {
         LQService.post("/userAndWord/insertAllBySegmentId", null, String.class, param, new LQHandler.Consumer<String>() {
             @Override
             public void accept(String userAndContent) {
-                ToastUtil.showShort(getView().getContext(),userAndContent);
+               // ToastUtil.showShort(getView().getContext(),userAndContent);
             }
         });
 
@@ -143,6 +163,30 @@ public class PlayAudioAController extends ControllerAbstract {
 
             viewHolder.view = view;
 
+            viewHolder.title.setOnTouchListener(new View.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_UP){
+                        if(!viewHolder.title.hasSelection()){
+                            return false;
+                        }
+                        String wordStr = viewHolder.title.getText().subSequence(viewHolder.title.getSelectionStart(),viewHolder.title.getSelectionEnd()).toString();
+
+                        if(wordInfoPopupWindow.isShowing()){
+                            wordInfoPopupWindow.dismiss();
+                        }
+
+                        wordInfoPopupWindow.load(wordStr);
+                       // wordInfoPopupWindow.showAsDropDown(PlayAudioAController.this.getView());
+                        wordInfoPopupWindow.showAtLocation(PlayAudioAController.this.getView(), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+//
+                    }
+                    return false;
+                }
+
+
+            });
 
             viewHolder.title.setOnClickListener(new View.OnClickListener() {
                 @Override

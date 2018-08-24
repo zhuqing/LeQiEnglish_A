@@ -32,9 +32,10 @@ public abstract class DataCacheAbstract<T> {
 
     /**
      * 是否需要更新
+     *
      * @return
      */
-    protected boolean shouldUpdate(T t){
+    protected boolean shouldUpdate(T t) {
         return false;
     }
 
@@ -78,7 +79,7 @@ public abstract class DataCacheAbstract<T> {
      * 向缓存中增加数据
      * @param t
      */
-   // public abstract void add(T t);
+    // public abstract void add(T t);
 
     /**
      * 加载数据
@@ -127,7 +128,18 @@ public abstract class DataCacheAbstract<T> {
      * 刷新数据
      */
     public void refresh() {
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
 
+                T temp = getFromService();
+                setCacheData(temp);
+                putCache(temp);
+                return null;
+            }
+        };
+
+        asyncTask.execute();
     }
 
 
@@ -149,7 +161,7 @@ public abstract class DataCacheAbstract<T> {
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                if(!shouldUpdate(getCacheData())){
+                if (!shouldUpdate(getCacheData())) {
                     return null;
                 }
                 T temp = getFromService();
@@ -160,7 +172,6 @@ public abstract class DataCacheAbstract<T> {
 
         asyncTask.execute();
     }
-
 
 
     public T getCacheData() {
@@ -175,7 +186,7 @@ public abstract class DataCacheAbstract<T> {
         if (this.restClient == null) {
             try {
                 this.restClient = new RestClient(LQService.getHttp());
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 this.restClient = new RestClient("http://192.168.43.9:8080");
             }
 

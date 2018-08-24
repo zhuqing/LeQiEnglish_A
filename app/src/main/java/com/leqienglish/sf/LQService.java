@@ -1,27 +1,19 @@
 package com.leqienglish.sf;
 
-import android.content.res.Resources;
 import android.os.Handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leqienglish.R;
-import com.leqienglish.entity.Message;
 import com.leqienglish.sf.task.HttpGetTask;
 import com.leqienglish.sf.task.HttpGetTranslateTask;
 import com.leqienglish.sf.task.HttpPostTask;
 import com.leqienglish.sf.task.HttpPutTask;
 import com.leqienglish.util.LQHandler;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-import java.util.Objects;
 
 import xyz.tobebetter.entity.word.Word;
 

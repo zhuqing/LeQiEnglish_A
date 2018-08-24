@@ -15,6 +15,7 @@ import com.leqienglish.playandrecord.PlayAudio;
 import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.string.StringUtil;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class WordInfoView extends RelativeLayout {
 
     public WordInfoView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        LayoutInflater.from(context).inflate(R.layout.word_info_main,this);
+        LayoutInflater.from(context).inflate(R.layout.word_info_main, this);
 
         playAudio = new PlayAudio();
         this.wordTextView = this.findViewById(R.id.word_info_word);
@@ -67,7 +68,7 @@ public class WordInfoView extends RelativeLayout {
         this.initListener();
     }
 
-    private void initListener(){
+    private void initListener() {
         this.amPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,9 +107,10 @@ public class WordInfoView extends RelativeLayout {
         });
     }
 
-    public void load(Word word){
+    public void load(Word word) {
         this.word = word;
         if (word == null) {
+            clear();
             return;
         }
         this.wordTextView.setText(word.getWord());
@@ -123,9 +125,7 @@ public class WordInfoView extends RelativeLayout {
 
 
         initMeans();
-        if (this.word.getAmAudionPath() == null || this.word.getAmAudionPath().isEmpty()) {
-
-        } else {
+        if (!StringUtil.isNullOrEmpty(word.getAmAudionPath())) {
             LoadFile.loadFile(this.word.getAmAudionPath(), new LQHandler.Consumer<String>() {
                 @Override
                 public void accept(String s) {
@@ -134,18 +134,55 @@ public class WordInfoView extends RelativeLayout {
             });
         }
 
-        if (this.word.getEnAudioPath() != null && !this.word.getEnAudioPath().isEmpty()) {
+        if (!StringUtil.isNullOrEmpty(word.getEnAudioPath())) {
             LoadFile.loadFile(this.word.getEnAudioPath(), new LQHandler.Consumer<String>() {
                 @Override
                 public void accept(String s) {
                     playEnAudio = playAudio.load(s);
                 }
             });
-        } else {
+        }
+        if (!StringUtil.isNullOrEmpty(word.getTtsAudioPath())) {
             LoadFile.loadFile(this.word.getTtsAudioPath(), new LQHandler.Consumer<String>() {
                 @Override
                 public void accept(String s) {
                     playTtsAudio = playAudio.load(s);
+                }
+            });
+        }
+    }
+
+    private void clear(){
+        this.word = null;
+        this.wordTextView.setText("");
+        playEnAudio = -1;
+        playAmAudio = -1;
+        playTtsAudio = -1;
+    }
+
+    public void play() {
+        if (word == null) {
+            return;
+        }
+
+        if (!StringUtil.isNullOrEmpty(word.getEnAudioPath())) {
+            LoadFile.loadFile(this.word.getEnAudioPath(), new LQHandler.Consumer<String>() {
+                @Override
+                public void accept(String s) {
+                    playEnAudio = playAudio.load(s);
+                    playAudio.play(playEnAudio, null);
+                }
+            });
+
+            return;
+        }
+
+        if (!StringUtil.isNullOrEmpty(word.getTtsAudioPath())) {
+            LoadFile.loadFile(this.word.getTtsAudioPath(), new LQHandler.Consumer<String>() {
+                @Override
+                public void accept(String s) {
+                    playTtsAudio = playAudio.load(s);
+                    playAudio.play(playTtsAudio, null);
                 }
             });
         }

@@ -24,7 +24,6 @@ import java.util.List;
  */
 public class RecordAudioThread extends DataBaseTask<List<short[]>> {
     private LOGGER logger = new LOGGER(RecordAudioThread.class);
-    private static RecordAudioThread recordAudioThread;
 
     private List<short[]> byteBufferList;
     private long duration;

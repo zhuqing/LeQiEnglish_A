@@ -4,6 +4,7 @@ import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.util.LOGGER;
+import com.leqienglish.util.LQHandler;
 
 
 import org.springframework.util.LinkedMultiValueMap;
@@ -29,12 +30,20 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
 
     private static MyRecitingContentDataCache myRecitingContentDataCache;
 
+    private LQHandler.Consumer<List<ReciteContentVO>> consumer;
+
 
 
     private MyRecitingContentDataCache(){
 
     }
 
+
+    @Override
+    public void load(LQHandler.Consumer<List<ReciteContentVO>> consumer) {
+        this.consumer = consumer;
+        super.load(consumer);
+    }
 
     public  static MyRecitingContentDataCache getInstance(){
         if(myRecitingContentDataCache !=null){
@@ -63,6 +72,10 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
     @Override
     protected void putCache(List<ReciteContentVO> constantsList) {
         User user = UserDataCache.getInstance().getCacheData();
+        if(user == null){
+            return;
+        }
+        ExecuteSQL.delete(MY_RECITING_ARITCLE_TYPE,user.getId());
         ExecuteSQL.insertLearnE(constantsList,user.getId(),MY_RECITING_ARITCLE_TYPE);
     }
 
@@ -87,7 +100,36 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
 
     @Override
     public void add(List<ReciteContentVO> reciteContentVOS) {
+        if(this.getCacheData()!=null){
+            this.getCacheData().addAll(reciteContentVOS);
+        }else{
+            this.setCacheData(reciteContentVOS);
+        }
 
+        if(consumer != null){
+            this.consumer.accept(this.getCacheData());
+        }
+    }
+
+    /**
+     * 已有的添加的背诵
+     * @param content
+     * @return
+     */
+    public boolean contains(Content content){
+        if(content == null){
+            return false;
+        }
+        if(this.getCacheData() == null){
+            return false;
+        }
+        for(ReciteContentVO reciteContentVO : this.getCacheData()){
+            if(reciteContentVO.getId().equals(content.getId())){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

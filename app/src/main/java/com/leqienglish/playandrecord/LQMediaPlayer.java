@@ -82,7 +82,35 @@ public class LQMediaPlayer {
     /**
      * 播放
      *
-     * @param filePath         文件路径
+     * @param mp               文件路径
+     * @param playTimes        播放次数
+     * @param completeConsumer
+     */
+    public void play(MediaPlayer mp, int playTimes, LQHandler.Consumer completeConsumer) {
+        PLAY_TIMES = playTimes;
+        this.times = 0;
+        isPlay = true;
+        this.completeConsumer = completeConsumer;
+        this.mediaPlayer = mp;
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+
+                initListner();
+                mediaPlayer.start();
+                return null;
+            }
+        };
+
+        asyncTask.execute();
+
+
+    }
+
+    /**
+     * 播放
+     *
+     * @param filePath            文件路径
      * @param playTimes        播放次数
      * @param completeConsumer
      */
@@ -101,6 +129,7 @@ public class LQMediaPlayer {
 
                 logger.d("filePath:" + filePath + "\texit=" + file.length());
                 try {
+
                     mediaPlayer.setDataSource(filePath);
                     mediaPlayer.prepareAsync();
 

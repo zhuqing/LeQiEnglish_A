@@ -211,7 +211,7 @@ public class ExecuteSQL {
     public static boolean delete(String type) {
         try {
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
-            db.delete(CACHE_TABLE, "type=" + type, null);
+            db.delete(CACHE_TABLE, Constants.TYPE+"=" + type, null);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/reciting_borad_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:id="@+id/reciting_borad_center"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content" />
+    <TextView
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+         android:layout_above="@id/reciting_borad_center"
+        android:text="00:00"
+        android:id="@+id/reciting_borad_count_down"
+        style="@style/font_size_48_green_bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/reciting_borad_start"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/reciting_borad_center"
+        android:layout_centerHorizontal="true"
+        style="@style/font_size_21_white_bold"
+        android:text="@string/start"
+        android:background="@drawable/background_green_selector_blue_50dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/reciting_borad_start"
+        android:text="@string/message_tip_start_ding_record"
+        style="@style/font_size_12_gray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

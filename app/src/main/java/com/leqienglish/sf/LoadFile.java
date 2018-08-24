@@ -3,17 +3,12 @@ package com.leqienglish.sf;
 import android.os.AsyncTask;
 import android.os.Handler;
 
-import com.leqienglish.entity.Message;
-import com.leqienglish.sf.RestClient;
 import com.leqienglish.util.AppType;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.message.MessageUtil;
-import com.leqienglish.util.task.FutureTaskUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 public class LoadFile {
 

@@ -33,6 +33,7 @@
         <activity android:name=".activity.load.LoadingActivity"></activity>
         <activity android:name=".activity.word.WordInfoActivity"></activity>
         <activity android:name=".activity.word.ReciteWordsActivity"></activity>
+        <activity android:name=".activity.segment.RecitingSegmentActivity"></activity>
 
         <activity android:name=".activity.word.ReciteWordsReviewActivity"></activity>
     </application>

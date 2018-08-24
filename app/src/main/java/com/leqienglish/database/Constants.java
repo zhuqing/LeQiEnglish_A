@@ -66,5 +66,5 @@ public interface Constants extends BaseColumns {
      */
     public static final String CATALOG_TYPE="CATALOG_TYPE";
 
-    public static final String WORD_TYPE="WORD";
+    public static final String WORD_TYPE="WORD_TYPE";
 }

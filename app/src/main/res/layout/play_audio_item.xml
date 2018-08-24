@@ -14,6 +14,7 @@
 
             <TextView
                 android:id="@+id/play_audio_text"
+                android:textIsSelectable="true"
                 style="@style/font_size_24_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

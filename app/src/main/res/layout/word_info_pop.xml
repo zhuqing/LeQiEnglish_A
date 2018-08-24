@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:paddingBottom="20dp"
+    android:background="@drawable/app_background"
+    android:layout_height="wrap_content">
+<com.leqienglish.view.word.WordInfoView
+    android:id="@+id/word_info_pop_word_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"></com.leqienglish.view.word.WordInfoView>
+
+    <Button
+        android:layout_below="@id/word_info_pop_word_info"
+        android:layout_margin="40dp"
+        android:id="@+id/word_info_pop_checkinfo"
+        android:background="@drawable/background_green_selector_blue"
+        android:text="@string/check_information"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+</RelativeLayout>
