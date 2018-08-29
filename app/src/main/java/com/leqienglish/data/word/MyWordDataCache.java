@@ -7,6 +7,7 @@ import com.leqienglish.database.ExecuteSQL;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,40 +41,46 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
         return myWordDataCache;
     }
 
+
+    protected boolean shouldUpdate(List<Word> t) {
+        return true;
+    }
     @Override
     protected List<Word> getFromCache() {
-        if(UserDataCache.getInstance().getCacheData() == null){
+        if (UserDataCache.getInstance().getCacheData() == null) {
             return null;
         }
 
-        List<Word> wordList =  ExecuteSQL.getDatasByType(MY_WORDS_TYPE,UserDataCache.getInstance().getCacheData().getId(),Word.class);
+        List<Word> wordList = ExecuteSQL.getDatasByType(MY_WORDS_TYPE, UserDataCache.getInstance().getCacheData().getId(), Word.class);
 
         return wordList;
     }
 
     @Override
     protected void putCache(List<Word> words) {
-        if(UserDataCache.getInstance().getCacheData() == null){
-            return ;
+        if (UserDataCache.getInstance().getCacheData() == null) {
+            return;
         }
 
-        ExecuteSQL.insertLearnE(words,UserDataCache.getInstance().getCacheData().getId(),MY_WORDS_TYPE);
+        ExecuteSQL.insertLearnE(words, UserDataCache.getInstance().getCacheData().getId(), MY_WORDS_TYPE);
     }
 
     @Override
     protected List<Word> getFromService() {
-        if(UserDataCache.getInstance().getCacheData()== null){
+        if (UserDataCache.getInstance().getCacheData() == null) {
             return null;
         }
-        MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
-        param.add("contentId", UserDataCache.getInstance().getCacheData().getId());
+        MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+        param.add("userId", UserDataCache.getInstance().getCacheData().getId());
         try {
-            Word[] segments = this.getRestClient().get("/english/word/findAll",param,Word[].class);
-            if(segments == null){
+            Word[] segments = this.getRestClient().get("/english/word/findByUserId", param, Word[].class);
+            if (segments == null) {
                 return null;
             }
 
-            return Arrays.asList(segments);
+            List<Word> wordList = new ArrayList<>(Arrays.asList(segments));
+
+            return wordList;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,6 +90,32 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
 
     @Override
     public void add(List<Word> words) {
+
+        if (words == null || words.isEmpty()) {
+            return;
+        }
+        this.putCache(words);
+
+        if (this.getCacheData() == null ) {
+            this.setCacheData(new ArrayList<>());
+        }
+        this.getCacheData().addAll(words);
+
+    }
+
+
+    public boolean hasWord(String wordId) {
+
+        if (this.getCacheData() == null || this.getCacheData().isEmpty()) {
+            return false;
+        }
+
+        for (Word word : this.getCacheData()) {
+            if (wordId.equals(word.getId())) {
+                return true;
+            }
+        }
+        return false;
 
     }
 

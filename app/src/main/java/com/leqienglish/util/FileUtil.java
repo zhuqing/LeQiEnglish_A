@@ -19,6 +19,7 @@ import java.util.UUID;
 /**
  * @author zhuqing
  */
+@Deprecated
 public class FileUtil {
 
     public static final String APP_NAME = "leqienglish";

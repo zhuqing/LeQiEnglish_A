@@ -1,44 +1,38 @@
 package com.leqienglish;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.view.Gravity;
-import android.view.Menu;
+import android.text.Html;
+import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.controller.HomeListViewController;
 import com.leqienglish.data.user.UserDataCache;
-import com.leqienglish.database.Constants;
+import com.leqienglish.data.version.VersionDataCache;
 import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.database.SqlData;
-import com.leqienglish.entity.SQLEntity;
 import com.leqienglish.fragment.HomeFragment;
 import com.leqienglish.fragment.LQFragmentAdapter;
 import com.leqienglish.fragment.SecondFrament;
 import com.leqienglish.fragment.ThirdFrament;
-import com.leqienglish.R;
-import com.leqienglish.util.FileUtil;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.file.AndroidFileUtil;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import xyz.tobebetter.entity.user.User;
+import xyz.tobebetter.version.Version;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private LOGGER logger = new LOGGER(MainActivity.class);
    // private TextView mTextMessage;
 
     private FrameLayout content;
@@ -148,10 +142,53 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initData(){
-        FileUtil.application = this.getApplication();
+        AndroidFileUtil.application = this.getApplication();
         ExecuteSQL.init(new SqlData(this.getBaseContext()));
         UserDataCache.getInstance().load(null);
      //   this.getBaseContext().get
+
+        VersionDataCache.getInstance().loadNewest(new LQHandler.Consumer<Version>() {
+            @Override
+            public void accept(Version version) {
+                if(version!=null){
+                    openNewVersionDialog(version);
+                }
+            }
+        });
+    }
+
+    private void openNewVersionDialog(Version version){
+//        NewVersionDialog dialog = new NewVersionDialog(this.getApplicationContext(), version, new LQHandler.Consumer<Version>() {
+//            @Override
+//            public void accept(Version version) {
+//                logger.d("==========upgread");
+//            }
+//        });
+//        dialog.show();
+
+        View myView = LayoutInflater.from(MainActivity.this).inflate(R.layout.newversion_dialog, null);
+        TextView textView = myView.findViewById(R.id.new_version_message);
+        Spanned spanned = Html.fromHtml(version.getType()+version.getMessage());
+
+        textView.setText(spanned);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.upgreade)
+        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                VersionDataCache.getInstance().add(version);
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setView(myView)
+                .create();
+
+        builder.show();
     }
 
 

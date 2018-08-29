@@ -67,4 +67,7 @@ public interface Constants extends BaseColumns {
     public static final String CATALOG_TYPE="CATALOG_TYPE";
 
     public static final String WORD_TYPE="WORD_TYPE";
+
+
+    public static final String VERSION_CACHE_TYPE="VERSION_CACHE_TYPE";
 }

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.segment.RecitingSegmentActivity;
-import com.leqienglish.activity.word.ReciteWordsActivity;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
 import com.leqienglish.pop.WordInfoDialog;
@@ -22,8 +21,6 @@ import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
-import com.leqienglish.util.toast.ToastUtil;
-import com.leqienglish.view.LeQiTextView;
 import com.leqienglish.view.play.PlayerPaneView;
 
 import java.util.ArrayList;
@@ -54,6 +51,8 @@ public class PlayAudioAController extends ControllerAbstract {
     private Button startReciteButton;
 
     private int minutes;
+
+    private long during;
 
     private WordInfoDialog wordInfoDialog;
 
@@ -168,6 +167,16 @@ public class PlayAudioAController extends ControllerAbstract {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if(event.getAction() == MotionEvent.ACTION_UP){
+
+                        long end = System.currentTimeMillis();
+
+                        /**
+                         * 如果按下的时间小于300毫秒，不处理
+                         */
+                        if(end-during<300){
+                            return false;
+                        }
+
                         if(!viewHolder.title.hasSelection()){
                             return false;
                         }
@@ -177,16 +186,24 @@ public class PlayAudioAController extends ControllerAbstract {
                             wordInfoPopupWindow.dismiss();
                         }
 
+                        logger.d("wordStr:"+wordStr);
+                        if(wordStr.trim().isEmpty()){
+                            return false;
+                        }
+                       /// wordInfoPopupWindow = new WordInfoPopupWindow(getView().getContext());
+                        paneView.destroy();
                         wordInfoPopupWindow.load(wordStr);
                        // wordInfoPopupWindow.showAsDropDown(PlayAudioAController.this.getView());
                         wordInfoPopupWindow.showAtLocation(PlayAudioAController.this.getView(), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
 //
+                    } else if(event.getAction() == MotionEvent.ACTION_DOWN){
+                        during = System.currentTimeMillis();
                     }
                     return false;
-                }
+                }} );
 
 
-            });
+
 
             viewHolder.title.setOnClickListener(new View.OnClickListener() {
                 @Override

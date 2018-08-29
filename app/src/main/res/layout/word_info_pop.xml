@@ -4,6 +4,7 @@
     android:paddingBottom="20dp"
     android:background="@drawable/app_background"
     android:layout_height="wrap_content">
+    
 <com.leqienglish.view.word.WordInfoView
     android:id="@+id/word_info_pop_word_info"
     android:layout_width="match_parent"
@@ -11,10 +12,14 @@
 
     <Button
         android:layout_below="@id/word_info_pop_word_info"
-        android:layout_margin="40dp"
+        style="@style/font_size_20_white"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
         android:id="@+id/word_info_pop_checkinfo"
         android:background="@drawable/background_green_selector_blue"
         android:text="@string/check_information"
         android:layout_width="match_parent"
-        android:layout_height="40dp" />
+
+        android:layout_height="wrap_content" />
 </RelativeLayout>

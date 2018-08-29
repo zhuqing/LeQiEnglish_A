@@ -1,15 +1,10 @@
 package com.leqienglish.playandrecord;
 
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.AsyncTask;
 
-import com.leqienglish.controller.WordListViewController;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
-
-import java.io.IOException;
 
 
 /**
@@ -19,7 +14,7 @@ public class PlayAudio {
 
     private LOGGER logger = new LOGGER(PlayAudio.class);
 
-    SoundPool soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
+    SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
     private String path;
 
     private LQHandler.Consumer playComplete;

@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.controller.word.WordInfoController;
+import com.leqienglish.playandrecord.LQMediaPlayer;
 import com.leqienglish.playandrecord.PlayAudio;
 import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.LOGGER;
@@ -110,18 +110,22 @@ public class WordInfoView extends RelativeLayout {
     public void load(Word word) {
         this.word = word;
         if (word == null) {
+
             clear();
             return;
         }
         this.wordTextView.setText(word.getWord());
         if (word.getAmAudionPath() == null || word.getAmAudionPath().isEmpty()) {
             this.wordProLayout.setVisibility(View.GONE);
-
+            ttsPlay.setVisibility(View.VISIBLE);
         } else {
             this.ttsPlay.setVisibility(View.GONE);
+            wordProLayout.setVisibility(View.VISIBLE);
             this.enPro.setText("英 [" + word.getPhEn() + "]");
             this.amPro.setText("美 [" + word.getPhAm() + "]");
         }
+
+
 
 
         initMeans();
@@ -153,11 +157,17 @@ public class WordInfoView extends RelativeLayout {
     }
 
     private void clear(){
+
+        logger.d("clear==========");
         this.word = null;
         this.wordTextView.setText("");
         playEnAudio = -1;
         playAmAudio = -1;
         playTtsAudio = -1;
+
+        this.enPro.setText("");
+        this.amPro.setText("");
+        wordMean.setText("");
     }
 
     public void play() {
@@ -165,12 +175,13 @@ public class WordInfoView extends RelativeLayout {
             return;
         }
 
+        logger.d("play==========");logger.d("clear==========");
         if (!StringUtil.isNullOrEmpty(word.getEnAudioPath())) {
             LoadFile.loadFile(this.word.getEnAudioPath(), new LQHandler.Consumer<String>() {
                 @Override
                 public void accept(String s) {
-                    playEnAudio = playAudio.load(s);
-                    playAudio.play(playEnAudio, null);
+                    LQMediaPlayer lqMediaPlayer = new LQMediaPlayer();
+                    lqMediaPlayer.play(s,1,null);
                 }
             });
 
@@ -181,8 +192,8 @@ public class WordInfoView extends RelativeLayout {
             LoadFile.loadFile(this.word.getTtsAudioPath(), new LQHandler.Consumer<String>() {
                 @Override
                 public void accept(String s) {
-                    playTtsAudio = playAudio.load(s);
-                    playAudio.play(playTtsAudio, null);
+                    LQMediaPlayer lqMediaPlayer = new LQMediaPlayer();
+                    lqMediaPlayer.play(s,1,null);
                 }
             });
         }

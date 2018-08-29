@@ -30,7 +30,7 @@ import static com.leqienglish.database.Constants.URL;
 
 public class ExecuteSQL {
 
-    private static final LOGGER log = new LOGGER(ExecuteSQL.class);
+    private static LOGGER log = new LOGGER(ExecuteSQL.class);
 
     private SqlData sqlData;
 
@@ -73,6 +73,7 @@ public class ExecuteSQL {
      * @throws JsonProcessingException
      */
     public static <T extends Entity> List<SQLEntity> toSQLEntitys(String type, String parentId, List<T> contents) throws JsonProcessingException {
+       log.d("toSQLEntitys,type="+type+" , contents="+contents.size());
         if (contents == null || contents.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
@@ -132,11 +133,15 @@ public class ExecuteSQL {
     public static <T extends Entity> void insertLearnE(final List<T> data, String parentId, String type) {
         try {
             List<SQLEntity> sqlEntities = toSQLEntitys(type, parentId, data);
+            log.d("insertLearnE,size="+sqlEntities.size());
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
+            db.beginTransaction();
             for (SQLEntity sqlEnity : sqlEntities) {
                 executeSQL.insert(sqlEnity, db);
             }
-
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return;
@@ -172,15 +177,19 @@ public class ExecuteSQL {
 
     private void insert(SQLEntity sqlEnity, SQLiteDatabase db) {
         ContentValues values = createValues(sqlEnity);
-        log.d("start insertLearnE url=" + sqlEnity);
-        // log.d("start insertLearnE data="+json);
+
+
         SQLEntity data = getJSONDataById(sqlEnity.getId());
         if (data != null) {
+            log.d("update ,id="+sqlEnity.getId());
             db.update(CACHE_TABLE, values, ID + "=?",
                     new String[]{sqlEnity.getId()});
         } else {
-            db.insertOrThrow(CACHE_TABLE, null, values);
+            log.d("insert ,id="+sqlEnity.getId());
+          long lng =    db.insert(CACHE_TABLE, null, values);
+            log.d("insert ,id="+lng);
         }
+
     }
 
     /**
@@ -211,8 +220,10 @@ public class ExecuteSQL {
     public static boolean delete(String type) {
         try {
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
-            db.delete(CACHE_TABLE, Constants.TYPE+"=" + type, null);
-
+            db.beginTransaction();
+            db.delete(CACHE_TABLE, Constants.TYPE+"=?", new String[]{type});
+            db.endTransaction();
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -370,6 +381,9 @@ public class ExecuteSQL {
     }
 
     private static Cursor createCursor(String type ,String parentId){
+
+        log.d("createCursor , type="+type+",parentId="+parentId);
+
         SQLiteDatabase db = executeSQL.sqlData.getReadableDatabase();
         if(parentId == null){
             return db.query(CACHE_TABLE, null, TYPE + "=? " ,
@@ -390,9 +404,9 @@ public class ExecuteSQL {
 
 
 
-        SQLiteDatabase db = executeSQL.sqlData.getReadableDatabase();
-        Cursor cursor = createCursor(type,parentId);
 
+        Cursor cursor = createCursor(type,parentId);
+        log.d("getDatasByType ,type="+type+",getCount="+cursor.getCount());
         if (cursor.getCount() <= 0) {
             cursor.close();
             return null;
@@ -407,9 +421,9 @@ public class ExecuteSQL {
         while (cursor.moveToNext()) {
             jsonDatas.add(executeSQL.toSqlEntity(cursor));
         }
-       // log.d("getJSONDataById jsonData=" + jsonData);
-        cursor.close();
 
+        cursor.close();
+        log.d("getDatasByType ,type="+type+",size="+jsonDatas.size());
         try {
             return ExecuteSQL.toEntity(jsonDatas, claz);
         } catch (IOException e) {
