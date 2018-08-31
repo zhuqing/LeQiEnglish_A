@@ -1,14 +1,16 @@
 package com.leqienglish.view.article;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -17,20 +19,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
+import com.leqienglish.activity.content.ArticleInfoActivity;
+import com.leqienglish.activity.content.ShowAllContentActiviey;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.sf.LoadFile;
-import com.leqienglish.util.FileUtil;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.view.adapter.LeQiBaseAdapter;
 import com.leqienglish.view.percent.CirclePrecentView;
 import com.leqienglish.view.recommend.RecommendArticle;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
+import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.content.ReciteContentVO;
 import xyz.tobebetter.entity.user.User;
+
+import static com.leqienglish.util.BundleUtil.DATA_BL;
 
 
 public class UserRecitingArticleView extends RelativeLayout {
@@ -57,6 +65,7 @@ public class UserRecitingArticleView extends RelativeLayout {
         this.recitingArticles = this.findViewById(R.id.user_reciting_gridview);
         this.myRecitingTitle = this.findViewById(R.id.user_reciting_title);
         this.gridViewAdapter = new GridViewAdapter(LayoutInflater.from(this.recitingArticles.getContext()));
+        this.initListener();
     }
 
     public void load() {
@@ -68,15 +77,44 @@ public class UserRecitingArticleView extends RelativeLayout {
         });
     }
 
+    private void initListener(){
+        this.addArticle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+
+                intent.setClass(getContext(), ShowAllContentActiviey.class);
+                getContext().startActivity(intent);
+            }
+        });
+
+        this.recitingArticles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Content content = gridViewAdapter.getItem(position);
+                if (content == null) {
+                    return;
+                }
+
+                Intent intent = new Intent();
+               Bundle bundle = BundleUtil.create(BundleUtil.DATA, content);
+                bundle.putBoolean(DATA_BL,true);
+                intent.putExtras(bundle);
+                intent.setClass(getContext(), ArticleInfoActivity.class);
+                getContext().startActivity(intent);
+            }
+        });
+    }
+
     private void showData(List<ReciteContentVO> contents) {
-        if (contents == null || contents.isEmpty()) {
-            return;
+        if (contents == null ) {
+            contents = Collections.EMPTY_LIST;
         }
         myRecitingTitle.setText("我的背诵("+contents.size()+")");
 
         logger.d("showData data Content " + contents.size());
 
-        this.gridViewAdapter.setItems(contents);
+        this.gridViewAdapter.updateListView(contents);
 
         this.recitingArticles.setAdapter(gridViewAdapter);
 
@@ -106,37 +144,11 @@ public class UserRecitingArticleView extends RelativeLayout {
 
     }
 
-    class GridViewAdapter extends BaseAdapter {
+    class GridViewAdapter extends LeQiBaseAdapter<ReciteContentVO> {
 
-        private LayoutInflater mInflater;
 
         public GridViewAdapter(LayoutInflater mInflater) {
-            this.mInflater = mInflater;
-        }
-
-        private List<ReciteContentVO> items;
-
-        public List<ReciteContentVO> getItems() {
-            return items;
-        }
-
-        public void setItems(List<ReciteContentVO> items) {
-            this.items = items;
-        }
-
-        @Override
-        public int getCount() {
-            return items.size();
-        }
-
-        @Override
-        public ReciteContentVO getItem(int i) {
-            return items.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0L;
+            super(mInflater);
         }
 
         @Override

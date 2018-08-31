@@ -1,16 +1,16 @@
 package com.leqienglish.controller.article;
 
-import android.content.res.Resources;
+
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 
 import com.leqienglish.R;
-
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LQHandler;
-import com.leqienglish.util.toast.ToastUtil;
 import com.leqienglish.view.article.ArticleInfoView;
 
 import java.util.Arrays;
@@ -30,18 +30,24 @@ public class ArticleInfoController extends ControllerAbstract {
     private Content content;
     private List<Segment> segmentList;
 
+    private boolean hasAdd2MyReciting = false;
+
     private ArticleInfoView articleInfoView;
 
     public Button button;
 
-    public ArticleInfoController(View view) {
+    private boolean isReciting;
+
+    public ArticleInfoController(View view,boolean isReciting) {
         super(view);
+        this.isReciting = isReciting;
     }
 
     @Override
     public void init() {
         this.button = this.getView().findViewById(R.id.add_recite_article_info_button);
         this.articleInfoView = this.getView().findViewById(R.id.add_recite_article_info_view);
+
 
         this.initListener();
         reload();
@@ -51,7 +57,13 @@ public class ArticleInfoController extends ControllerAbstract {
         this.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                add();
+
+                if(hasAdd2MyReciting){
+
+                    removeFromMyReciting();
+                }else {
+                    add();
+                }
             }
         });
     }
@@ -59,14 +71,53 @@ public class ArticleInfoController extends ControllerAbstract {
     @Override
     public void reload() {
 
+
+        if(this.isReciting){
+            button.setVisibility(View.GONE);
+        }else{
+            button.setVisibility(View.VISIBLE);
+        }
         if (MyRecitingContentDataCache.getInstance().contains(this.content)) {
             button.setBackgroundResource(R.drawable.background_red_corner);
             button.setText(R.string.has_add_article_to_recite);
+            hasAdd2MyReciting = true;
         }
     }
 
     @Override
     public void destory() {
+
+    }
+
+    private void removeFromMyReciting(){
+       AlertDialog.Builder builder = new AlertDialog.Builder(this.getView().getContext());
+       builder.setTitle(R.string.warnning)
+               .setMessage(R.string.is_remove_from_myreciting)
+               .setPositiveButton(R.string.cancel,null)
+               .setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                       removeFromMyReciting(content);
+                   }
+               }).show();
+    }
+
+    private void removeFromMyReciting(Content content){
+
+        Map<String, String> param = new HashMap<>();
+        param.put("userId",this.getUser().getId());
+        param.put("contentId",this.getContent().getId());
+
+
+        LQService.put("/userAndContent/remove",null, String.class, param, new LQHandler.Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                MyRecitingContentDataCache.getInstance().removeByContentId(content.getId());
+
+                button.setText(R.string.add_article_to_recite);
+                button.setBackgroundResource(R.drawable.background_green_selector_blue);
+            }
+        });
 
     }
 

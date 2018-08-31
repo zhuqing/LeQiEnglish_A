@@ -6,10 +6,10 @@ import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 
-
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +18,6 @@ import xyz.tobebetter.entity.english.content.ReciteContentVO;
 import xyz.tobebetter.entity.user.User;
 
 import static com.leqienglish.database.Constants.MY_RECITING_ARITCLE_TYPE;
-import static com.leqienglish.database.Constants.MY_RECOMMEND_TYPE;
 
 
 /**
@@ -90,7 +89,7 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
 
         try {
             ReciteContentVO[] contents = this.getRestClient().get("/english/content/findUserReciting",param,ReciteContentVO[].class);
-            return Arrays.asList(contents);
+            return new ArrayList<>(Arrays.asList(contents));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,5 +134,31 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
     @Override
     public void remove(List<ReciteContentVO> reciteContentVOS) {
 
+    }
+
+
+    public void removeByContentId(String contentId) {
+        if(this.getCacheData() == null || this.getCacheData().isEmpty()){
+            return;
+        }
+
+        ReciteContentVO needRemove = null;
+        for(ReciteContentVO reciteContentVO : this.getCacheData()){
+            if(reciteContentVO.getId().equals(contentId)){
+                needRemove = reciteContentVO;
+                break;
+            }
+        }
+        if(needRemove == null){
+            return;
+        }
+
+        this.getCacheData().remove(needRemove);
+
+        ExecuteSQL.deleteById(needRemove.getId());
+
+        if(consumer !=null){
+            consumer.accept(this.getCacheData());
+        }
     }
 }

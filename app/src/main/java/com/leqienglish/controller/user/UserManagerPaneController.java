@@ -10,19 +10,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
 import com.leqienglish.activity.suggestion.SuggestionActivity;
 import com.leqienglish.activity.user.UserLoginActivity;
 import com.leqienglish.controller.ControllerAbstract;
-import com.leqienglish.data.user.UserDataCache;
-import com.leqienglish.util.BundleUtil;
-import com.leqienglish.util.LQHandler;
 import com.leqienglish.view.adapter.simpleitem.SimpleItemAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import xyz.tobebetter.entity.Entity;
 import xyz.tobebetter.entity.english.Catalog;
 import xyz.tobebetter.entity.user.User;
 

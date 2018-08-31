@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="@string/show_all_recite_article" />
+                android:text="@string/show_all_recited_article" />
         </RelativeLayout>
 
         <HorizontalScrollView

@@ -3,31 +3,24 @@ package com.leqienglish.view.recommend;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
+import com.leqienglish.activity.content.ArticleInfoActivity;
 import com.leqienglish.activity.content.ShowAllContentActiviey;
 import com.leqienglish.data.content.RecommendContentDataCache;
-import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
-import com.leqienglish.view.adapter.LeQiBaseAdapter;
 import com.leqienglish.view.adapter.content.ContentItemGridViewAdapter;
 
-import java.io.File;
 import java.util.List;
 
 

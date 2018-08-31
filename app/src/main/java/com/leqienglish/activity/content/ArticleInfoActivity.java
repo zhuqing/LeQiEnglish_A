@@ -1,22 +1,16 @@
-package com.leqienglish.activity;
+package com.leqienglish.activity.content;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.article.ArticleInfoController;
-
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
@@ -38,9 +32,11 @@ public class ArticleInfoActivity extends AppCompatActivity {
         content = (Content) this.getIntent().getExtras().getSerializable(BundleUtil.DATA);
         View view = this.findViewById(R.id.add_recite_article_info_root);
 
+        boolean isReciting =  this.getIntent().getExtras().getBoolean(BundleUtil.DATA_BL,false);
 
 
-        ArticleInfoController articleInfoController = new ArticleInfoController(view);
+
+        ArticleInfoController articleInfoController = new ArticleInfoController(view,isReciting);
         articleInfoController.init();
         articleInfoController.setContent(content);
         UserDataCache.getInstance().load(new LQHandler.Consumer<User>() {

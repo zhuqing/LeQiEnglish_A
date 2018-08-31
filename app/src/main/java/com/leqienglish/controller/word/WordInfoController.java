@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
+import com.leqienglish.activity.content.ArticleInfoActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.content.ContentDataCache;
 import com.leqienglish.data.word.WordSentenceDataCache;

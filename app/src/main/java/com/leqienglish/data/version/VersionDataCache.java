@@ -119,6 +119,9 @@ public class VersionDataCache extends DataCacheAbstract<Version> {
        }
         logger.d("====currentNo "+currentVersionNumber);
        Version newVersion = this.getFromService();
+       if(newVersion == null){
+           return false;
+       }
         logger.d("====new "+newVersion.getVersionNo());
        return newVersion.getVersionNo() > currentVersionNumber;
     }

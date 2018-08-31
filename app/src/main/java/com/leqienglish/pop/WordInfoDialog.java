@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
 import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.data.word.WordInfoDataCache;
 import com.leqienglish.util.BundleUtil;

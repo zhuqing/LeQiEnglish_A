@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class BundleUtil {
     public static final String DATA = "DATA";
+    public static final String DATA_BL = "DATA_BL";
     public static final String PATH = "PATH";
 
     public static final String CONTENT = "CONTENT";
@@ -24,6 +25,12 @@ public class BundleUtil {
     public static Bundle create(String key, String value) {
         Bundle bundle = new Bundle();
         bundle.putString(key, value);
+        return bundle;
+    }
+
+    public static Bundle create(String key, Boolean value) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(key, value);
         return bundle;
     }
 

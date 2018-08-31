@@ -6,54 +6,37 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
 import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.activity.load.LoadingActivity;
 import com.leqienglish.data.content.ContentWordsDataCache;
 import com.leqienglish.data.segment.SegmentDataCache;
-import com.leqienglish.database.ExecuteSQL;
-import com.leqienglish.entity.SQLEntity;
-import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.image.ImageUtil;
 import com.leqienglish.view.adapter.LeQiBaseAdapter;
-import com.leqienglish.view.recommend.RecommendArticle;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.word.Word;
-
-
-import static xyz.tobebetter.entity.Consistent.SEGMENT_TYPE;
 
 public class ArticleInfoView extends RelativeLayout {
     private LOGGER logger = new LOGGER(ArticleInfoView.class);

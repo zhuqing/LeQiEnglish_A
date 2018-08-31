@@ -7,16 +7,13 @@ import android.widget.TextView;
 
 import com.leqienglish.MainActivity;
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.word.RecitingWordDataCache;
-import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.view.word.RecitingWordListView;
 
 import java.util.List;
 
-import io.reactivex.android.plugins.RxAndroidPlugins;
 import xyz.tobebetter.entity.word.Word;
 
 public class ReciteWordsReviewController extends ControllerAbstract {

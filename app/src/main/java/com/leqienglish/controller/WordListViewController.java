@@ -3,12 +3,9 @@ package com.leqienglish.controller;
 import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
 import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.data.word.MyWordDataCache;
 import com.leqienglish.util.BundleUtil;

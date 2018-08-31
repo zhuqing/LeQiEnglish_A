@@ -16,6 +16,7 @@
     <string name="my_recite_article">我的背诵(0)</string>
     <string name="add_recite_article">添加背诵文章</string>
     <string name="show_all_recite_article">查看全部></string>
+    <string name="show_all_recited_article">查看已背诵></string>
 
     <string name="add_article_to_recite">添加到我的背诵</string>
     <string name="has_add_article_to_recite">已添加到背诵</string>
@@ -80,4 +81,9 @@
 
     <string name="upgreade">升级</string>
     <string name="ok">确认</string>
+
+
+    <string name="warnning">警告</string>
+
+    <string name="is_remove_from_myreciting">是否从背诵列表移除</string>
 </resources>

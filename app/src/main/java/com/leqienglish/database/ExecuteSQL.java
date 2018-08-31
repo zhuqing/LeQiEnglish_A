@@ -73,7 +73,7 @@ public class ExecuteSQL {
      * @throws JsonProcessingException
      */
     public static <T extends Entity> List<SQLEntity> toSQLEntitys(String type, String parentId, List<T> contents) throws JsonProcessingException {
-       log.d("toSQLEntitys,type="+type+" , contents="+contents.size());
+
         if (contents == null || contents.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
@@ -133,7 +133,7 @@ public class ExecuteSQL {
     public static <T extends Entity> void insertLearnE(final List<T> data, String parentId, String type) {
         try {
             List<SQLEntity> sqlEntities = toSQLEntitys(type, parentId, data);
-            log.d("insertLearnE,size="+sqlEntities.size());
+            log.d("insertLearnE，type="+type+",size="+sqlEntities.size());
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
             db.beginTransaction();
             for (SQLEntity sqlEnity : sqlEntities) {
@@ -185,7 +185,7 @@ public class ExecuteSQL {
             db.update(CACHE_TABLE, values, ID + "=?",
                     new String[]{sqlEnity.getId()});
         } else {
-            log.d("insert ,id="+sqlEnity.getId());
+            //log.d("insert ,id="+sqlEnity.getId());
           long lng =    db.insert(CACHE_TABLE, null, values);
             log.d("insert ,id="+lng);
         }
@@ -203,6 +203,27 @@ public class ExecuteSQL {
             SQLiteDatabase db = sqlData.getWritableDatabase();
             db.delete(CACHE_TABLE, "id=" + id, null);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 删除数据
+     *
+     * @param id
+     * @return
+     */
+    public static boolean deleteById(String id) {
+        try {
+            SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
+            db.beginTransaction();
+            db.delete(CACHE_TABLE, Constants.ID+"=?", new String[]{id});
+            db.endTransaction();
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -416,11 +437,12 @@ public class ExecuteSQL {
             cursor.close();
             return null;
         }
-        String jsonData = null;
+
         List<SQLEntity> jsonDatas = new ArrayList<>();
-        while (cursor.moveToNext()) {
+        do{
             jsonDatas.add(executeSQL.toSqlEntity(cursor));
         }
+        while (cursor.moveToNext());
 
         cursor.close();
         log.d("getDatasByType ,type="+type+",size="+jsonDatas.size());

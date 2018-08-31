@@ -9,7 +9,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.ArticleInfoActivity;
+import com.leqienglish.activity.content.ArticleInfoActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.catalog.CatalogCache;
 import com.leqienglish.sf.LQService;
