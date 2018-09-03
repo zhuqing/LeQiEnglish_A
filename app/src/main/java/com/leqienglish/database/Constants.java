@@ -70,4 +70,7 @@ public interface Constants extends BaseColumns {
 
 
     public static final String VERSION_CACHE_TYPE="VERSION_CACHE_TYPE";
+
+
+    public static final String RECITED_SEGMENT_IN_CONTENT="RECITED_SEGMENT_IN_CONTENT";
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.segment.RecitingSegmentActivity;
+import com.leqienglish.data.content.RecitedSegmentDataCache;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
 import com.leqienglish.pop.WordInfoDialog;
@@ -24,12 +25,15 @@ import com.leqienglish.util.LQHandler;
 import com.leqienglish.view.play.PlayerPaneView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.english.play.AudioPlayPoint;
+import xyz.tobebetter.entity.english.word.user.UserAndSegment;
 import xyz.tobebetter.entity.user.User;
 import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 
@@ -102,14 +106,17 @@ public class PlayAudioAController extends ControllerAbstract {
             @Override
             public void onClick(View v) {
                 updateTimes();
+                addUserAndSegment();
                 paneView.destroy();
                 Intent intent = new Intent();
                 intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
                 intent.setClass(getView().getContext(), RecitingSegmentActivity.class);
                 getView().getContext().startActivity(intent);
+
             }
         });
     }
+
 
     /**
      * 更新背诵时间
@@ -125,6 +132,28 @@ public class PlayAudioAController extends ControllerAbstract {
                 UserReciteRecordDataCache.getInstance().add(userReciteRecord);
             }
         });
+    }
+
+    private void addUserAndSegment(){
+        User user = UserDataCache.getInstance().getUser();
+        if(user == null|| this.segment == null){
+            return;
+        }
+
+        UserAndSegment userAndSegment = new UserAndSegment();
+        userAndSegment.setUserId(user.getId());
+        userAndSegment.setSegmentId(segment.getId());
+        userAndSegment.setContentId(this.segment.getContentId());
+
+        LQService.post("userAndSegment/create",userAndSegment,UserAndSegment.class,null, new LQHandler.Consumer<UserAndSegment>(){
+            @Override
+            public void accept(UserAndSegment userAndSegment) {
+                Content content = new Content();
+                content.setId(segment.getContentId());
+                RecitedSegmentDataCache.getInstance(content).add(Arrays.asList(userAndSegment));
+            }
+        });
+
     }
 
     /**

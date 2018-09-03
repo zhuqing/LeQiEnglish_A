@@ -3,7 +3,6 @@ package com.leqienglish.data;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 
-import com.leqienglish.R;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.sf.RestClient;
 import com.leqienglish.util.LQHandler;
@@ -75,6 +74,10 @@ public abstract class DataCacheAbstract<T> {
      */
     public abstract void remove(T t);
 
+    protected  void delete(){
+
+    }
+
     /**
      * 向缓存中增加数据
      * @param t
@@ -123,6 +126,37 @@ public abstract class DataCacheAbstract<T> {
 
         asyncTask.execute();
     }
+
+    /**
+     * 加载最新的数据
+     * @param consumer
+     */
+    public void loadNewest(LQHandler.Consumer<T> consumer){
+        AsyncTask asyncTask = new AsyncTask<Object, Object, T>() {
+            @Override
+            protected T doInBackground(Object[] objects) {
+
+                T t = getFromService();
+                setCacheData(t);
+                if (t != null) {
+                    putCache(t);
+                }
+                return t;
+            }
+
+            @Override
+            protected void onPostExecute(T t) {
+                super.onPostExecute(t);
+                if (consumer != null) {
+                    consumer.accept(t);
+                }
+
+            }
+        };
+
+        asyncTask.execute();
+    }
+
 
     /**
      * 刷新数据

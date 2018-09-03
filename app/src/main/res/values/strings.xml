@@ -86,4 +86,10 @@
     <string name="warnning">警告</string>
 
     <string name="is_remove_from_myreciting">是否从背诵列表移除</string>
+
+
+    <string name="reciting_article">正在背诵</string>
+
+    <string name="recited_article">已经背诵</string>
+
 </resources>

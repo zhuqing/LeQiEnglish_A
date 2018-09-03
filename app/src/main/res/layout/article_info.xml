@@ -34,7 +34,7 @@
         android:layout_below="@id/article_info_title"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:text="已完成2/10" />
+        android:text="已完成-/-" />
 
     <HorizontalScrollView
         android:layout_marginTop="20dp"

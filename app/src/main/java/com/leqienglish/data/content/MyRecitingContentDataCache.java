@@ -40,7 +40,7 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
 
     @Override
     public void load(LQHandler.Consumer<List<ReciteContentVO>> consumer) {
-        this.consumer = consumer;
+
         super.load(consumer);
     }
 
@@ -59,13 +59,14 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
 
     @Override
     protected List<ReciteContentVO> getFromCache() {
-        User user = UserDataCache.getInstance().getCacheData();
-        if(user == null){
-            return null;
-        }
-        List<ReciteContentVO> contents = ExecuteSQL.getDatasByType(MY_RECITING_ARITCLE_TYPE,user.getId(),ReciteContentVO.class);
-
-        return contents;
+//        User user = UserDataCache.getInstance().getCacheData();
+//        if(user == null){
+//            return null;
+//        }
+//        List<ReciteContentVO> contents = ExecuteSQL.getDatasByType(MY_RECITING_ARITCLE_TYPE,user.getId(),ReciteContentVO.class);
+//
+//        return contents;
+        return null;
     }
 
     @Override
@@ -131,6 +132,34 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
         return false;
     }
 
+    public void update(String id,Integer precent){
+        if(this.getCacheData() == null || this.getCacheData().isEmpty()){
+            return;
+        }
+
+        ReciteContentVO updateReciteVo = null;
+        for(ReciteContentVO reciteContentVO : this.getCacheData()){
+            if(reciteContentVO.getId().equals(id)){
+                reciteContentVO.setFinishedPercent(precent);
+                updateReciteVo = reciteContentVO;
+                break;
+            }
+        }
+
+        if(precent == 100&&updateReciteVo!=null){
+            this.getCacheData().remove(updateReciteVo);
+            MyRecitedContentDataCache.getInstance().add(Arrays.asList(updateReciteVo));
+        }
+
+        this.putCache(this.getCacheData());
+
+
+        if(consumer!=null){
+            consumer.accept(this.getCacheData());
+        }
+
+    }
+
     @Override
     public void remove(List<ReciteContentVO> reciteContentVOS) {
 
@@ -160,5 +189,9 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
         if(consumer !=null){
             consumer.accept(this.getCacheData());
         }
+    }
+
+    public void setConsumer(LQHandler.Consumer<List<ReciteContentVO>> consumer) {
+        this.consumer = consumer;
     }
 }

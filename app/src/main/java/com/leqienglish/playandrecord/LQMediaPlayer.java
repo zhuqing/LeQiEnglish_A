@@ -59,6 +59,9 @@ public class LQMediaPlayer {
                             .subscribe(new Consumer<MediaPlayer>() {
                                 @Override
                                 public void accept(MediaPlayer mediaPlayer) throws Exception {
+                                    if(!isPlay){
+                                        return;
+                                    }
                                     mediaPlayer.start();
                                 }
                             });

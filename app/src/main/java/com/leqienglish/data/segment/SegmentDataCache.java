@@ -39,7 +39,7 @@ public class SegmentDataCache extends DataCacheAbstract<List<Segment>> {
         Collections.sort(segments,new Comparator<Segment>() {
             @Override
             public int compare(Segment o1, Segment o2) {
-                return o2.getIndexNo()-o1.getIndexNo();
+                return o1.getIndexNo()-o2.getIndexNo();
             }
         });
 

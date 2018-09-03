@@ -21,8 +21,12 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.activity.load.LoadingActivity;
-import com.leqienglish.data.content.ContentWordsDataCache;
+import com.leqienglish.activity.word.ArticleWordListActivity;
+import com.leqienglish.data.content.MyRecitingContentDataCache;
+import com.leqienglish.data.content.RecitedSegmentDataCache;
 import com.leqienglish.data.segment.SegmentDataCache;
+import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
@@ -32,11 +36,15 @@ import com.leqienglish.view.adapter.LeQiBaseAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
-import xyz.tobebetter.entity.word.Word;
+import xyz.tobebetter.entity.english.word.user.UserAndSegment;
+import xyz.tobebetter.entity.user.content.UserAndContent;
 
 public class ArticleInfoView extends RelativeLayout {
     private LOGGER logger = new LOGGER(ArticleInfoView.class);
@@ -51,7 +59,11 @@ public class ArticleInfoView extends RelativeLayout {
 
     private GridViewAdapter gridViewAdapter;
 
+    private TextView acticleInfoPrecent;
+
     private Bitmap blurBitMap;
+
+    private RecitedSegmentDataCache recitedSegmentDataCache;
 
     public ArticleInfoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -59,6 +71,7 @@ public class ArticleInfoView extends RelativeLayout {
 
         this.titleView = this.findViewById(R.id.article_info_title);
         this.gridView = this.findViewById(R.id.article_info_gridview);
+        this.acticleInfoPrecent = this.findViewById(R.id.article_info_percent);
         this.gridViewAdapter = new GridViewAdapter(LayoutInflater.from(this.gridView.getContext()));
         addListener();
     }
@@ -71,22 +84,24 @@ public class ArticleInfoView extends RelativeLayout {
                 if (segment == null) {
                     return;
                 }
-
-                if(position == 0){
-                    return;
-                }
                 Intent intent = new Intent();
-                Bundle bundle = BundleUtil.create(BundleUtil.DATA, segment);
-                BundleUtil.create(bundle, BundleUtil.PATH, content.getAudioPath());
-                intent.putExtras(bundle);
+                if(position == 0){
+                    intent.setClass(getContext(), ArticleWordListActivity.class);
+                    Bundle bundle = BundleUtil.create(BundleUtil.DATA, content);
+                    intent.putExtras(bundle);
 
-                String filePath = FileUtil.toLocalPath(content.getAudioPath());
-                if(new File(filePath).exists()){
-                    intent.setClass(getContext(), PlayAudioActivity.class);
                 }else{
-                    intent.setClass(getContext(), LoadingActivity.class);
-                }
+                    Bundle bundle = BundleUtil.create(BundleUtil.DATA, segment);
+                    BundleUtil.create(bundle, BundleUtil.PATH, content.getAudioPath());
+                    intent.putExtras(bundle);
 
+                    String filePath = FileUtil.toLocalPath(content.getAudioPath());
+                    if(new File(filePath).exists()){
+                        intent.setClass(getContext(), PlayAudioActivity.class);
+                    }else{
+                        intent.setClass(getContext(), LoadingActivity.class);
+                    }
+                }
 
 
                 getContext().startActivity(intent);
@@ -109,6 +124,8 @@ public class ArticleInfoView extends RelativeLayout {
             return;
         }
 
+        this.recitedSegmentDataCache = RecitedSegmentDataCache.getInstance(content);
+
         this.blurBitMap = this.buildBlurBitmap();
         this.roundBlurBitMap = ImageUtil.createRoundCornerImage(blurBitMap,30, ImageUtil.HalfType.ALL);
         this.getRootView().setBackground(new BitmapDrawable(this.getResources(),blurBitMap));
@@ -120,19 +137,46 @@ public class ArticleInfoView extends RelativeLayout {
             @Override
             public void accept(List<Segment> segmentList) {
                 showSegments(segmentList);
+                loadHasRecited();
             }
         });
 
-
-        ContentWordsDataCache contentWordsDataCache = new ContentWordsDataCache(this.getContent());
-        contentWordsDataCache.load(new LQHandler.Consumer<List<Word>>() {
-            @Override
-            public void accept(List<Word> words) {
-                logger.d(words.toString());
-            }
-        });
 
     }
+
+    private void loadHasRecited(){
+        this.recitedSegmentDataCache.load(new LQHandler.Consumer<List<UserAndSegment>>() {
+            @Override
+            public void accept(List<UserAndSegment> userAndSegments) {
+                if(userAndSegments == null){
+                    userAndSegments = Collections.EMPTY_LIST;
+                }
+                acticleInfoPrecent.setText("已完成"+userAndSegments.size()+"/"+(gridViewAdapter.getCount()-1));
+                updatePrecent((int)(userAndSegments.size()*1.0/(gridViewAdapter.getCount()-1)*100));
+            }
+        });
+    }
+
+
+    private void updatePrecent(Integer precent){
+        if(UserDataCache.getInstance().getUser() == null){
+            return;
+        }
+        Map<String,String> param = new HashMap<>();
+
+        param.put("userId", UserDataCache.getInstance().getUser().getId());
+        param.put("contentId",content.getId());
+        param.put("precent",precent+"");
+
+
+        LQService.put("userAndContent/updatePrecent", null, UserAndContent.class, param, new LQHandler.Consumer<UserAndContent>() {
+            @Override
+            public void accept(UserAndContent userReciteRecord) {
+                MyRecitingContentDataCache.getInstance().update(content.getId(),precent);
+            }
+        });
+    }
+
 
     private Segment getWordsSegment(){
         Segment word = new Segment();
@@ -147,6 +191,8 @@ public class ArticleInfoView extends RelativeLayout {
         if (segmentList == null || segmentList.isEmpty()) {
             return;
         }
+
+
 
         List<Segment> newList = new ArrayList<>();
 

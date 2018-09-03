@@ -1,4 +1,4 @@
-package com.leqienglish.data.content;
+package com.leqienglish.data.word;
 
 import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.database.ExecuteSQL;

@@ -3,17 +3,14 @@ package com.leqienglish.view.article;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,16 +18,14 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.content.ArticleInfoActivity;
 import com.leqienglish.activity.content.ShowAllContentActiviey;
+import com.leqienglish.activity.reciting.RecitingArticleListActivity;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
-import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
-import com.leqienglish.view.adapter.LeQiBaseAdapter;
-import com.leqienglish.view.percent.CirclePrecentView;
+import com.leqienglish.view.adapter.content.RecitingArticleItemAdapter;
 import com.leqienglish.view.recommend.RecommendArticle;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +49,14 @@ public class UserRecitingArticleView extends RelativeLayout {
 
     private User user;
 
-    private GridViewAdapter gridViewAdapter;
+    private RecitingArticleItemAdapter gridViewAdapter;
+
+    private LQHandler.Consumer<List<ReciteContentVO>> consumer = new LQHandler.Consumer<List<ReciteContentVO>>() {
+        @Override
+        public void accept(List<ReciteContentVO> contents) {
+            showData(contents);
+        }
+    };
 
     public UserRecitingArticleView(Context context, @Nullable AttributeSet attrs) {
 
@@ -64,17 +66,14 @@ public class UserRecitingArticleView extends RelativeLayout {
         this.addArticle = this.findViewById(R.id.user_reciting_add_button);
         this.recitingArticles = this.findViewById(R.id.user_reciting_gridview);
         this.myRecitingTitle = this.findViewById(R.id.user_reciting_title);
-        this.gridViewAdapter = new GridViewAdapter(LayoutInflater.from(this.recitingArticles.getContext()));
+        showAllRecitingArticle = this.findViewById(R.id.user_reciting_show_all);
+        this.gridViewAdapter = new RecitingArticleItemAdapter(LayoutInflater.from(this.recitingArticles.getContext()));
         this.initListener();
     }
 
     public void load() {
-        MyRecitingContentDataCache.getInstance().load(new LQHandler.Consumer<List<ReciteContentVO>>() {
-            @Override
-            public void accept(List<ReciteContentVO> contents) {
-                showData(contents);
-            }
-        });
+        MyRecitingContentDataCache.getInstance().setConsumer(consumer);
+        MyRecitingContentDataCache.getInstance().load(consumer);
     }
 
     private void initListener(){
@@ -101,6 +100,17 @@ public class UserRecitingArticleView extends RelativeLayout {
                 bundle.putBoolean(DATA_BL,true);
                 intent.putExtras(bundle);
                 intent.setClass(getContext(), ArticleInfoActivity.class);
+                getContext().startActivity(intent);
+            }
+        });
+
+        this.showAllRecitingArticle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+
+
+                intent.setClass(getContext(), RecitingArticleListActivity.class);
                 getContext().startActivity(intent);
             }
         });
@@ -136,63 +146,6 @@ public class UserRecitingArticleView extends RelativeLayout {
 
     }
 
-    final class ViewHolder {
-        ImageView imageView;
-        TextView title;
-        TextView precentText;
-        CirclePrecentView circlePrecentView;
 
-    }
-
-    class GridViewAdapter extends LeQiBaseAdapter<ReciteContentVO> {
-
-
-        public GridViewAdapter(LayoutInflater mInflater) {
-            super(mInflater);
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            UserRecitingArticleView.ViewHolder holder = null;
-            if (view != null) {
-                holder = (UserRecitingArticleView.ViewHolder) view.getTag();
-            } else {
-                holder = new UserRecitingArticleView.ViewHolder();
-                view = this.mInflater.inflate(R.layout.article_item_complete_status, null);
-                holder.imageView = view.findViewById(R.id.article_item_complete_image);
-                holder.title = view.findViewById(R.id.article_item_complete_title);
-                holder.precentText = view.findViewById(R.id.article_item_complete_percent);
-                holder.circlePrecentView = view.findViewById(R.id.article_item_complete_circle);
-
-                view.setTag(holder);
-
-            }
-
-            ReciteContentVO actical = this.getItem(i);
-            if (actical == null) {
-
-
-                return view;
-            }
-
-            holder.title.setText(actical.getTitle());
-            holder.precentText.setText("完成" + actical.getFinishedPercent() + "%");
-            holder.circlePrecentView.setPercent(actical.getFinishedPercent() / 100.0F);
-            final ViewHolder viewHolder = holder;
-            final UserRecitingArticleView.ViewHolder fviewHolder = holder;
-
-            if (actical.getImagePath() != null) {
-                LoadFile.loadFile(actical.getImagePath(), new LQHandler.Consumer<String>() {
-                    @Override
-                    public void accept(String s) {
-                        viewHolder.imageView.setImageURI(Uri.fromFile(new File(s)));
-                    }
-                });
-            }
-
-
-            return view;
-        }
-    }
 
 }

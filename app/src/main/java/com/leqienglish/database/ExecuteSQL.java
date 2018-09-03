@@ -141,8 +141,8 @@ public class ExecuteSQL {
             }
             db.setTransactionSuccessful();
             db.endTransaction();
-            db.close();
-        } catch (JsonProcessingException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -163,8 +163,6 @@ public class ExecuteSQL {
             protected Object run(Object[] objects) {
                 SQLiteDatabase db = sqlData.getWritableDatabase();
                 insert(sqlEnity, db);
-                db.close();
-
                 return sqlEnity.getId();
 
             }
@@ -223,7 +221,7 @@ public class ExecuteSQL {
             db.beginTransaction();
             db.delete(CACHE_TABLE, Constants.ID+"=?", new String[]{id});
             db.endTransaction();
-            db.close();
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -244,7 +242,7 @@ public class ExecuteSQL {
             db.beginTransaction();
             db.delete(CACHE_TABLE, Constants.TYPE+"=?", new String[]{type});
             db.endTransaction();
-            db.close();
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
