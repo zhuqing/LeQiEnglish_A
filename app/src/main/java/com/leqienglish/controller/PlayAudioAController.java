@@ -1,7 +1,6 @@
 package com.leqienglish.controller;
 
 import android.content.Intent;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,17 +11,19 @@ import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.segment.RecitingSegmentActivity;
+import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.data.content.RecitedSegmentDataCache;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
-import com.leqienglish.pop.WordInfoDialog;
-import com.leqienglish.popwindow.WordInfoPopupWindow;
+import com.leqienglish.data.word.WordInfoDataCache;
+import com.leqienglish.pop.actionsheet.ActionSheet;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.view.play.PlayerPaneView;
+import com.leqienglish.view.word.WordInfoView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import xyz.tobebetter.entity.english.play.AudioPlayPoint;
 import xyz.tobebetter.entity.english.word.user.UserAndSegment;
 import xyz.tobebetter.entity.user.User;
 import xyz.tobebetter.entity.user.recite.UserReciteRecord;
+import xyz.tobebetter.entity.word.Word;
 
 public class PlayAudioAController extends ControllerAbstract {
     private LOGGER logger = new LOGGER(PlayAudioAController.class);
@@ -58,15 +60,13 @@ public class PlayAudioAController extends ControllerAbstract {
 
     private long during;
 
-    private WordInfoDialog wordInfoDialog;
 
-    private WordInfoPopupWindow wordInfoPopupWindow;
 
     public PlayAudioAController(View view, Segment segment, String path) {
         super(view);
         this.segment = segment;
         this.filePath = path;
-        wordInfoDialog = new WordInfoDialog(view.getContext());
+
     }
 
     @Override
@@ -75,7 +75,7 @@ public class PlayAudioAController extends ControllerAbstract {
         this.paneView = new PlayerPaneView(this.getView().getContext(), null);
         this.startReciteButton = (Button) this.findViewById(R.id.play_audio_start_recite);
 
-        this.wordInfoPopupWindow = new WordInfoPopupWindow(this.getView().getContext());
+
         this.views = new ArrayList<>();
 
         try {
@@ -210,21 +210,17 @@ public class PlayAudioAController extends ControllerAbstract {
                             return false;
                         }
                         String wordStr = viewHolder.title.getText().subSequence(viewHolder.title.getSelectionStart(),viewHolder.title.getSelectionEnd()).toString();
+                        wordStr = wordStr.trim();
 
-                        if(wordInfoPopupWindow.isShowing()){
-                            wordInfoPopupWindow.dismiss();
-                        }
 
-                        logger.d("wordStr:"+wordStr);
-                        if(wordStr.trim().isEmpty()){
+                        if(wordStr.isEmpty()){
                             return false;
                         }
                        /// wordInfoPopupWindow = new WordInfoPopupWindow(getView().getContext());
                         paneView.destroy();
-                        wordInfoPopupWindow.load(wordStr);
-                       // wordInfoPopupWindow.showAsDropDown(PlayAudioAController.this.getView());
-                        wordInfoPopupWindow.showAtLocation(PlayAudioAController.this.getView(), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-//
+                        showWordInfo(wordStr);
+
+
                     } else if(event.getAction() == MotionEvent.ACTION_DOWN){
                         during = System.currentTimeMillis();
                     }
@@ -272,6 +268,32 @@ public class PlayAudioAController extends ControllerAbstract {
         }
 
 
+    }
+
+    private void showWordInfo(String word){
+        WordInfoView wordInfoView = new WordInfoView(getView().getContext(),null);
+
+        WordInfoDataCache.getInstance(word).load(new LQHandler.Consumer<Word>() {
+            @Override
+            public void accept(Word word) {
+                if(wordInfoView== null){
+                    return;
+                }
+
+                wordInfoView.load(word);
+
+                new ActionSheet.DialogBuilder(getView().getContext())
+                        .addButton("查看详情", (v)->{
+                            Intent intent = new Intent();
+                            intent.putExtras(BundleUtil.create(BundleUtil.DATA, word));
+                            intent.setClass(getView().getContext(), WordInfoActivity.class);
+                            getView().getContext().startActivity(intent);
+                        })
+                        .addCloseButton("关闭",null)
+                        .setCustomeView(wordInfoView).create();
+                wordInfoView.play();
+            }
+        });
     }
 
     @Override

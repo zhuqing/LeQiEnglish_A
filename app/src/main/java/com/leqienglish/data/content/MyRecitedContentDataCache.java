@@ -2,6 +2,7 @@ package com.leqienglish.data.content;
 
 import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.database.ExecuteSQL;
 import com.leqienglish.util.LQHandler;
 
 import org.springframework.util.LinkedMultiValueMap;
@@ -9,6 +10,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import xyz.tobebetter.entity.english.content.ReciteContentVO;
@@ -17,6 +19,10 @@ import xyz.tobebetter.entity.user.User;
 public class MyRecitedContentDataCache extends DataCacheAbstract<List<ReciteContentVO>> {
 
     private static MyRecitedContentDataCache myRecitedContentDataCache;
+
+    private static String DATA_TYPE = "MyRecitedContentDataCache";
+
+    private static String UPDATE_TYPE = "MyRecitedContentDataCache_UPDATE_TYPE";
 
     private LQHandler.Consumer<List<ReciteContentVO>> consumer;
 
@@ -47,14 +53,28 @@ public class MyRecitedContentDataCache extends DataCacheAbstract<List<ReciteCont
     }
 
     @Override
-    protected List<ReciteContentVO> getFromCache() {
+    protected String getUpdateTimeType() {
+        return UPDATE_TYPE;
+    }
 
+    @Override
+    protected List<ReciteContentVO> getFromCache() {
+        User user = UserDataCache.getInstance().getUser();
+        if(user == null){
+            return Collections.emptyList();
+        }
+        ExecuteSQL.getDatasByType(DATA_TYPE,user.getId(),ReciteContentVO.class);
         return null;
     }
 
     @Override
     protected void putCache(List<ReciteContentVO> reciteContentVOS) {
-
+        this.clearData();
+        User user = UserDataCache.getInstance().getUser();
+        if(user == null){
+            return;
+        }
+        ExecuteSQL.insertLearnE(reciteContentVOS, user.getId(),DATA_TYPE);
     }
 
     @Override
@@ -91,7 +111,13 @@ public class MyRecitedContentDataCache extends DataCacheAbstract<List<ReciteCont
     }
 
     @Override
-    public void remove(List<ReciteContentVO> reciteContentVOS) {
-
+    public void clearData() {
+        User user = UserDataCache.getInstance().getUser();
+        if(user == null){
+            return ;
+        }
+        ExecuteSQL.delete(DATA_TYPE, user.getId());
     }
+
+
 }

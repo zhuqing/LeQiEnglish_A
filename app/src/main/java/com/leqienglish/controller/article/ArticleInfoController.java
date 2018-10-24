@@ -8,10 +8,14 @@ import android.widget.Button;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.ControllerAbstract;
+import com.leqienglish.data.AppRefreshManager;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
+import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.view.article.ArticleInfoView;
+import com.leqienglish.view.article.UserRecitingArticleView;
+import com.leqienglish.view.recommend.RecommendArticle;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -154,6 +158,9 @@ public class ArticleInfoController extends ControllerAbstract {
 
     }
 
+    /**
+     *加载正在背诵的数据
+     */
     private void loadRecitingContent() {
         Map<String, String> map = new HashMap<>();
         map.put("userId", user.getId());
@@ -165,6 +172,10 @@ public class ArticleInfoController extends ControllerAbstract {
                     return;
                 }
                 MyRecitingContentDataCache.getInstance().add(Arrays.asList(reciteContentVOS));
+
+                AppRefreshManager.getInstance().refresh(UserRecitingArticleView.REFRESH_ID);
+
+                AppRefreshManager.getInstance().clearnAndRefresh(RecommendArticle.REFRESH_ID);
             }
         });
     }
@@ -181,6 +192,9 @@ public class ArticleInfoController extends ControllerAbstract {
 
 
     public User getUser() {
+        if(user == null){
+            user = UserDataCache.getInstance().getUser();
+        }
         return user;
     }
 

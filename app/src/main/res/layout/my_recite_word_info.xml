@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/my_recite_word_info_root"
+    android:background="@drawable/app_background">
+
+    <com.handmark.pulltorefresh.library.PullToRefreshScrollView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/my_recite_word_info_refresh_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        ptr:ptrAnimationStyle="flip"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:orientation="vertical"
+        ptr:ptrMode="pullDownFromTop"
+        >
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/my_recite_word_info_header"
+                android:layout_marginTop="100dp">
+
+                <TextView
+                    android:id="@+id/my_recite_word_info_number"
+                    style="@style/font_size_32_green_bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="已完成背诵10/20" />
+
+                <TextView
+                    android:id="@+id/my_recite_word_info_num_perday"
+                    style="@style/font_size_14_blue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="每日背诵5个单词" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
+
+                <Button
+                    android:id="@+id/my_recite_word_info_write_word"
+                    style="@style/font_size_24_white_bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/background_red_corner"
+
+                    android:text="默写单词" />
+
+                <Button
+                    android:id="@+id/my_recite_word_info_recite_word"
+                    style="@style/font_size_24_white_bold"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_green_corner"
+                    android:text="背诵单词" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
+</RelativeLayout>

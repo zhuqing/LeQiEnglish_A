@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.leqienglish.R;
 import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.data.word.MyWordDataCache;
@@ -28,7 +30,7 @@ public class WordListViewController extends ControllerAbstract<View> {
 
     private LOGGER logger = new LOGGER(WordListViewController.class);
 
-    private ListView wordListView;
+    private PullToRefreshListView wordListView;
 
     private SideBar sideBar;
     private SectionAdapter sectionAdapter;
@@ -49,7 +51,8 @@ public class WordListViewController extends ControllerAbstract<View> {
             public void onTouchingLetterChanged(String s) {
                 int position = sectionAdapter.getPositionForSection(s.charAt(0));
                 if (position != -1) {
-                    wordListView.setSelection(position);
+                    wordListView.getRefreshableView().setSelection(position);
+
                 }
 
 
@@ -65,6 +68,20 @@ public class WordListViewController extends ControllerAbstract<View> {
                 intent.putExtras(BundleUtil.create(BundleUtil.DATA, word));
                 intent.setClass(getView().getContext(), WordInfoActivity.class);
                 getView().getContext().startActivity(intent);
+            }
+        });
+
+        wordListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ListView> pullToRefreshBase) {
+                reload();
+                logger.i("onPullDownToRefresh");
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> pullToRefreshBase) {
+                reload();
+                logger.i("onPullUpToRefresh");
             }
         });
     }
@@ -86,6 +103,7 @@ public class WordListViewController extends ControllerAbstract<View> {
                 });
 
                 sectionAdapter.updateListView(words);
+                wordListView.onRefreshComplete();
             }
         });
     }

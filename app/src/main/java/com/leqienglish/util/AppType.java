@@ -5,12 +5,15 @@ package com.leqienglish.util;
  */
 
 
+import android.content.Context;
 import android.media.AudioFormat;
 
 public class AppType {
     public static final int frequence = 44100; // 录制频率，单位hz.这里的值注意了，写的不好，可能实例化AudioRecord对象的时候，会出错。我开始写成11025就不行。这取决于硬件设备
     public static final int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
     public static final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+
+    public  static Context mainContext;
 
     public final static String ID = "id";
     public final static String KEY = "key";

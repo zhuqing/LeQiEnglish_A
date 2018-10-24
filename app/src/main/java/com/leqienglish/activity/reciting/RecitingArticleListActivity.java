@@ -25,7 +25,7 @@ public class RecitingArticleListActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.title_word_recite);
+            actionBar.setTitle(R.string.title_content_recite);
         }
     }
 

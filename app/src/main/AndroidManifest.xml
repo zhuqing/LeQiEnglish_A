@@ -35,6 +35,7 @@
         <activity android:name=".activity.word.WordInfoActivity"></activity>
         <activity android:name=".activity.word.ArticleWordListActivity"></activity>
         <activity android:name=".activity.word.ReciteWordsActivity"></activity>
+        <activity android:name=".activity.word.MyReciteWordsInfoActivity"></activity>
         <activity android:name=".activity.segment.RecitingSegmentActivity"></activity>
         <activity android:name=".activity.reciting.RecitingArticleListActivity"></activity>
 

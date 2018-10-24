@@ -45,6 +45,12 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
     protected boolean shouldUpdate(List<Word> t) {
         return true;
     }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "MyWordDataCache_update";
+    }
+
     @Override
     protected List<Word> getFromCache() {
         if (UserDataCache.getInstance().getCacheData() == null) {
@@ -103,6 +109,11 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
 
     }
 
+    @Override
+    public void clearData() {
+        ExecuteSQL.delete(MY_WORDS_TYPE, UserDataCache.getInstance().getCacheData().getId());
+    }
+
 
     public boolean hasWord(String wordId) {
 
@@ -119,8 +130,5 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
 
     }
 
-    @Override
-    public void remove(List<Word> words) {
 
-    }
 }

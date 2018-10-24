@@ -28,7 +28,8 @@ public class WordInfoDialog extends CustomDialog {
 
     }
 
-    private void load(String word){
+
+    public void load(String word){
 
         WordInfoDataCache.getInstance(word).load(new LQHandler.Consumer<Word>() {
             @Override
@@ -74,5 +75,9 @@ public class WordInfoDialog extends CustomDialog {
 
         });
     }
+
+
+
+
 
 }

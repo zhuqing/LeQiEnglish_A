@@ -1,29 +1,24 @@
 package com.leqienglish.data.content;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.ExecuteSQL;
-import com.leqienglish.entity.SQLEntity;
-import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LOGGER;
-import com.leqienglish.util.LQHandler;
-import com.leqienglish.view.recommend.RecommendArticle;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.user.User;
 
 import static com.leqienglish.database.Constants.MY_RECOMMEND_TYPE;
 
+/**
+ * 推荐内容的缓存
+ */
 public class RecommendContentDataCache extends DataCacheAbstract<List<Content>> {
     private LOGGER logger = new LOGGER(RecommendContentDataCache.class);
     private static RecommendContentDataCache recommendContentDataCache;
@@ -47,6 +42,12 @@ public class RecommendContentDataCache extends DataCacheAbstract<List<Content>> 
 
         return recommendContentDataCache;
     }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "RecommendContentDataCache_update";
+    }
+
     @Override
     protected List<Content> getFromCache() {
         User user = UserDataCache.getInstance().getCacheData();
@@ -59,6 +60,7 @@ public class RecommendContentDataCache extends DataCacheAbstract<List<Content>> 
 
     @Override
     protected void putCache(List<Content> contents) {
+        clearData();
         User user = UserDataCache.getInstance().getCacheData();
         ExecuteSQL.insertLearnE(contents,user.getId(),MY_RECOMMEND_TYPE);
     }
@@ -89,7 +91,18 @@ public class RecommendContentDataCache extends DataCacheAbstract<List<Content>> 
     }
 
     @Override
-    public void remove(List<Content> contents) {
+    public void clearData() {
+        User user = UserDataCache.getInstance().getCacheData();
+        if(user == null){
+            return;
+        }
+        setCacheData(null);
+        ExecuteSQL.delete(MY_RECOMMEND_TYPE,user.getId());
+    }
+
+    //从缓存中移除指定的数据
+    public void remove(Content content){
 
     }
+
 }

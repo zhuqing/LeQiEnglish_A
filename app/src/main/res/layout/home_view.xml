@@ -4,9 +4,15 @@
     android:layout_height="match_parent"
     android:background="@drawable/app_background">
 
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+
+    <com.handmark.pulltorefresh.library.PullToRefreshScrollView xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/home_view_pull_refresh_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        ptr:ptrAnimationStyle="flip"
+        ptr:ptrMode="pullDownFromTop">
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -16,43 +22,43 @@
                 android:id="@+id/home_view_user_board"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-               >
+                android:layout_centerHorizontal="true">
 
             </com.leqienglish.view.UserBoardView>
 
             <com.leqienglish.view.article.UserRecitingArticleView
-                android:layout_marginTop="10dp"
                 android:id="@+id/home_view_user_reciting"
-                android:layout_centerHorizontal="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/home_view_user_board">
+                android:layout_below="@id/home_view_user_board"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp">
 
 
             </com.leqienglish.view.article.UserRecitingArticleView>
 
             <com.leqienglish.view.recommend.RecommendArticle
                 android:id="@+id/home_view_recommend_article"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@id/home_view_user_reciting"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/home_view_user_reciting"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp">
 
             </com.leqienglish.view.recommend.RecommendArticle>
 
-            <com.leqienglish.view.recommend.RecommendBook
-                android:id="@+id/home_view_recommend_book"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
+            <!--<com.leqienglish.view.recommend.RecommendBook-->
+            <!--android:id="@+id/home_view_recommend_book"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:layout_centerHorizontal="true"-->
 
-                android:layout_width="wrap_content"
-                android:layout_below="@id/home_view_recommend_article"
-                android:layout_height="wrap_content">
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_below="@id/home_view_recommend_article"-->
+            <!--android:layout_height="wrap_content">-->
 
-            </com.leqienglish.view.recommend.RecommendBook>
+            <!--</com.leqienglish.view.recommend.RecommendBook>-->
 
         </RelativeLayout>
-</ScrollView>
+    </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
+
 </RelativeLayout>

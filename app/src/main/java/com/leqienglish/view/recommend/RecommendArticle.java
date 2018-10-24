@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.content.ArticleInfoActivity;
 import com.leqienglish.activity.content.ShowAllContentActiviey;
+import com.leqienglish.data.AppRefreshManager;
+import com.leqienglish.data.RefreshI;
 import com.leqienglish.data.content.RecommendContentDataCache;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LOGGER;
@@ -26,8 +28,10 @@ import java.util.List;
 
 import xyz.tobebetter.entity.english.Content;
 
-public class RecommendArticle extends RelativeLayout {
+public class RecommendArticle extends RelativeLayout implements RefreshI {
     private LOGGER logger = new LOGGER(RecommendArticle.class);
+
+    public static final  String REFRESH_ID = "RecommendArticle";
 
     private GridView gridView;
     private TextView showAllTextView;
@@ -38,12 +42,14 @@ public class RecommendArticle extends RelativeLayout {
         LayoutInflater.from(context).inflate(R.layout.recommend_aritcle, this);
         this.gridView = this.findViewById(R.id.recommend_article_gridView);
         this.showAllTextView = this.findViewById(R.id.recommend_article_show_all);
-        gridViewAdapter = new ContentItemGridViewAdapter(LayoutInflater.from(this.gridView.getContext()));
 
+        gridViewAdapter = new ContentItemGridViewAdapter(LayoutInflater.from(this.gridView.getContext()));
+        this.gridView.setAdapter(gridViewAdapter);
         init();
     }
 
     private void init() {
+
         this.showAllTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,12 +77,18 @@ public class RecommendArticle extends RelativeLayout {
         });
 
 
+        //注册到缓存管理中
+        AppRefreshManager.getInstance().regist(REFRESH_ID,this);
+
     }
 
 
 
-    public void load() {
 
+    /**
+     * 加载数据
+     */
+    public void load() {
 
         RecommendContentDataCache.getInstance().load(new LQHandler.Consumer<List<Content>>() {
             @Override
@@ -84,9 +96,6 @@ public class RecommendArticle extends RelativeLayout {
                 showData(contents);
             }
         });
-
-
-
 
     }
 
@@ -99,9 +108,9 @@ public class RecommendArticle extends RelativeLayout {
 
         logger.d("showData data Content " + contents.size());
 
-        this.gridViewAdapter.setItems(contents);
 
-        this.gridView.setAdapter(gridViewAdapter);
+
+
 
         int size = contents.size();
         int length = 170;
@@ -119,11 +128,22 @@ public class RecommendArticle extends RelativeLayout {
         gridView.setStretchMode(GridView.NO_STRETCH);
         gridView.setNumColumns(size); // 设置列数量=列表集合数
 
+        this.gridViewAdapter.updateListView(contents);
+
 
     }
 
 
+    @Override
+    public void clearAndRefresh(LQHandler.Consumer<Boolean> fininshed) {
+        RecommendContentDataCache.getInstance().clearData();
+        load();
+    }
 
+    //刷新数据，先把缓存中的数据清空，加载数据
+    @Override
+    public void refresh(LQHandler.Consumer<Boolean> fininshed) {
 
-
+        load();
+    }
 }

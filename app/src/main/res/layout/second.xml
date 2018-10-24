@@ -3,11 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-<ListView
+
+<com.handmark.pulltorefresh.library.PullToRefreshListView
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
     android:layout_alignParentRight="true"
     android:id="@+id/myword_wordlist"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"></ListView>
+    android:layout_height="match_parent"
+    ptr:ptrAnimationStyle="flip"
+    ptr:ptrMode="both"
+    ></com.handmark.pulltorefresh.library.PullToRefreshListView>
     <com.leqienglish.view.sorted.slidbar.SideBar
         android:id="@+id/myword_wordList_sidebar"
         android:layout_alignParentRight="true"

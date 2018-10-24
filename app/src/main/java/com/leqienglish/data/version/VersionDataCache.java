@@ -18,6 +18,10 @@ import xyz.tobebetter.version.Version;
 
 import static com.leqienglish.database.Constants.VERSION_CACHE_TYPE;
 
+/**
+ * 每天只提醒一次
+ * 当前版本信息的缓存
+ */
 public class VersionDataCache extends DataCacheAbstract<Version> {
     private LOGGER logger = new LOGGER(VersionDataCache.class);
     private long currentNo = 0L;
@@ -45,6 +49,12 @@ public class VersionDataCache extends DataCacheAbstract<Version> {
 
         return versionDataCache;
     }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "VersionDataCache_update";
+    }
+
     @Override
     protected Version getFromCache() {
         List<Version> versionList = ExecuteSQL.getDatasByType(VERSION_CACHE_TYPE,Version.class);
@@ -56,7 +66,7 @@ public class VersionDataCache extends DataCacheAbstract<Version> {
 
     @Override
     protected void putCache(Version version) {
-        ExecuteSQL.delete(VERSION_CACHE_TYPE);
+
         ExecuteSQL.insertLearnE(Arrays.asList(version),null,VERSION_CACHE_TYPE);
         logger.d("insert====");
     }
@@ -132,7 +142,9 @@ public class VersionDataCache extends DataCacheAbstract<Version> {
     }
 
     @Override
-    public void remove(Version version) {
-
+    public void clearData() {
+        ExecuteSQL.delete(VERSION_CACHE_TYPE);
     }
+
+
 }

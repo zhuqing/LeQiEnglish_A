@@ -26,6 +26,9 @@ import xyz.tobebetter.entity.word.Word;
 
 import static com.leqienglish.database.Constants.WORD_TYPE;
 
+/**
+ * 单词信息的缓存
+ */
 public class WordInfoDataCache extends DataCacheAbstract<Word> {
     private LOGGER logger = new LOGGER(WordInfoDataCache.class);
     private static WordInfoDataCache wordInfoDataCache;
@@ -45,6 +48,11 @@ public class WordInfoDataCache extends DataCacheAbstract<Word> {
         wordInfoDataCache.word = word;
         wordInfoDataCache.setCacheData(null);
         return wordInfoDataCache;
+    }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "WordInfoDataCache_update";
     }
 
     @Override
@@ -194,7 +202,9 @@ public class WordInfoDataCache extends DataCacheAbstract<Word> {
     }
 
     @Override
-    public void remove(Word word) {
-
+    public void clearData() {
+        ExecuteSQL.delete(WORD_TYPE,this.word);
     }
+
+
 }

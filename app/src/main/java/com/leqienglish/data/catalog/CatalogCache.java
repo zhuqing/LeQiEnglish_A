@@ -36,6 +36,12 @@ public class CatalogCache extends DataCacheAbstract<List<Catalog>> {
 
         return catalogCache;
     }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "CatalogCache_update";
+    }
+
     @Override
     protected List<Catalog> getFromCache() {
        List<Catalog> catalogs =  ExecuteSQL.getDatasByType(CATALOG_TYPE,Catalog.class);
@@ -47,6 +53,7 @@ public class CatalogCache extends DataCacheAbstract<List<Catalog>> {
 
     @Override
     protected void putCache(List<Catalog> catalogs) {
+        clearData();
         ExecuteSQL.insertLearnE(catalogs,null,CATALOG_TYPE);
     }
 
@@ -71,7 +78,9 @@ public class CatalogCache extends DataCacheAbstract<List<Catalog>> {
     }
 
     @Override
-    public void remove(List<Catalog> catalogs) {
-
+    public void clearData() {
+        ExecuteSQL.delete(CATALOG_TYPE);
     }
+
+
 }

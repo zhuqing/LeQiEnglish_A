@@ -11,20 +11,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.content.ShowAllContentActiviey;
 import com.leqienglish.activity.word.ReciteWordsActivity;
+import com.leqienglish.data.AppRefreshManager;
+import com.leqienglish.data.RefreshI;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
-import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LQHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
-import xyz.tobebetter.entity.user.User;
 import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 
-public class UserBoardView extends RelativeLayout {
+public class UserBoardView extends RelativeLayout implements RefreshI{
+
+    public final static String REFRESH_ID = "UserBoardView";
 
     private ImageView userImage;
     private TextView allMinute;
@@ -40,6 +37,8 @@ public class UserBoardView extends RelativeLayout {
         this.allDays = this.findViewById(R.id.user_board_recite_days);
         this.reciteWordsButton = this.findViewById(R.id.user_board_recite_words);
         this.initListener();
+
+        AppRefreshManager.getInstance().regist(REFRESH_ID,this);
     }
 
     private void initListener(){
@@ -71,4 +70,16 @@ public class UserBoardView extends RelativeLayout {
     }
 
 
+    @Override
+    public void clearAndRefresh(LQHandler.Consumer<Boolean> fininshed) {
+        UserReciteRecordDataCache.getInstance().clearData();
+
+        this.load();
+    }
+
+    @Override
+    public void refresh(LQHandler.Consumer<Boolean> fininshed) {
+        this.load();
+
+    }
 }

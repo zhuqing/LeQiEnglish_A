@@ -16,11 +16,15 @@ import com.leqienglish.controller.HomeListViewController;
 
 public class HomeFragment extends Fragment {
     private View homeView;
+
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if(this.homeView == null){
             homeView = inflater.inflate(R.layout.home_view,null);
+
             new HomeListViewController(homeView).init();
         }
 

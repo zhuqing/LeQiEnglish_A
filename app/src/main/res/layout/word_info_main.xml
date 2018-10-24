@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
+    android:background="@drawable/app_background"
     android:layout_height="wrap_content">
     <LinearLayout
         android:layout_alignParentTop="true"

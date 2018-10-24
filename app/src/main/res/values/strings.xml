@@ -74,6 +74,10 @@
     <string name="continue_recite_word">继续背诵单词</string>
 
     <string name="title_word_recite">单词背诵</string>
+    <string name="title_my_word_recite">我的单词背诵</string>
+    <string name="title_content_recite">文章背诵</string>
+
+    <string name="title_no_network">没有联网</string>
 
     <string name="title_search_content">查询文章</string>
 

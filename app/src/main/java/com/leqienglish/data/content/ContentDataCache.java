@@ -10,10 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import xyz.tobebetter.entity.english.Content;
-import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 
 import static com.leqienglish.database.Constants.CONTENT_TYPE;
 
+/**
+ * Content缓存
+ */
 public class ContentDataCache extends DataCacheAbstract<Content> {
     private String contentId;
 
@@ -39,6 +41,7 @@ public class ContentDataCache extends DataCacheAbstract<Content> {
             return;
         }
 
+        this.clearData();
         ExecuteSQL.insertLearnE(Arrays.asList(content),contentId,CONTENT_TYPE);
     }
 
@@ -60,28 +63,30 @@ public class ContentDataCache extends DataCacheAbstract<Content> {
     }
 
     @Override
-    protected boolean shouldUpdate(Content content) {
-        MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
-        param.add("id", content.getId());
-        param.add("updateTime",content.getUpdateDate().toString());
+    protected boolean needUpdate() {
 
-        try {
-            Boolean shouldUpdate = this.getRestClient().get("/english/content/shouldUpdate",param,Boolean.class);
-            return shouldUpdate;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        return false;
+        return true;
+    }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "ContentDataCache_update";
     }
 
     @Override
     public void add(Content content) {
-
+        if(content == null){
+            return ;
+        }
+        ExecuteSQL.delete(CONTENT_TYPE,content.getId());
+        ExecuteSQL.insertLearnE(Arrays.asList(content),content.getId(),CONTENT_TYPE);
     }
 
     @Override
-    public void remove(Content content) {
-
+    public void clearData() {
+        ExecuteSQL.delete(CONTENT_TYPE,contentId);
     }
+
+
 }

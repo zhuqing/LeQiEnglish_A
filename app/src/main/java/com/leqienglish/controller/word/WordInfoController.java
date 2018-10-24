@@ -207,6 +207,10 @@ public class WordInfoController extends ControllerAbstract {
             });
         }
 
+        /**
+         * 跳转到Content内容界面
+         * @param wordAndSegment
+         */
         private void turnToContentActivity(WordAndSegment wordAndSegment){
             String contentId = wordAndSegment.getContentId();
 

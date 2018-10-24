@@ -14,7 +14,6 @@ import java.util.List;
 import xyz.tobebetter.entity.english.segment.WordAndSegment;
 import xyz.tobebetter.entity.word.Word;
 
-import static com.leqienglish.database.Constants.CONTENT_WORD_TYPE;
 import static com.leqienglish.database.Constants.WORD_SEGMENT_TYPE;
 
 public class WordSentenceDataCache extends DataCacheAbstract<List<WordAndSegment>> {
@@ -23,6 +22,11 @@ public class WordSentenceDataCache extends DataCacheAbstract<List<WordAndSegment
 
     public WordSentenceDataCache(Word word){
         this.word = word;
+    }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "WordSentenceDataCache_data";
     }
 
     @Override
@@ -44,6 +48,7 @@ public class WordSentenceDataCache extends DataCacheAbstract<List<WordAndSegment
         if(this.getWord() == null){
             return ;
         }
+
         logger.d("putCache,wordId="+this.getWord().getId());
         ExecuteSQL.insertLearnE(wordAndSegments,this.getWord().getId(),WORD_SEGMENT_TYPE);
 
@@ -76,9 +81,11 @@ public class WordSentenceDataCache extends DataCacheAbstract<List<WordAndSegment
     }
 
     @Override
-    public void remove(List<WordAndSegment> wordAndSegments) {
-
+    public void clearData() {
+        ExecuteSQL.delete(WORD_SEGMENT_TYPE,this.getWord().getId());
     }
+
+
 
     public Word getWord() {
         return word;

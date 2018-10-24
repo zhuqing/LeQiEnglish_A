@@ -17,8 +17,6 @@ import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.content.ReciteContentVO;
 import xyz.tobebetter.entity.user.User;
 
-import static com.leqienglish.database.Constants.MY_RECITING_ARITCLE_TYPE;
-
 
 /**
  * 正在背诵的文章的缓存
@@ -31,7 +29,10 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
 
     private LQHandler.Consumer<List<ReciteContentVO>> consumer;
 
-
+    /**
+     *我正在背诵的单词
+     */
+    public static final String MY_RECITING_ARITCLE_TYPE="MY_RECITING_ARITCLE_TYPE";
 
     private MyRecitingContentDataCache(){
 
@@ -58,15 +59,19 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
     }
 
     @Override
+    protected String getUpdateTimeType() {
+        return "MyRecitingContentDataCache_update";
+    }
+
+    @Override
     protected List<ReciteContentVO> getFromCache() {
-//        User user = UserDataCache.getInstance().getCacheData();
-//        if(user == null){
-//            return null;
-//        }
-//        List<ReciteContentVO> contents = ExecuteSQL.getDatasByType(MY_RECITING_ARITCLE_TYPE,user.getId(),ReciteContentVO.class);
-//
-//        return contents;
-        return null;
+        User user = UserDataCache.getInstance().getCacheData();
+        if(user == null){
+            return null;
+        }
+        List<ReciteContentVO> contents = ExecuteSQL.getDatasByType(MY_RECITING_ARITCLE_TYPE,user.getId(),ReciteContentVO.class);
+
+        return contents;
     }
 
     @Override
@@ -106,9 +111,17 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
             this.setCacheData(reciteContentVOS);
         }
 
-        if(consumer != null){
-            this.consumer.accept(this.getCacheData());
+    }
+
+    @Override
+    public void clearData() {
+        User user = UserDataCache.getInstance().getCacheData();
+
+        if(user == null){
+            return;
         }
+        setCacheData(null);
+        ExecuteSQL.delete(MY_RECITING_ARITCLE_TYPE,user.getId());
     }
 
     /**
@@ -160,10 +173,7 @@ public class MyRecitingContentDataCache extends DataCacheAbstract<List<ReciteCon
 
     }
 
-    @Override
-    public void remove(List<ReciteContentVO> reciteContentVOS) {
 
-    }
 
 
     public void removeByContentId(String contentId) {

@@ -49,6 +49,11 @@ public class UserReciteRecordDataCache extends DataCacheAbstract<UserReciteRecor
     }
 
     @Override
+    protected String getUpdateTimeType() {
+        return "UserReciteRecordDataCache_update";
+    }
+
+    @Override
     protected UserReciteRecord getFromCache() {
         User user = UserDataCache.getInstance().getCacheData();
         if(user == null){
@@ -67,6 +72,7 @@ public class UserReciteRecordDataCache extends DataCacheAbstract<UserReciteRecor
         if(user == null ){
             return;
         }
+        this.clearData();
         ExecuteSQL.insertLearnE(Arrays.asList(userReciteRecord),user.getId(),USER_RECITE_RECORD_TYPE);
     }
 
@@ -100,6 +106,16 @@ public class UserReciteRecordDataCache extends DataCacheAbstract<UserReciteRecor
     }
 
     @Override
+    public void clearData() {
+        User user = UserDataCache.getInstance().getCacheData();
+        if(user == null ){
+            return;
+        }
+        setCacheData(null);
+        ExecuteSQL.delete(USER_RECITE_RECORD_TYPE,user.getId());
+    }
+
+
     public void remove(UserReciteRecord userReciteRecord) {
 
     }

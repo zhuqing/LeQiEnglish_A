@@ -19,6 +19,9 @@ import xyz.tobebetter.entity.english.word.user.UserAndSegment;
 
 import static com.leqienglish.database.Constants.RECITED_SEGMENT_IN_CONTENT;
 
+/**
+ * Content下段的缓存已经背诵的段的缓存
+ */
 public class RecitedSegmentDataCache extends DataCacheAbstract<List<UserAndSegment>> {
 
     private Content content;
@@ -47,6 +50,11 @@ public class RecitedSegmentDataCache extends DataCacheAbstract<List<UserAndSegme
     }
 
     @Override
+    protected String getUpdateTimeType() {
+        return "RecitedSegmentDataCache_update";
+    }
+
+    @Override
     protected List<UserAndSegment> getFromCache() {
         List<UserAndSegment> userAndSegments = ExecuteSQL.getDatasByType(RECITED_SEGMENT_IN_CONTENT,getParentId(),UserAndSegment.class);
         if(userAndSegments==null||userAndSegments.isEmpty()){
@@ -58,6 +66,7 @@ public class RecitedSegmentDataCache extends DataCacheAbstract<List<UserAndSegme
 
     @Override
     protected void putCache(List<UserAndSegment> userAndSegments) {
+        this.clearData();
         ExecuteSQL.insertLearnE(userAndSegments,getParentId(),RECITED_SEGMENT_IN_CONTENT);
     }
 
@@ -106,7 +115,9 @@ public class RecitedSegmentDataCache extends DataCacheAbstract<List<UserAndSegme
     }
 
     @Override
-    public void remove(List<UserAndSegment> userAndSegments) {
-
+    public void clearData() {
+        ExecuteSQL.delete(RECITED_SEGMENT_IN_CONTENT,getParentId());
     }
+
+
 }

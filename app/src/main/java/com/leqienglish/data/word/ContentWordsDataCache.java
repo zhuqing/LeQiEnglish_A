@@ -14,6 +14,9 @@ import xyz.tobebetter.entity.word.Word;
 
 import static com.leqienglish.database.Constants.CONTENT_WORD_TYPE;
 
+/**
+ * 与当前content相关的单词的缓存
+ */
 public class ContentWordsDataCache extends DataCacheAbstract<List<Word>>  {
 
     public Content content;
@@ -31,7 +34,10 @@ public class ContentWordsDataCache extends DataCacheAbstract<List<Word>>  {
     }
 
 
-
+    @Override
+    protected String getUpdateTimeType() {
+        return "ContentWordsDataCache_update";
+    }
 
     @Override
     protected List<Word> getFromCache() {
@@ -39,6 +45,7 @@ public class ContentWordsDataCache extends DataCacheAbstract<List<Word>>  {
             return null;
         }
 
+        this.clearData();
         List<Word> wordList = ExecuteSQL.getDatasByType(CONTENT_WORD_TYPE,this.getContent().getId(),Word.class);
         return wordList;
     }
@@ -78,7 +85,9 @@ public class ContentWordsDataCache extends DataCacheAbstract<List<Word>>  {
     }
 
     @Override
-    public void remove(List<Word> words) {
-
+    public void clearData() {
+        ExecuteSQL.delete(CONTENT_WORD_TYPE,this.getContent().getId());
     }
+
+
 }

@@ -1,12 +1,11 @@
 package com.leqienglish.pop;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Display;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.Gravity;
+
+import com.leqienglish.R;
 
 /**
  * Created by zhuleqi on 2018/2/25.
@@ -14,32 +13,39 @@ import android.view.WindowManager;
 public class CustomDialog extends Dialog {
   //  private Activity activity;
 
+    private int marginBottom ;
+
     public CustomDialog(Context context) {
-        super(context);
+        super(context, R.style.ActionSheetStyle);
        // this.setActivity(context);
+        marginBottom = dp2px(10);
     }
+
+    private int dp2px(float dipValue) {
+        float scale = this.getContext().getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window dialogWindow = this.getWindow();
 
-     //   WindowManager m = this.getActivity().getWindowManager();
-      //  Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
-        WindowManager.LayoutParams p = dialogWindow.getAttributes(); // 获取对话框当前的参数值
-        // p.height = (int) (d.getHeight() * 0.6); // 高度设置为屏幕的0.6
-        p.width = (int) (200); // 宽度设置为屏幕的0.8
-      //  p.w
-        dialogWindow.setAttributes(p);
+
     }
 
-//    public Activity getActivity() {
-//        return activity;
-//    }
-//
-//    public void setActivity(Activity activity) {
-//        this.activity = activity;
-//    }
+    public void showDialog(){
+        getWindow().setGravity(Gravity.BOTTOM);
+        getWindow().getAttributes().y = marginBottom;
+        show();
+
+        setCancelable(true);
+        setCanceledOnTouchOutside(true);
+
+
+    }
+
+
 
 
 }

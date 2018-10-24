@@ -37,6 +37,7 @@ public class RecitingArticleListController extends ControllerAbstract {
         this.recitingArticleItemAdapter = new RecitingArticleItemAdapter(LayoutInflater.from(this.getView().getContext()));
         this.gridView.setAdapter(this.recitingArticleItemAdapter);
         this.initRadioGroup();
+        loadRecitedData();
     }
 
     private void initRadioGroup(){

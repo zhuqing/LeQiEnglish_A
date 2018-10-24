@@ -72,7 +72,7 @@ public class LoadFile {
         }
     }
 
-    public static String loadFile(String urlPath) {
+    private static String loadFile(String urlPath) {
         if (urlPath == null || urlPath.isEmpty()) {
             return "";
         }

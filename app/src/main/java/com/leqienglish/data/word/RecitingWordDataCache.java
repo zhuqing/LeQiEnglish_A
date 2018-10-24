@@ -12,7 +12,6 @@ import java.util.List;
 
 import xyz.tobebetter.entity.word.Word;
 
-import static com.leqienglish.database.Constants.MY_WORDS_TYPE;
 import static com.leqienglish.database.Constants.RECITING_WORDS_TYPE;
 
 /**
@@ -39,6 +38,11 @@ public class RecitingWordDataCache extends DataCacheAbstract<List<Word>> {
         }
 
         return recitingWordDataCache;
+    }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "RecitingWordDataCache_update";
     }
 
     @Override
@@ -88,7 +92,9 @@ public class RecitingWordDataCache extends DataCacheAbstract<List<Word>> {
     }
 
     @Override
-    public void remove(List<Word> words) {
-
+    public void clearData() {
+        ExecuteSQL.delete(RECITING_WORDS_TYPE,UserDataCache.getInstance().getCacheData().getId());
     }
+
+
 }

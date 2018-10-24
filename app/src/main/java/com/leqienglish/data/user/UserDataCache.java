@@ -1,11 +1,8 @@
 package com.leqienglish.data.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.leqienglish.R;
 import com.leqienglish.data.DataCacheAbstract;
-
 import com.leqienglish.database.ExecuteSQL;
-import com.leqienglish.sf.RestClient;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -20,6 +17,7 @@ import xyz.tobebetter.entity.user.User;
 import static com.leqienglish.database.Constants.CURRENT_USER_TYPE;
 
 /**
+ * 用户数据的缓存
  * 加载用户，或者默认创建一个临时用户。
  */
 public class UserDataCache extends DataCacheAbstract<User> {
@@ -52,6 +50,19 @@ public class UserDataCache extends DataCacheAbstract<User> {
         return this.getCacheData();
     }
 
+    /**
+     * 获取用户的Id
+     * @return
+     */
+    public String getUserId() {
+       User user = this.getUser();
+       if(user == null){
+           return "";
+       }
+
+       return user.getId();
+    }
+
     @Override
     protected User getFromCache() {
         return this.findOrCreateUser();
@@ -59,8 +70,18 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
     @Override
     protected void putCache(User user) {
-        ExecuteSQL.delete(CURRENT_USER_TYPE);
+        this.clearData();
         ExecuteSQL.insertLearnE(Arrays.asList(user), null, CURRENT_USER_TYPE);
+    }
+
+    @Override
+    protected  boolean needUpdate(){
+        return false;
+    }
+
+    @Override
+    protected String getUpdateTimeType() {
+        return "UserDataCache_update";
     }
 
     @Override
@@ -69,7 +90,7 @@ public class UserDataCache extends DataCacheAbstract<User> {
             return null;
         }
         MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
-        param.add("userId", this.getCacheData().getId());
+        param.add("id", this.getCacheData().getId());
 
 
         try {
@@ -101,16 +122,18 @@ public class UserDataCache extends DataCacheAbstract<User> {
     }
 
     @Override
-    public void remove(User user) {
-
+    public void clearData() {
+        this.setCacheData(null);
     }
+
+
 
     public boolean login(String name, String password) {
         return false;
     }
 
     /**
-     * 检验当前有没有用户登陆
+     * 检验当前有没有用户登陆,没有时创建，注册时才保存到服务器
      */
     private User findOrCreateUser() {
 
@@ -121,9 +144,9 @@ public class UserDataCache extends DataCacheAbstract<User> {
         }
 
         try {
-            User user = addTempUser();
+            User user = createTempUser();
             this.putCache(user);
-            save(user);
+            //save(user);
             return user;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -134,10 +157,12 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
     }
 
-    private User addTempUser() throws JsonProcessingException {
+    //创建临时用户
+    private User createTempUser() throws JsonProcessingException {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
-        user.setName("Mine");
+        user.setName("临客");
+        user.setCreateDate(System.currentTimeMillis());
         user.setSex(0);
         user.setStatus(Consistent.UN_SAVED_STATUS);
         return user;

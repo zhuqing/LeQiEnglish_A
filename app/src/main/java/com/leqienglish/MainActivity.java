@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,9 +25,14 @@ import com.leqienglish.fragment.HomeFragment;
 import com.leqienglish.fragment.LQFragmentAdapter;
 import com.leqienglish.fragment.SecondFrament;
 import com.leqienglish.fragment.ThirdFrament;
+import com.leqienglish.util.AppType;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.TaskUtil;
+import com.leqienglish.util.dialog.DialogUtil;
 import com.leqienglish.util.file.AndroidFileUtil;
+import com.leqienglish.util.network.NetWorkUtil;
+import com.leqienglish.util.toast.ToastUtil;
 
 import xyz.tobebetter.version.Version;
 
@@ -42,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
 
     private BottomNavigationView navigation;
+
+    private Integer rebackCount = 0;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -109,9 +117,10 @@ public class MainActivity extends AppCompatActivity {
 
         this.initViewPage();
 
-         navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        AppType.mainContext = this.getBaseContext();
     }
 
 //    @Override
@@ -141,12 +150,35 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            rebackCount++;
+           if(rebackCount == 1){
+               ToastUtil.showShort(this,"再按一次将退出乐其英语");
+               TaskUtil.runlater((t)->rebackCount = 0,4000L);
+           }else{
+               finish();
+               return super.onKeyDown(keyCode, event);
+           }
+        }
+
+        return false;
+
+    }
+
+
+
     private void initData(){
         AndroidFileUtil.application = this.getApplication();
         ExecuteSQL.init(new SqlData(this.getBaseContext()));
         UserDataCache.getInstance().load(null);
      //   this.getBaseContext().get
 
+        if(!NetWorkUtil.isConnect(this.getBaseContext())){
+            showNoNetWork();
+            return;
+        }
         VersionDataCache.getInstance().loadNewest(new LQHandler.Consumer<Version>() {
             @Override
             public void accept(Version version) {
@@ -157,14 +189,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showNoNetWork(){
+        DialogUtil.show(R.string.title_no_network,this);
+
+    }
+
+
     private void openNewVersionDialog(Version version){
-//        NewVersionDialog dialog = new NewVersionDialog(this.getApplicationContext(), version, new LQHandler.Consumer<Version>() {
-//            @Override
-//            public void accept(Version version) {
-//                logger.d("==========upgread");
-//            }
-//        });
-//        dialog.show();
+
 
         View myView = LayoutInflater.from(MainActivity.this).inflate(R.layout.newversion_dialog, null);
         TextView textView = myView.findViewById(R.id.new_version_message);

@@ -16,6 +16,9 @@ import xyz.tobebetter.entity.english.Segment;
 
 import static com.leqienglish.database.Constants.SEGMENT_TYPE;
 
+/**
+ * Content下段的缓存
+ */
 public class SegmentDataCache extends DataCacheAbstract<List<Segment>> {
 
     private Content content;
@@ -24,6 +27,12 @@ public class SegmentDataCache extends DataCacheAbstract<List<Segment>> {
         this.content = content;
 
     }
+
+    @Override
+    protected String getUpdateTimeType() {
+       return "SegmentDataCache_update";
+    }
+
     @Override
     protected List<Segment> getFromCache() {
         if(this.getContent() == null){
@@ -51,6 +60,7 @@ public class SegmentDataCache extends DataCacheAbstract<List<Segment>> {
         if(this.getContent() == null){
             return ;
         }
+        this.clearData();
         ExecuteSQL.insertLearnE(segmentList,this.getContent().getId(),SEGMENT_TYPE);
 
     }
@@ -82,9 +92,11 @@ public class SegmentDataCache extends DataCacheAbstract<List<Segment>> {
     }
 
     @Override
-    public void remove(List<Segment> segmentList) {
-
+    public void clearData() {
+        ExecuteSQL.delete(SEGMENT_TYPE,this.getContent().getId());
     }
+
+
 
     public Content getContent() {
         return content;

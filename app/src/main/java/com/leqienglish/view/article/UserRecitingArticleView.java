@@ -19,6 +19,8 @@ import com.leqienglish.R;
 import com.leqienglish.activity.content.ArticleInfoActivity;
 import com.leqienglish.activity.content.ShowAllContentActiviey;
 import com.leqienglish.activity.reciting.RecitingArticleListActivity;
+import com.leqienglish.data.AppRefreshManager;
+import com.leqienglish.data.RefreshI;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LOGGER;
@@ -36,11 +38,13 @@ import xyz.tobebetter.entity.user.User;
 import static com.leqienglish.util.BundleUtil.DATA_BL;
 
 
-public class UserRecitingArticleView extends RelativeLayout {
+public class UserRecitingArticleView extends RelativeLayout implements RefreshI{
 
     private LOGGER logger = new LOGGER(RecommendArticle.class);
 
     private Button addArticle;
+
+    public final static String REFRESH_ID = "UserRecitingArticleView";
 
     private TextView showAllRecitingArticle;
     private TextView myRecitingTitle;
@@ -69,6 +73,8 @@ public class UserRecitingArticleView extends RelativeLayout {
         showAllRecitingArticle = this.findViewById(R.id.user_reciting_show_all);
         this.gridViewAdapter = new RecitingArticleItemAdapter(LayoutInflater.from(this.recitingArticles.getContext()));
         this.initListener();
+
+        AppRefreshManager.getInstance().regist(REFRESH_ID,this);
     }
 
     public void load() {
@@ -147,5 +153,15 @@ public class UserRecitingArticleView extends RelativeLayout {
     }
 
 
+    @Override
+    public void clearAndRefresh(LQHandler.Consumer<Boolean> fininshed) {
+        MyRecitingContentDataCache.getInstance().clearData();
+        load();
+    }
 
+    @Override
+    public void refresh(LQHandler.Consumer<Boolean> fininshed) {
+
+        load();
+    }
 }

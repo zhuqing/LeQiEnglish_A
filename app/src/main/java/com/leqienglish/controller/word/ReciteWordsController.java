@@ -2,42 +2,30 @@ package com.leqienglish.controller.word;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.MainActivity;
 import com.leqienglish.R;
-import com.leqienglish.activity.content.ShowAllContentActiviey;
 import com.leqienglish.activity.word.ReciteWordsReviewActivity;
-import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.controller.ControllerAbstract;
-import com.leqienglish.data.word.MyWordDataCache;
 import com.leqienglish.data.word.RecitingWordDataCache;
 import com.leqienglish.playandrecord.LQMediaPlayer;
-import com.leqienglish.playandrecord.PlayAudio;
 import com.leqienglish.sf.LoadFile;
-import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.TaskUtil;
 import com.leqienglish.util.string.StringUtil;
 import com.leqienglish.view.word.RecitingWordListView;
 import com.leqienglish.view.word.WordInfoView;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -76,6 +64,8 @@ public class ReciteWordsController extends ControllerAbstract {
 
     private boolean playing = false;
 
+    private Boolean isWirting =  false;
+
 
 
     public ReciteWordsController(View view) {
@@ -110,14 +100,9 @@ public class ReciteWordsController extends ControllerAbstract {
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
                     tipTextView.setVisibility(View.GONE);
                 }
-                Observable.just(tipTextView).delay(3,TimeUnit.SECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<TextView>() {
-                            @Override
-                            public void accept(TextView textView) throws Exception {
-                                tipTextView.setVisibility(View.VISIBLE);
-                            }
-                        });
+
+                TaskUtil.runlater((t)->tipTextView.setVisibility(View.VISIBLE),3000L);
+
 
                 return false;
             }
@@ -157,6 +142,14 @@ public class ReciteWordsController extends ControllerAbstract {
             }
         });
 
+    }
+
+    public void setIsWirting(Boolean isWirting){
+        this.isWirting = isWirting;
+        //如果不是默写，遮挡层永远消失
+        if(!this.isWirting){
+            this.wordInfoFrame.setVisibility(View.GONE);
+        }
     }
 
     private void loadAudioFile() {
