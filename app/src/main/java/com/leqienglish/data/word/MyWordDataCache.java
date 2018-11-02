@@ -42,9 +42,6 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
     }
 
 
-    protected boolean shouldUpdate(List<Word> t) {
-        return true;
-    }
 
     @Override
     protected String getUpdateTimeType() {

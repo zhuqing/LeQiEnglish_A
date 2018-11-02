@@ -47,6 +47,7 @@
     <string name="suggestion_message_hint">请写下对我们的意见，谢谢</string>
 
     <string name="letter_numberbl_digits">0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW_</string>
+    <string name="numberbl_digits">0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW_</string>
 
     <string name="message_regist_success">注册成功！</string>
     <string name="message_regist_fail">注册失败！</string>
@@ -95,5 +96,10 @@
     <string name="reciting_article">正在背诵</string>
 
     <string name="recited_article">已经背诵</string>
+
+    <string name="finished">完成</string>
+
+    <string name="back_home">返回主页</string>
+
 
 </resources>

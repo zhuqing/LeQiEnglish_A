@@ -1,5 +1,6 @@
 package com.leqienglish.activity.word;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -7,13 +8,6 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.word.ReciteWordsReviewController;
-import com.leqienglish.util.BundleUtil;
-import com.leqienglish.view.word.RecitingWordListView;
-
-import java.util.List;
-import java.util.ArrayList;
-import xyz.tobebetter.entity.english.Segment;
-import xyz.tobebetter.entity.word.Word;
 
 public class ReciteWordsReviewActivity extends AppCompatActivity {
 
@@ -35,7 +29,7 @@ public class ReciteWordsReviewActivity extends AppCompatActivity {
         if(actionBar != null){
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-           // actionBar.setTitle(word.getWord());
+
         }
     }
 
@@ -43,8 +37,11 @@ public class ReciteWordsReviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish(); // back button
-
+                this.finish();
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), MyReciteWordsInfoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                getApplicationContext().startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);

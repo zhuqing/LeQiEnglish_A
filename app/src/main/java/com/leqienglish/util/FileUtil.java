@@ -1,14 +1,15 @@
 package com.leqienglish.util;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.os.Environment;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.UUID;
+
+import xyz.tobebetter.entity.english.Content;
+import xyz.tobebetter.entity.english.Segment;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -72,6 +73,18 @@ public class FileUtil {
         if(file.exists()){
             file.delete();
         }
+    }
+
+    public static String getPath(Content content , Segment segment){
+        if(segment.getAudioPath()!=null){
+            return segment.getAudioPath();
+        }
+
+        if(content.getAudioPath()!=null){
+            return content.getAudioPath();
+        }
+
+        return null;
     }
 
     /**

@@ -1,17 +1,16 @@
 package com.leqienglish.activity.word;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.word.ReciteWordsController;
-import com.leqienglish.controller.word.WordInfoController;
+import com.leqienglish.controller.word.WriteWordsController;
+import com.leqienglish.data.word.RecitingWordDataCache;
 import com.leqienglish.util.BundleUtil;
-
-import xyz.tobebetter.entity.word.Word;
 
 public class ReciteWordsActivity  extends AppCompatActivity {
 
@@ -22,8 +21,21 @@ public class ReciteWordsActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recite_words);
         View view  = this.findViewById(R.id.recite_words_root);
+        boolean isRecite =  this.getIntent().getExtras().getBoolean(BundleUtil.DATA,true);
+        boolean hasData =  this.getIntent().getExtras().getBoolean(BundleUtil.DATA_BL,false);
 
-        reciteWordsController = new ReciteWordsController(view);
+        if(isRecite){
+            reciteWordsController = new ReciteWordsController(view);
+
+        }else{
+            reciteWordsController = new WriteWordsController(view);
+
+        }
+
+        if(hasData){
+            reciteWordsController.setWordList(RecitingWordDataCache.getInstance().getCacheData());
+        }
+
         reciteWordsController.init();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -45,6 +57,10 @@ public class ReciteWordsActivity  extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish(); // back button
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), MyReciteWordsInfoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                getApplicationContext().startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);

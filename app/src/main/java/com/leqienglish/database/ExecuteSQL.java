@@ -419,6 +419,52 @@ public class ExecuteSQL {
      * @param type
      * @return
      */
+    public static <T> List<T> getDatasByType(String type, String parentId, Class<T> claz,int page , int pageSize) {
+
+
+       int startIndex = (page-1)*pageSize;
+
+        Cursor cursor = createCursor(type,parentId);
+        log.d("getDatasByType ,type="+type+",getCount="+cursor.getCount());
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return null;
+        }
+        if (!cursor.moveToFirst()) {
+            log.d("!cursor.moveToFirst()");
+            cursor.close();
+            return null;
+        }
+        cursor.moveToPosition(startIndex);
+
+        List<SQLEntity> jsonDatas = new ArrayList<>();
+        int count = 0;
+        do{
+            count++;
+            jsonDatas.add(executeSQL.toSqlEntity(cursor));
+        }
+        while (cursor.moveToNext()||count!=10);
+
+        cursor.close();
+        log.d("getDatasByType ,type="+type+",size="+jsonDatas.size());
+        try {
+            return ExecuteSQL.toEntity(jsonDatas, claz);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.e(e.getMessage());
+        }
+
+        return null;
+
+
+    }
+
+    /**
+     * 根据数据类型获取数据
+     *
+     * @param type
+     * @return
+     */
     public static <T> List<T> getDatasByType(String type, String parentId, Class<T> claz) {
 
 

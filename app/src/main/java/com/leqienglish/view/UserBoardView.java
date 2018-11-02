@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.word.ReciteWordsActivity;
+import com.leqienglish.activity.word.MyReciteWordsInfoActivity;
 import com.leqienglish.data.AppRefreshManager;
 import com.leqienglish.data.RefreshI;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
@@ -47,7 +47,7 @@ public class UserBoardView extends RelativeLayout implements RefreshI{
             public void onClick(View v) {
                 Intent intent = new Intent();
 
-                intent.setClass(getContext(), ReciteWordsActivity.class);
+                intent.setClass(getContext(), MyReciteWordsInfoActivity.class);
                 getContext().startActivity(intent);
             }
         });

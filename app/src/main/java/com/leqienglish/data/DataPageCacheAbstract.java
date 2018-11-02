@@ -10,8 +10,14 @@ import com.leqienglish.util.LQHandler;
  * @param <T>
  */
 public abstract class DataPageCacheAbstract<T> extends DataCacheAbstract<T> {
-    protected Integer page;
-    protected Integer pageSize;
+    /**
+     * 页码，默认是1
+     */
+    private Integer page = 1;
+    /**
+     * 每页的条数，默认是10
+     */
+    private Integer pageSize = 10;
 
 
     /**
@@ -83,4 +89,19 @@ public abstract class DataPageCacheAbstract<T> extends DataCacheAbstract<T> {
 
     protected abstract T getMoreFromService();
 
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
 }

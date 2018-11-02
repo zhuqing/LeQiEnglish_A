@@ -13,8 +13,15 @@ import com.leqienglish.R;
 import com.leqienglish.activity.word.ReciteWordsActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.RefreshI;
-import com.leqienglish.data.word.MyReciteWordReConfigDataCache;
+import com.leqienglish.data.word.MyReciteWordConfigDataCache;
+import com.leqienglish.pop.actionsheet.ActionSheet;
+import com.leqienglish.util.AppType;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.toast.ToastUtil;
+import com.leqienglish.view.word.ReciteWordNumberChangeView;
+
+import xyz.tobebetter.entity.word.ReciteWordConfig;
 
 public class MyReciteWordsInfoController extends ControllerAbstract implements RefreshI{
     private Button startReciteButton;
@@ -55,6 +62,7 @@ public class MyReciteWordsInfoController extends ControllerAbstract implements R
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
+                intent.putExtras(BundleUtil.create(BundleUtil.DATA,false));
                 intent.setClass(getView().getContext(), ReciteWordsActivity.class);
                 getView().getContext().startActivity(intent);
             }
@@ -64,6 +72,7 @@ public class MyReciteWordsInfoController extends ControllerAbstract implements R
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
+                intent.putExtras(BundleUtil.create(BundleUtil.DATA,true));
                 intent.setClass(getView().getContext(), ReciteWordsActivity.class);
                 getView().getContext().startActivity(intent);
             }
@@ -73,6 +82,16 @@ public class MyReciteWordsInfoController extends ControllerAbstract implements R
             @Override
             public void onClick(View v) {
 
+                ReciteWordNumberChangeView view = new ReciteWordNumberChangeView(getView().getContext());
+                view.setItem(MyReciteWordConfigDataCache.getInstance().getCacheData());
+
+                new ActionSheet.DialogBuilder(getView().getContext()).setCustomeView(view).addButton("修改",(cview)->{
+
+                    ReciteWordConfig newReciteWordConfig = view.getReciteWordConfig();
+                    MyReciteWordConfigDataCache.getInstance().update(newReciteWordConfig);
+                    reSetData(newReciteWordConfig);
+
+                }).create();
             }
         });
 
@@ -84,18 +103,25 @@ public class MyReciteWordsInfoController extends ControllerAbstract implements R
     @Override
     public void reload() {
 
-        MyReciteWordReConfigDataCache.getInstance().load((r)->{
-            if(r == null){
-                return;
-            }
-            this.hasReciteTextView.setText("已完成背诵"+r.getHasReciteNumber()+"/"+r.getMyWordsNumber());
-
-            if(!pullToRefreshScrollView.isRefreshing()){
+        MyReciteWordConfigDataCache.getInstance().load((r)->{
+            if(pullToRefreshScrollView.isRefreshing()){
                 pullToRefreshScrollView.onRefreshComplete();
             }
+            if(r == null){
+                ToastUtil.showShort(AppType.mainContext,"数据加载失败");
+                return;
+            }
 
+            reSetData(r);
 
         });
+    }
+
+    private void reSetData(ReciteWordConfig r){
+        this.hasReciteTextView.setText("已完成背诵"+r.getHasReciteNumber()+"/"+r.getMyWordsNumber());
+        this.changeReciteNumTextView.setText("每日背诵"+r.getReciteNumberPerDay()+"个单词");
+
+
     }
 
     @Override
@@ -105,7 +131,7 @@ public class MyReciteWordsInfoController extends ControllerAbstract implements R
 
     @Override
     public void clearAndRefresh(LQHandler.Consumer<Boolean> fininshed) {
-        MyReciteWordReConfigDataCache.getInstance().clearData();
+        MyReciteWordConfigDataCache.getInstance().clearData();
         reload();
     }
 

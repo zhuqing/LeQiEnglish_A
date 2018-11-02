@@ -91,11 +91,14 @@ public class ArticleInfoView extends RelativeLayout {
                     intent.putExtras(bundle);
 
                 }else{
+
+                    String path = FileUtil.getPath(content,segment);
+
                     Bundle bundle = BundleUtil.create(BundleUtil.DATA, segment);
-                    BundleUtil.create(bundle, BundleUtil.PATH, content.getAudioPath());
+                    BundleUtil.create(bundle, BundleUtil.PATH, path);
                     intent.putExtras(bundle);
 
-                    String filePath = FileUtil.toLocalPath(content.getAudioPath());
+                    String filePath = FileUtil.toLocalPath(path);
                     if(new File(filePath).exists()){
                         intent.setClass(getContext(), PlayAudioActivity.class);
                     }else{

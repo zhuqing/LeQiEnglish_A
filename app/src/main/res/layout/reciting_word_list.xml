@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 <GridView
-    android:numColumns="4"
+    android:numColumns="3"
     android:id="@+id/reciting_word_list_gridview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"></GridView>

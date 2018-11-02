@@ -27,6 +27,20 @@ public class LQService {
 
     public static String http ;
 
+    private static RestClient restClient;
+
+    public static  RestClient getRestClient(){
+        if (restClient == null) {
+            try {
+                restClient = new RestClient(LQService.getHttp());
+            } catch (Exception ex) {
+                restClient = new RestClient("http://www.leqienglish.com");
+            }
+
+        }
+        return restClient;
+    }
+
     public static String getHttp(){
         if(http == null){
             //http = "http://www.leqienglish.com/";

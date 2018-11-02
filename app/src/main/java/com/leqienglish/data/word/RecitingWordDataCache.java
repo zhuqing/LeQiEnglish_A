@@ -1,8 +1,10 @@
 package com.leqienglish.data.word;
 
-import com.leqienglish.data.DataCacheAbstract;
+import com.leqienglish.data.DataPageCacheAbstract;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.ExecuteSQL;
+import com.leqienglish.util.AppType;
+import com.leqienglish.util.network.NetWorkUtil;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -12,15 +14,17 @@ import java.util.List;
 
 import xyz.tobebetter.entity.word.Word;
 
-import static com.leqienglish.database.Constants.RECITING_WORDS_TYPE;
+import static com.leqienglish.database.Constants.WORD_TYPE;
 
 /**
  * 我的单词的缓存
  */
-public class RecitingWordDataCache extends DataCacheAbstract<List<Word>> {
+public class RecitingWordDataCache extends DataPageCacheAbstract<List<Word>> {
 
 
     private static RecitingWordDataCache recitingWordDataCache;
+
+
 
     private RecitingWordDataCache() {
 
@@ -47,13 +51,15 @@ public class RecitingWordDataCache extends DataCacheAbstract<List<Word>> {
 
     @Override
     protected List<Word> getFromCache() {
-        if(UserDataCache.getInstance().getCacheData() == null){
-            return null;
-        }
+        //没有联网，才从缓存中加载单词
+       if(NetWorkUtil.isConnect(AppType.mainContext)){
+           return null;
+       }
 
-        List<Word> wordList =  ExecuteSQL.getDatasByType(RECITING_WORDS_TYPE,UserDataCache.getInstance().getCacheData().getId(),Word.class);
+        int count = MyReciteWordConfigDataCache.getInstance().getReciteNumberPerDay();
+        List<Word> wordList =  ExecuteSQL.getDatasByType(WORD_TYPE,null,Word.class,this.getPage(),count);
 
-        return wordList;
+        return  wordList;
     }
 
     @Override
@@ -61,19 +67,18 @@ public class RecitingWordDataCache extends DataCacheAbstract<List<Word>> {
         if(UserDataCache.getInstance().getCacheData() == null){
             return ;
         }
+        ExecuteSQL.insertLearnE(words,null ,WORD_TYPE);
 
-        ExecuteSQL.insertLearnE(words,UserDataCache.getInstance().getCacheData().getId(),RECITING_WORDS_TYPE);
     }
 
     @Override
     protected List<Word> getFromService() {
-        if(UserDataCache.getInstance().getCacheData()== null){
-            return null;
-        }
+
         MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
-        param.add("contentId", UserDataCache.getInstance().getCacheData().getId());
+        param.add("userId", UserDataCache.getInstance().getUserId());
+        param.add("number", MyReciteWordConfigDataCache.getInstance().getReciteNumberPerDay().toString());
         try {
-            Word[] segments = this.getRestClient().get("/english/word/findAll",param,Word[].class);
+            Word[] segments = this.getRestClient().get("/english/word/findMyReciteByUserIdAndNumber",param,Word[].class);
             if(segments == null){
                 return null;
             }
@@ -93,8 +98,13 @@ public class RecitingWordDataCache extends DataCacheAbstract<List<Word>> {
 
     @Override
     public void clearData() {
-        ExecuteSQL.delete(RECITING_WORDS_TYPE,UserDataCache.getInstance().getCacheData().getId());
+
     }
 
 
+    @Override
+    protected List<Word> getMoreFromService() {
+
+        return null;
+    }
 }

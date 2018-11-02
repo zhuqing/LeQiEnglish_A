@@ -46,42 +46,42 @@ public abstract class DataCacheAbstract<T> {
      */
     protected boolean needUpdate() {
 
-        if(!NetWorkUtil.isConnect(AppType.mainContext)){
+        if (!NetWorkUtil.isConnect(AppType.mainContext)) {
             return false;
         }
 
         Long updateTime = this.getUpdateTime();
 
-        if(updateTime == 0L){
+        if (updateTime == 0L) {
 
             return true;
         }
 
 
-
         Long currentTime = System.currentTimeMillis();
 
-       return needUpdate(updateTime,currentTime);
+        return needUpdate(updateTime, currentTime);
 
     }
 
     /**
      * 是否需要更新，不在同一天就更新
+     *
      * @param lastUpdateTime
      * @param currentTime
      * @return
      */
-    public boolean needUpdate(Long lastUpdateTime,Long currentTime){
+    public boolean needUpdate(Long lastUpdateTime, Long currentTime) {
         Calendar lastUpdateC = DateUtil.toCalendar(lastUpdateTime);
         Calendar currentC = DateUtil.toCalendar(currentTime);
 
 
-       if(lastUpdateC.get(Calendar.DAY_OF_YEAR) != currentC.get(Calendar.DAY_OF_YEAR)){
-           this.insertUpdateTime();
-           return true;
-       }
+        if (lastUpdateC.get(Calendar.DAY_OF_YEAR) != currentC.get(Calendar.DAY_OF_YEAR)) {
+            this.insertUpdateTime();
+            return true;
+        }
 
-       return false;
+        return false;
 
 
     }
@@ -130,7 +130,7 @@ public abstract class DataCacheAbstract<T> {
      */
     public abstract void clearData();
 
-    protected  void delete(){
+    protected void delete() {
 
     }
 
@@ -147,7 +147,7 @@ public abstract class DataCacheAbstract<T> {
      */
     public void load(LQHandler.Consumer<T> consumer) {
 
-        if(!this.needUpdate()){
+        if (!this.needUpdate()) {
             if (this.getCacheData() != null) {
                 if (consumer != null) {
                     consumer.accept(this.cacheData);
@@ -163,16 +163,16 @@ public abstract class DataCacheAbstract<T> {
                 T t = null;
 
                 //如果需要更新先清空缓存
-                if(!needUpdate()){
+                if (!needUpdate()) {
                     t = getFromCache();
-                }else{
+                } else {
                     clearData();
                 }
 
 
                 setCacheData(t);
                 //没有网络直接返回
-                if(!NetWorkUtil.isConnect(AppType.mainContext)){
+                if (!NetWorkUtil.isConnect(AppType.mainContext)) {
                     return t;
                 }
                 if (t == null) {
@@ -199,9 +199,10 @@ public abstract class DataCacheAbstract<T> {
 
     /**
      * 加载最新的数据
+     *
      * @param consumer
      */
-    public void loadNewest(LQHandler.Consumer<T> consumer){
+    public void loadNewest(LQHandler.Consumer<T> consumer) {
         AsyncTask asyncTask = new AsyncTask<Object, Object, T>() {
             @Override
             protected T doInBackground(Object[] objects) {
@@ -249,6 +250,7 @@ public abstract class DataCacheAbstract<T> {
 
     /**
      * 在其他线程中把数据放入缓存
+     *
      * @param t
      */
     protected final void runTask(T t) {
@@ -256,7 +258,6 @@ public abstract class DataCacheAbstract<T> {
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-
                 putCache(t);
                 return null;
             }
@@ -283,11 +284,26 @@ public abstract class DataCacheAbstract<T> {
     }
 
     /**
-     * 获取缓存数据，没有从数据库中加载
+     * 获取缓存数据，没有从数据库中加载,数据库没有从服务端加载
+     *
      * @return
      */
     public T getCacheData() {
-        return cacheData;
+
+        T t = cacheData;
+        if (t != null) {
+            return t;
+        }
+
+        t = this.getFromCache();
+
+        if (t != null) {
+            this.setCacheData(t);
+            return t;
+        }
+
+        return null;
+
     }
 
     public void setCacheData(T cacheData) {
@@ -308,27 +324,28 @@ public abstract class DataCacheAbstract<T> {
     }
 
     /**
-     *插入数据更新的时间
+     * 插入数据更新的时间
      */
-    private void insertUpdateTime(){
+    private void insertUpdateTime() {
         String type = this.getUpdateTimeType();
 
         Entity entity = new Entity();
         entity.setId(type);
         entity.setCreateDate(System.currentTimeMillis());
-        ExecuteSQL.insertLearnE(Arrays.asList(entity),null,type);
+        ExecuteSQL.insertLearnE(Arrays.asList(entity), null, type);
     }
 
     /**
      * 获取数据更新的时间
+     *
      * @return
      */
-    private Long getUpdateTime(){
+    private Long getUpdateTime() {
         String type = this.getUpdateTimeType();
 
-       List<Entity> list = ExecuteSQL.getDatasByType(type,Entity.class);
+        List<Entity> list = ExecuteSQL.getDatasByType(type, Entity.class);
 
-        if(list == null || list.isEmpty()){
+        if (list == null || list.isEmpty()) {
             this.insertUpdateTime();
             return 0L;
         }

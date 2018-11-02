@@ -1,5 +1,7 @@
 package com.leqienglish.util;
 
+import android.os.AsyncTask;
+
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -25,5 +27,22 @@ public class TaskUtil {
                         }
                     }
                 });
+    }
+
+
+    /**
+     * 异步运行
+     * @param runnable
+     */
+    public static void run(Runnable runnable){
+       AsyncTask asyncTask =  new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                runnable.run();
+                return null;
+            }
+        };
+
+       asyncTask.execute();
     }
 }

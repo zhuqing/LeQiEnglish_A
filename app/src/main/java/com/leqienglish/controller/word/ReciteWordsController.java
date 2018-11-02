@@ -1,8 +1,6 @@
 package com.leqienglish.controller.word;
 
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -10,11 +8,13 @@ import android.widget.TextView;
 
 import com.leqienglish.MainActivity;
 import com.leqienglish.R;
-import com.leqienglish.activity.word.ReciteWordsReviewActivity;
+import com.leqienglish.activity.word.ReciteWordsActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.word.RecitingWordDataCache;
 import com.leqienglish.playandrecord.LQMediaPlayer;
+import com.leqienglish.pop.actionsheet.ActionSheet;
 import com.leqienglish.sf.LoadFile;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
@@ -26,11 +26,7 @@ import com.leqienglish.view.word.WordInfoView;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import xyz.tobebetter.entity.word.Word;
 
 public class ReciteWordsController extends ControllerAbstract {
@@ -43,13 +39,15 @@ public class ReciteWordsController extends ControllerAbstract {
 
     private WordInfoView wordInfoView;
 
-    private TextView tipTextView;
+    protected TextView tipTextView;
 
+    /**
+     * 每个单词的播放次数
+     */
     private final static int PLAY_TIMES = 3;
     // private ViewPager viewPager;
     private int currentPage = 1;
 
-    private int totalPage = 1;
 
     private List<Word> wordList;
 
@@ -57,14 +55,14 @@ public class ReciteWordsController extends ControllerAbstract {
 
     private FrameLayout cancelAndPause;
 
-    private FrameLayout  wordInfoFrame;
+    protected FrameLayout  wordInfoFrame;
 
 
     private RecitingWordListView recitingWordListView;
 
     private boolean playing = false;
 
-    private Boolean isWirting =  false;
+
 
 
 
@@ -75,8 +73,6 @@ public class ReciteWordsController extends ControllerAbstract {
     @Override
     public void init() {
 
-       // this.preButton = this.getView().findViewById(R.id.recite_words_pre_page);
-        //this.nextButton = this.getView().findViewById(R.id.recite_words_next_page);
         this.wordInfoView = this.getView().findViewById(R.id.recite_words_wordinfo);
         this.tipTextView = this.getView().findViewById(R.id.recite_words_tip);
         this.startButton = this.getView().findViewById(R.id.recite_words_start);
@@ -87,26 +83,14 @@ public class ReciteWordsController extends ControllerAbstract {
         this.wordInfoFrame = this.getView().findViewById(R.id.recite_words_wordinfo_framelayout);
         lqMediaPlayer = new LQMediaPlayer();
 
-        // this.viewPager = this.getView().findViewById(R.id.recite_words_viewpage);
+
         this.initListener();
         reload();
     }
 
-    private void initListener() {
+    protected void initListener() {
 
-        wordInfoFrame.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    tipTextView.setVisibility(View.GONE);
-                }
-
-                TaskUtil.runlater((t)->tipTextView.setVisibility(View.VISIBLE),3000L);
-
-
-                return false;
-            }
-        });
+        tipTextView.setVisibility(View.GONE);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,27 +128,23 @@ public class ReciteWordsController extends ControllerAbstract {
 
     }
 
-    public void setIsWirting(Boolean isWirting){
-        this.isWirting = isWirting;
-        //如果不是默写，遮挡层永远消失
-        if(!this.isWirting){
-            this.wordInfoFrame.setVisibility(View.GONE);
-        }
-    }
 
+    /**
+     * 异步加载音频文件
+     */
     private void loadAudioFile() {
-        AsyncTask asyncTask = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                for (Word word : wordList) {
-                    loadWordAudio(word,null);
-                }
-                return null;
+        TaskUtil.run(()->{
+            for (Word word : wordList) {
+                loadWordAudio(word,null);
             }
-        };
-        asyncTask.execute();
+        });
+
     }
 
+    /**
+     * 重新设置单词的界面的显示
+     * @param page
+     */
     private void reSetWord(int page) {
 
         if (wordList == null) {
@@ -180,7 +160,17 @@ public class ReciteWordsController extends ControllerAbstract {
 
     @Override
     public void reload() {
+        //如果有数据就不加载
+        if(wordList != null && !wordList.isEmpty()){
+            loadAudioFile();
+            if(playing){
+                play(currentPage);
+            }
+            return;
+        }
 
+        //情况掉缓存中的数据
+        RecitingWordDataCache.getInstance().setCacheData(null);
         RecitingWordDataCache.getInstance().load(new LQHandler.Consumer<List<Word>>() {
             @Override
             public void accept(List<Word> words) {
@@ -188,9 +178,8 @@ public class ReciteWordsController extends ControllerAbstract {
 
                     return;
                 }
-                wordList = words.subList(0,4);
-                totalPage = wordList.size();
 
+                wordList = words;
                 loadAudioFile();
                 if(playing){
                     play(currentPage);
@@ -210,22 +199,35 @@ public class ReciteWordsController extends ControllerAbstract {
         }
     }
 
-    private void showWords(){
-//        this.recitingWordListView = new RecitingWordListView(this.getView().getContext(),null);
-//
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-//                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//        recitingWordListView.setLayoutParams(params);
-//        this.recitingWordListView.load(this.wordList);
-//        this.wordInfoFrame.addView(recitingWordListView);
+    /**
+     * 背诵完成
+     */
+    protected void reciteFilished(){
+
 
         playing = false;
-        Intent intent = new Intent();
 
-        intent.setClass(getView().getContext(), ReciteWordsReviewActivity.class);
+        new ActionSheet.DialogBuilder(this.getView().getContext())
+                .addButton("再背诵一次",(v)->{
+                   currentPage = 1;
+                   play(currentPage);
 
-        getView().getContext().startActivity(intent);
+                })
+        .addButton("开始默写",(v)->{
+            Intent intent = new Intent();
+            intent.putExtras(BundleUtil.create(BundleUtil.DATA,false));
+            intent.putExtras(BundleUtil.create(BundleUtil.DATA_BL,true));
+            intent.setClass(getView().getContext(), ReciteWordsActivity.class);
+            getView().getContext().startActivity(intent);
+        })
+        .addCloseButton("返回主页",(v)->{
+            Intent intent = new Intent();
+            intent.setClass(getView().getContext(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            getView().getContext().startActivity(intent);
+        }).create();
+
+
 
     }
 
@@ -234,7 +236,7 @@ public class ReciteWordsController extends ControllerAbstract {
             return;
         }
         if (page > wordList.size()) {
-            showWords();
+            reciteFilished();
             return;
         }
 
@@ -283,16 +285,10 @@ public class ReciteWordsController extends ControllerAbstract {
             public void accept(Object o) {
 
                 //三秒后播放下一个
-                Observable.just(currentPage).delay(3L, TimeUnit.SECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Integer>() {
-                            @Override
-                            public void accept(Integer integer) throws Exception {
-                                play(currentPage++);
-                            }
-                        });
 
-
+                TaskUtil.runlater((t)->{
+                    play(++currentPage);
+                },3000L);
 
             }
         });
@@ -330,5 +326,13 @@ public class ReciteWordsController extends ControllerAbstract {
 
 
 
+    }
+
+    public List<Word> getWordList() {
+        return wordList;
+    }
+
+    public void setWordList(List<Word> wordList) {
+        this.wordList = wordList;
     }
 }

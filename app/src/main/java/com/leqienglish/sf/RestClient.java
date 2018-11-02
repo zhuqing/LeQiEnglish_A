@@ -1,10 +1,12 @@
 package com.leqienglish.sf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leqienglish.activity.load.LoadingActivity;
+import com.leqienglish.util.AppType;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.network.NetWorkUtil;
+import com.leqienglish.util.toast.ToastUtil;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,8 +26,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Objects;
-
 
 import xyz.tobebetter.entity.Message;
 
@@ -62,18 +62,24 @@ public class RestClient {
 
     public <T> T upload(String path, MultiValueMap<String, Object> value, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serverPath + "/" + path).queryParams(parameter);
 
-        HttpEntity entity = new HttpEntity(value, initHeaders());
-        //  entity.getHeaders().
-        ResponseEntity resEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Message.class, new HashMap());
-        Message resultMessage = (Message) resEntity.getBody();
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serverPath + "/" + path).queryParams(parameter);
 
-        if (resultMessage.getStatus() == Message.ERROR) {
-            throw new Exception(resultMessage.getMessage());
+            HttpEntity entity = new HttpEntity(value, initHeaders());
+            //  entity.getHeaders().
+            ResponseEntity resEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Message.class, new HashMap());
+            Message resultMessage = (Message) resEntity.getBody();
+
+            if (resultMessage.getStatus() == Message.ERROR) {
+                throw new Exception(resultMessage.getMessage());
+            }
+            return mapper.readValue(resultMessage.getData(), claz);
+        } catch (Exception ex) {
+            ToastUtil.showShort(AppType.mainContext, "服务端异常");
+            throw ex;
         }
 
-        return mapper.readValue(resultMessage.getData(), claz);
     }
 
     public <T> T get(String path, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
@@ -82,25 +88,39 @@ public class RestClient {
 
     private <T> T excute(HttpMethod method, String path, Object obj, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
 
-        if (parameter == null) {
-            parameter = new LinkedMultiValueMap<>();
-        }
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serverPath + path).queryParams(parameter);
-        HttpEntity entity = new HttpEntity(obj, initHeaders());
-        logger.d(method+":"+builder.toUriString());
 
-        ResponseEntity resEntity = restTemplate.exchange(builder.toUriString(), method, entity, Message.class);
-        Message resultMessage = (Message) resEntity.getBody();
-
-        if (resultMessage.getStatus() == Message.ERROR) {
-            throw new Exception(resultMessage.getMessage());
-        }
-        if (claz == null) {
+        if (!NetWorkUtil.isConnect(AppType.mainContext)) {
+            //ToastUtil.showShort(AppType.mainContext, "没有网络");
             return null;
         }
 
-        logger.d(resultMessage.getData());
-        return mapper.readValue(resultMessage.getData(), claz);
+        if (parameter == null) {
+            parameter = new LinkedMultiValueMap<>();
+        }
+
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serverPath + path).queryParams(parameter);
+            HttpEntity entity = new HttpEntity(obj, initHeaders());
+            logger.d(method + ":" + builder.toUriString());
+
+            ResponseEntity resEntity = restTemplate.exchange(builder.toUriString(), method, entity, Message.class);
+            Message resultMessage = (Message) resEntity.getBody();
+
+            if (resultMessage.getStatus() == Message.ERROR) {
+                ToastUtil.showShort(AppType.mainContext, "resultMessage.getMessage()");
+                throw new Exception(resultMessage.getMessage());
+            }
+            if (claz == null) {
+                return null;
+            }
+
+
+            logger.d(resultMessage.getData());
+            return mapper.readValue(resultMessage.getData(), claz);
+        } catch (Exception ex) {
+            ToastUtil.showShort(AppType.mainContext, "服务端异常");
+            throw ex;
+        }
     }
 
     private HttpHeaders initHeaders() {
@@ -159,7 +179,7 @@ public class RestClient {
         os.close();
         urlConn.disconnect();
 
-        logger.d(filePath+"\nfile ex-"+newFile.exists());
+        logger.d(filePath + "\nfile ex-" + newFile.exists());
 
     }
 

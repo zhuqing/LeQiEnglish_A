@@ -12,6 +12,9 @@ public class NetWorkUtil {
      * @return
      */
     public static boolean isConnect(Context context) {
+        if(context == null){
+            return false;
+        }
 
         if(!isNetworkConnected(context)){
             return false;

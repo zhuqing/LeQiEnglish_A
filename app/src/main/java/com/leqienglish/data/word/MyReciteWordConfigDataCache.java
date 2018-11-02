@@ -3,6 +3,7 @@ package com.leqienglish.data.word;
 import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.ExecuteSQL;
+import com.leqienglish.util.TaskUtil;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -12,27 +13,27 @@ import java.util.List;
 
 import xyz.tobebetter.entity.word.ReciteWordConfig;
 
-public class MyReciteWordReConfigDataCache extends DataCacheAbstract<ReciteWordConfig> {
+public class MyReciteWordConfigDataCache extends DataCacheAbstract<ReciteWordConfig> {
     private static final String DATA_TYPE = "MyWordConfigDataCache";
 
-    private static MyReciteWordReConfigDataCache MyReciteWordReConfigDataCache;
+    private static MyReciteWordConfigDataCache myReciteWordConfigDataCache;
 
-    private MyReciteWordReConfigDataCache() {
+    private MyReciteWordConfigDataCache() {
 
     }
 
 
-    public static MyReciteWordReConfigDataCache getInstance() {
-        if (MyReciteWordReConfigDataCache != null) {
-            return MyReciteWordReConfigDataCache;
+    public static MyReciteWordConfigDataCache getInstance() {
+        if (myReciteWordConfigDataCache != null) {
+            return myReciteWordConfigDataCache;
         }
         synchronized (MyWordDataCache.class) {
-            if (MyReciteWordReConfigDataCache == null) {
-                MyReciteWordReConfigDataCache = new MyReciteWordReConfigDataCache();
+            if (myReciteWordConfigDataCache == null) {
+                myReciteWordConfigDataCache = new MyReciteWordConfigDataCache();
             }
         }
 
-        return MyReciteWordReConfigDataCache;
+        return myReciteWordConfigDataCache;
     }
 
     @Override
@@ -49,6 +50,40 @@ public class MyReciteWordReConfigDataCache extends DataCacheAbstract<ReciteWordC
             return null;
         }
         return datas.get(0);
+    }
+
+    /**
+     *
+     * @param reciteWordConfig
+     */
+    public void update(ReciteWordConfig reciteWordConfig){
+        TaskUtil.run(()->{
+            try {
+                ReciteWordConfig reciteWordConfig1 = this.getFromCache();
+                if(reciteWordConfig.equals(reciteWordConfig1)){
+                    return;
+                }
+                this.getRestClient().put("reciteWordConfig/update",reciteWordConfig,null,ReciteWordConfig.class);
+                this.clearData();
+                this.setCacheData(reciteWordConfig);
+                this.putCache(reciteWordConfig);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    /**
+     * 获取每天背诵的单词的数量
+     * @return
+     */
+    public Integer getReciteNumberPerDay(){
+        ReciteWordConfig reciteWordConfig = this.getCacheData();
+        if(reciteWordConfig == null || reciteWordConfig.getReciteNumberPerDay() == null){
+            return 10;
+        }
+        return reciteWordConfig.getReciteNumberPerDay();
     }
 
     @Override

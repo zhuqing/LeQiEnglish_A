@@ -8,8 +8,10 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.view.adapter.LeQiBaseAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xyz.tobebetter.entity.Entity;
-import xyz.tobebetter.entity.english.Catalog;
 
 public abstract class SimpleItemAdapter<T extends Entity> extends LeQiBaseAdapter<T> {
 
@@ -17,9 +19,14 @@ public abstract class SimpleItemAdapter<T extends Entity> extends LeQiBaseAdapte
         TextView textView;
     }
 
+
+
+    public List<T> selectedList = new ArrayList<>();
+
     protected abstract String toString(T t);
 
     protected abstract void setStyle(TextView textView);
+
 
 
     public SimpleItemAdapter(LayoutInflater mInflater) {
@@ -45,6 +52,9 @@ public abstract class SimpleItemAdapter<T extends Entity> extends LeQiBaseAdapte
         }
 
         holder.textView.setText(this.toString(t));
+
+
+
 
         return convertView;
 
