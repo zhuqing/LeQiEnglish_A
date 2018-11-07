@@ -18,6 +18,10 @@ public class UserLoginActivity extends AppCompatActivity {
         View view = this.findViewById(R.id.login_main_root);
 
         loginController = new LoginController(view);
+        loginController.setActivity(this);
         loginController.init();
     }
+
+
+
 }

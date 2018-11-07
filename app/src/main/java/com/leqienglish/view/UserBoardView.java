@@ -2,6 +2,8 @@ package com.leqienglish.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +16,12 @@ import com.leqienglish.R;
 import com.leqienglish.activity.word.MyReciteWordsInfoActivity;
 import com.leqienglish.data.AppRefreshManager;
 import com.leqienglish.data.RefreshI;
+import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
+import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.LQHandler;
 
+import xyz.tobebetter.entity.user.User;
 import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 
 public class UserBoardView extends RelativeLayout implements RefreshI{
@@ -67,6 +72,22 @@ public class UserBoardView extends RelativeLayout implements RefreshI{
         });
 
 
+        loadImage();
+
+    }
+
+    private void loadImage(){
+        User user = UserDataCache.getInstance().getUser();
+
+        if(user == null || user.getImagePath() == null){
+            return;
+        }
+
+        LoadFile.loadFile(user.getImagePath(),(path)->{
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            userImage.setImageBitmap(bitmap);
+
+        });
     }
 
 

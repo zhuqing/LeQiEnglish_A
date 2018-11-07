@@ -1,8 +1,11 @@
 package com.leqienglish.data.user;
 
+import android.os.AsyncTask;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.database.ExecuteSQL;
+import com.leqienglish.util.LQHandler;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -44,23 +47,24 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
     public User getUser() {
         if (this.getCacheData() != null) {
-            return this.findOrCreateUser();
+            return this.getCacheData();
         }
 
-        return this.getCacheData();
+        return this.findOrCreateUser();
     }
 
     /**
      * 获取用户的Id
+     *
      * @return
      */
     public String getUserId() {
-       User user = this.getUser();
-       if(user == null){
-           return "";
-       }
+        User user = this.getUser();
+        if (user == null) {
+            return "";
+        }
 
-       return user.getId();
+        return user.getId();
     }
 
     @Override
@@ -71,11 +75,12 @@ public class UserDataCache extends DataCacheAbstract<User> {
     @Override
     protected void putCache(User user) {
         this.clearData();
+
         ExecuteSQL.insertLearnE(Arrays.asList(user), null, CURRENT_USER_TYPE);
     }
 
     @Override
-    protected  boolean needUpdate(){
+    protected boolean needUpdate() {
         return false;
     }
 
@@ -86,10 +91,10 @@ public class UserDataCache extends DataCacheAbstract<User> {
 
     @Override
     protected User getFromService() {
-        if(this.getCacheData() == null){
+        if (this.getCacheData() == null) {
             return null;
         }
-        MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
         param.add("id", this.getCacheData().getId());
 
 
@@ -104,9 +109,9 @@ public class UserDataCache extends DataCacheAbstract<User> {
         return null;
     }
 
-    private User save(User user){
+    private User save(User user) {
         try {
-             user = this.getRestClient().post("/user/create", this.getCacheData(), null, User.class);
+            user = this.getRestClient().post("/user/create", this.getCacheData(), null, User.class);
             this.add(user);
             return user;
         } catch (Exception e) {
@@ -115,17 +120,64 @@ public class UserDataCache extends DataCacheAbstract<User> {
         }
     }
 
+    public User findByOtherSysId(String otherSysId) {
+        MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+        param.add("otherSysId", otherSysId);
+
+        try {
+            User user = this.getRestClient().get("/user/findUserByOtherSysId", param, User.class);
+            return user;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void regist(final User user, LQHandler.Consumer<User> consumer) {
+        AsyncTask asyncTask = new AsyncTask<Object, Object, User>() {
+            @Override
+            protected User doInBackground(Object[] objects) {
+
+                try {
+
+
+                    return getRestClient().post("/user/regist", user, null, User.class);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(User t) {
+                super.onPostExecute(t);
+                 add(t);
+                if (consumer != null) {
+                    consumer.accept(t);
+                }
+
+            }
+
+        };
+
+        asyncTask.execute();
+
+
+    }
+
     @Override
     public void add(User user) {
-        this.setCacheData(user);
+
         this.putCache(user);
+        this.setCacheData(user);
     }
 
     @Override
     public void clearData() {
         this.setCacheData(null);
+        ExecuteSQL.delete(CURRENT_USER_TYPE);
     }
-
 
 
     public boolean login(String name, String password) {
@@ -161,7 +213,7 @@ public class UserDataCache extends DataCacheAbstract<User> {
     private User createTempUser() throws JsonProcessingException {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
-        user.setName("临客");
+        user.setName("Friend");
         user.setCreateDate(System.currentTimeMillis());
         user.setSex(0);
         user.setStatus(Consistent.UN_SAVED_STATUS);

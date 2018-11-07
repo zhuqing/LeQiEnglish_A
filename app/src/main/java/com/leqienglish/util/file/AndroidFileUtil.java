@@ -45,4 +45,13 @@ public class AndroidFileUtil extends FileUtil {
         sb.append(File.separatorChar).append(fileName("mp3"));
         return sb.toString();
     }
+
+
+    public String createImagePath(String fileName){
+        StringBuffer sb = new StringBuffer();
+        sb.append(appRootPath()).append(File.separatorChar).append(imageDirectory()).append(File.separatorChar);
+        initDirectory(sb.toString());
+        sb.append(fileName);
+        return sb.toString();
+    }
 }

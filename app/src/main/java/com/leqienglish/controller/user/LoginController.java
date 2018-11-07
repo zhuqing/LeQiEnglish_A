@@ -1,5 +1,6 @@
 package com.leqienglish.controller.user;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.text.InputType;
@@ -7,14 +8,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.leqienglish.MainActivity;
 import com.leqienglish.R;
-import com.leqienglish.activity.suggestion.SuggestionActivity;
 import com.leqienglish.activity.user.UserRegistActivity;
 import com.leqienglish.controller.ControllerAbstract;
+import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.md5.MD5;
 import com.leqienglish.util.string.StringUtil;
@@ -23,9 +24,19 @@ import com.leqienglish.util.toast.ToastUtil;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.wechat.friends.Wechat;
+import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.user.User;
 
 public class LoginController extends ControllerAbstract {
+
+    private static final LOGGER LOG = new LOGGER(LoginController.class);
+
     private EditText userName;
     private EditText password;
 
@@ -35,6 +46,9 @@ public class LoginController extends ControllerAbstract {
     private Button weiXinButton;
     private Button weiBoButton;
     private Button qqButton;
+
+    private Activity activity;
+
 
 
     public LoginController(View view) {
@@ -85,25 +99,85 @@ public class LoginController extends ControllerAbstract {
         this.weiXinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Platform weixin = ShareSDK.getPlatform(Wechat.NAME);
 
+                thirdPartLogin(weixin);
             }
         });
 
         this.weiBoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Platform qq = ShareSDK.getPlatform(SinaWeibo.NAME);
+                thirdPartLogin(qq);
             }
         });
 
         this.qqButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Platform qq = ShareSDK.getPlatform(QQ.NAME);
+              thirdPartLogin(qq);
 
             }
         });
     }
 
+
+
+
+    private void thirdPartLogin( Platform qq){
+        if(qq.isAuthValid()){
+            qq.removeAccount(true);
+        }
+        qq.setPlatformActionListener(new PlatformActionListener() {
+            @Override
+            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+
+                if(platform == null ){
+                    ToastUtil.showShort(getView().getContext(),"授权失败");
+                    return;
+                }
+                User user = UserDataCache.getInstance().findByOtherSysId(platform.getDb().getUserId());
+
+                if(user != null){
+                    UserDataCache.getInstance().add(user);
+                    toMainActivity();
+                    return;
+                }else{
+                    user = new User();
+                    user.setImagePath(platform.getDb().getUserIcon());
+                    user.setName(platform.getDb().getUserName());
+                    user.setOtherSysId(platform.getDb().getUserId());
+                    //81FEA2389A0359773B9234228F0426EC
+                    if("m".equals(platform.getDb().getUserGender())){
+                        user.setSex(Consistent.MAN);
+                    }else{
+                        user.setSex(Consistent.WOMEN);
+                    }
+                    UserDataCache.getInstance().regist(user,(u)->{
+                        toMainActivity();
+                    });
+                }
+
+
+
+                //  LOG.d( hashMap.toString());
+            }
+
+            @Override
+            public void onError(Platform platform, int i, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onCancel(Platform platform, int i) {
+
+            }
+        });
+
+        qq.authorize();
+    }
 
     private void startLogin(){
         String userName = this.userName.getText().toString();
@@ -145,6 +219,10 @@ public class LoginController extends ControllerAbstract {
         getView().getContext().startActivity(intent);
     }
 
+
+    public void setActivity(Activity activity){
+        this.activity = activity;
+    }
 
     @Override
     public void reload() {

@@ -220,7 +220,8 @@ public class ExecuteSQL {
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
             db.beginTransaction();
             db.delete(CACHE_TABLE, Constants.ID+"=?", new String[]{id});
-            db.endTransaction();
+            db.setTransactionSuccessful();
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -239,9 +240,8 @@ public class ExecuteSQL {
     public static boolean delete(String type) {
         try {
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
-            db.beginTransaction();
+
             db.delete(CACHE_TABLE, Constants.TYPE+"=?", new String[]{type});
-            db.endTransaction();
 
         } catch (Exception e) {
             e.printStackTrace();

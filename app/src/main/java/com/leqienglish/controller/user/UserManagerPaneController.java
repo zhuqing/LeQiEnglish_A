@@ -23,6 +23,7 @@ import com.leqienglish.activity.word.MyReciteWordsInfoActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.RefreshI;
 import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.data.user.UserReciteRecordDataCache;
 import com.leqienglish.data.version.VersionDataCache;
 import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.LQHandler;
@@ -226,7 +227,8 @@ public class UserManagerPaneController extends ControllerAbstract implements Ref
     //重新加载用户数据
     @Override
     public void clearAndRefresh(LQHandler.Consumer<Boolean> fininshed) {
-
+        UserReciteRecordDataCache.getInstance().clearData();
+        refresh(fininshed);
     }
 
     //刷新用户数据
@@ -236,7 +238,7 @@ public class UserManagerPaneController extends ControllerAbstract implements Ref
 
         this.userNameTextView.setText(user.getName());
         if(user.getCreateDate()!=null)
-        this.registDateTextView.setText(DateUtil.toDateFmt(Long.valueOf(user.getCreateDate()), DateUtil.YYYYMMDD_CHN2));
+           this.registDateTextView.setText(DateUtil.toDateFmt(Long.valueOf(user.getCreateDate()), DateUtil.YYYYMMDD_CHN2));
 
 
         LoadFile.loadFile(user.getImagePath(), (path) -> {

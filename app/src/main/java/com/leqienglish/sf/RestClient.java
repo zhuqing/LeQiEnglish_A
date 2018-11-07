@@ -118,7 +118,7 @@ public class RestClient {
             logger.d(resultMessage.getData());
             return mapper.readValue(resultMessage.getData(), claz);
         } catch (Exception ex) {
-            ToastUtil.showShort(AppType.mainContext, "服务端异常");
+          //  ToastUtil.showShort(AppType.mainContext, "服务端异常");
             throw ex;
         }
     }
@@ -139,12 +139,17 @@ public class RestClient {
      * @throws Exception
      */
     public void downLoad(String path, String filePath, LQHandler.Consumer<Double> hasdownload) throws MalformedURLException, IOException, Exception {
+        downloadByFullPath(serverPath + "/" + path,filePath,hasdownload);
+    }
+
+
+    public void downloadByFullPath(String httpPath , String filePath, LQHandler.Consumer<Double> hasdownload ) throws Exception {
         FileUtil.delete(filePath);
         File newFile = new File(filePath);
         newFile.createNewFile();
         //创建一个URL对象
-        URL url = new URL(serverPath + "/" + path);
-        logger.d(serverPath + "/" + path);
+        URL url = new URL(httpPath);
+        logger.d(httpPath);
         //创建一个HTTP链接
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.setConnectTimeout(300000);
@@ -180,7 +185,6 @@ public class RestClient {
         urlConn.disconnect();
 
         logger.d(filePath + "\nfile ex-" + newFile.exists());
-
     }
 
 }

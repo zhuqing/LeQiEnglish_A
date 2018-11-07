@@ -33,6 +33,7 @@ import com.leqienglish.util.dialog.DialogUtil;
 import com.leqienglish.util.file.AndroidFileUtil;
 import com.leqienglish.util.network.NetWorkUtil;
 import com.leqienglish.util.toast.ToastUtil;
+import com.mob.MobSDK;
 
 import xyz.tobebetter.version.Version;
 
@@ -121,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         AppType.mainContext = this.getBaseContext();
+        MobSDK.init(this);
+       // UMConfigure.init(this,"5be13eb5f1f556358100025f","Umeng",UMConfigure.DEVICE_TYPE_PHONE,"6b4d3870d5bd34d584a486288bf4a998");
+        //PlatformConfig.setQQZone("101515797","efe34c73fd1182ffcbded86368aef2b6");
     }
 
 //    @Override

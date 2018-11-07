@@ -58,6 +58,14 @@ public class AppRefreshManager {
     }
 
     /**
+     * 刷新所有缓存
+     */
+    public void clearAndRefreshAll(){
+        for(RefreshI refreshI : refreshIMap.values()){
+            refreshI.clearAndRefresh(null);
+        }
+    }
+    /**
      * 根据Id刷新缓存
      * @param ids
      */
