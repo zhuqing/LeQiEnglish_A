@@ -8,26 +8,55 @@ MobSDK {
     ShareSDK {
         //平台配置信息
         devInfo {
-            SinaWeibo {
-                appKey "4272638368"
-                appSecret "d544c9e0d2f43e9b0029c599326af8a1"
-                callbackUri "http://www.sharesdk.cn"
-                shareByAppClient false
-            }
-            Wechat {
+
+            WechatMoments {
+                id "1"
+                sortId "1"
                 appId "wxec6cca95f8f8627b"
                 appSecret "5ad231774720aa3d0d83509211ba7cae"
+                bypassApproval  "false"
             }
-            QQ {
+            SinaWeibo {
+                id "2"
+                sortId "2"
+                appKey "4272638368"
+                appSecret "d544c9e0d2f43e9b0029c599326af8a1"
+                callbackUri "http://www.leqienglish.com"
+                shareByAppClient true
+
+            }
+
+            QZone {
+                id "3"
+                sortId "3"
                 appId "101515797"
                 appKey "efe34c73fd1182ffcbded86368aef2b6"
                 shareByAppClient true
             }
-//            Facebook {
-//                appKey "1412473428822331"
-//                appSecret "a42f4f3f867dc947b9ed6020c2e93558"
-//                callbackUri "https://mob.com"
-//            }
+
+            QQ {
+                id "4"
+                sortId "4"
+                appId "101515797"
+                appKey "efe34c73fd1182ffcbded86368aef2b6"
+                shareByAppClient true
+            }
+
+
+            Wechat {
+                id "5"
+                sortId "5"
+                appId "wxec6cca95f8f8627b"
+                appSecret "5ad231774720aa3d0d83509211ba7cae"
+            }
+
+            WechatFavorite {
+                id "6"
+                sortId "6"
+                appId "wxec6cca95f8f8627b"
+                appSecret "5ad231774720aa3d0d83509211ba7cae"
+                Enable = "true"
+            }
         }
     }
 

@@ -17,6 +17,7 @@ import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.md5.MD5;
 import com.leqienglish.util.string.StringUtil;
 import com.leqienglish.util.toast.ToastUtil;
@@ -29,7 +30,6 @@ import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.tencent.qq.QQ;
-import cn.sharesdk.wechat.friends.Wechat;
 import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.user.User;
 
@@ -99,9 +99,10 @@ public class LoginController extends ControllerAbstract {
         this.weiXinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Platform weixin = ShareSDK.getPlatform(Wechat.NAME);
+                SharePlatform.onShare(getView().getContext(),"乐其英语，乐在其中","fenxiang","http://www.leqienglish.com/res/static/images/logo.png","http://www.leqienglish.com");
+                //Platform weixin = ShareSDK.getPlatform(Wechat.NAME);
 
-                thirdPartLogin(weixin);
+                //thirdPartLogin(weixin);
             }
         });
 
@@ -127,6 +128,7 @@ public class LoginController extends ControllerAbstract {
 
 
     private void thirdPartLogin( Platform qq){
+       qq.SSOSetting(false);
         if(qq.isAuthValid()){
             qq.removeAccount(true);
         }
