@@ -27,8 +27,11 @@ public class PlayAudioThread extends DataBaseTask<String> {
     private static  PlayAudioThread playAudioThread;
 
 
-
-
+    /**
+     * 开始播放录音
+     * @param list
+     * @param handler
+     */
     public void playRecord(List<short[]> list, LQHandler.Consumer handler){
         if(this.isRunning()){
             this.destroy();

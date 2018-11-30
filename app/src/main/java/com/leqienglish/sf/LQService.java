@@ -50,6 +50,14 @@ public class LQService {
         return http;
     }
 
+    /**
+     * 获取App的logo的路径
+     * @return
+     */
+    public static String getLogoPath(){
+       return LQService.getHttp()+"res/static/images/logo.png";
+    }
+
     public static <T> void put(String path ,Object value, Class claz,Map<String,?> variables,LQHandler.Consumer<T> consumer){
         new HttpPutTask(getHttp()+path,value,claz,consumer,variables).execute();
     }

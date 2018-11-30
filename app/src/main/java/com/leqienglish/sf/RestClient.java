@@ -107,7 +107,7 @@ public class RestClient {
             Message resultMessage = (Message) resEntity.getBody();
 
             if (resultMessage.getStatus() == Message.ERROR) {
-                ToastUtil.showShort(AppType.mainContext, "resultMessage.getMessage()");
+
                 throw new Exception(resultMessage.getMessage());
             }
             if (claz == null) {

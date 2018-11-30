@@ -12,6 +12,7 @@ import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.word.RecitingWordDataCache;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.TaskUtil;
 import com.leqienglish.view.word.RecitingWordListView;
 
@@ -30,6 +31,7 @@ public class ReciteWordsReviewController extends ControllerAbstract {
     private Button continueReciteWordButton;
     private TextView closeButton;
     private List<Word> wordList;
+    private Button shareButton;
     public ReciteWordsReviewController(View view ) {
         super(view);
         //this.wordList = wordList;
@@ -41,6 +43,8 @@ public class ReciteWordsReviewController extends ControllerAbstract {
         this.recitingWordListView = (RecitingWordListView) this.findViewById(R.id.recite_words_review_wordlist);
         this.finishedButton = (Button) this.findViewById(R.id.recite_words_review_finished);
         this.continueReciteWordButton = (Button) this.findViewById(R.id.recite_words_review_continue);
+        this.shareButton = (Button) this.findViewById(R.id.recite_words_review_share);
+
         this.initListener();
         this.reload();
     }
@@ -56,6 +60,16 @@ public class ReciteWordsReviewController extends ControllerAbstract {
                intent.setClass(getView().getContext(), MainActivity.class);
                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                getView().getContext().startActivity(intent);
+
+           }
+       });
+
+       this.shareButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               String userName = UserDataCache.getInstance().getUserName();
+               String userId = UserDataCache.getInstance().getUserId();
+               SharePlatform.onShare(getView().getContext(),userName+"完成了单词听写",userName+"完成了单词听写",LQService.getHttp()+"/res/static/images/logo.png",LQService.getHttp()+"/html/share/shareWordRecite.html?userId="+userId);
 
            }
        });

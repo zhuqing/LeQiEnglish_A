@@ -1,13 +1,13 @@
 package com.leqienglish.activity.suggestion;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.leqienglish.R;
+import com.leqienglish.activity.LeQiAppCompatActivity;
 import com.leqienglish.controller.suggestion.SuggestionController;
 
-public class SuggestionActivity extends AppCompatActivity {
+public class SuggestionActivity extends LeQiAppCompatActivity {
 
 
     private View mainView;
@@ -21,5 +21,10 @@ public class SuggestionActivity extends AppCompatActivity {
         this.mainView = this.findViewById(R.id.suggestion_layout_main);
         this.suggestionController = new SuggestionController(mainView);
         this.suggestionController.init();
+    }
+
+    @Override
+    protected String getActionBarTitle() {
+        return "感谢您的宝贵意见";
     }
 }

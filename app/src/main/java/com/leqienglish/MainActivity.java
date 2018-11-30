@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                ToastUtil.showShort(this,"再按一次将退出乐其英语");
                TaskUtil.runlater((t)->rebackCount = 0,4000L);
            }else{
-               finish();
+               this.finishAffinity();
                return super.onKeyDown(keyCode, event);
            }
         }

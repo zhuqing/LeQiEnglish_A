@@ -7,9 +7,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.leqienglish.MainActivity;
 import com.leqienglish.R;
 import com.leqienglish.activity.user.UserRegistActivity;
 import com.leqienglish.controller.ControllerAbstract;
@@ -17,7 +15,6 @@ import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
-import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.md5.MD5;
 import com.leqienglish.util.string.StringUtil;
 import com.leqienglish.util.toast.ToastUtil;
@@ -28,7 +25,6 @@ import java.util.Map;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.tencent.qq.QQ;
 import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.user.User;
@@ -41,7 +37,8 @@ public class LoginController extends ControllerAbstract {
     private EditText password;
 
     private Button login;
-    private TextView regist;
+    private Button regist;
+    private Button cancelButton;
 
     private Button weiXinButton;
     private Button weiBoButton;
@@ -66,12 +63,13 @@ public class LoginController extends ControllerAbstract {
         login = this.getView().findViewById(R.id.login_main_login);
 
         regist = this.getView().findViewById(R.id.login_main_regist);
+        this.cancelButton = this.getView().findViewById(R.id.login_main_cancel);
 
         regist.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
         this.qqButton = this.getView().findViewById(R.id.login_main_qq);
-        this.weiBoButton = this.getView().findViewById(R.id.login_main_weibo);
-        this.weiXinButton = this.getView().findViewById(R.id.login_main_weixin);
+//        this.weiBoButton = this.getView().findViewById(R.id.login_main_weibo);
+//        this.weiXinButton = this.getView().findViewById(R.id.login_main_weixin);
 
         this.initListener();
     }
@@ -95,24 +93,31 @@ public class LoginController extends ControllerAbstract {
             }
         });
 
-
-        this.weiXinButton.setOnClickListener(new View.OnClickListener() {
+        this.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharePlatform.onShare(getView().getContext(),"乐其英语，乐在其中","fenxiang","http://www.leqienglish.com/res/static/images/logo.png","http://www.leqienglish.com");
-                //Platform weixin = ShareSDK.getPlatform(Wechat.NAME);
-
-                //thirdPartLogin(weixin);
+                goBackHome();
             }
         });
 
-        this.weiBoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Platform qq = ShareSDK.getPlatform(SinaWeibo.NAME);
-                thirdPartLogin(qq);
-            }
-        });
+
+//        this.weiXinButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SharePlatform.onShare(getView().getContext(),"乐其英语，乐在其中","fenxiang","http://www.leqienglish.com/res/static/images/logo.png","http://www.leqienglish.com");
+//                //Platform weixin = ShareSDK.getPlatform(Wechat.NAME);
+//
+//                //thirdPartLogin(weixin);
+//            }
+//        });
+
+//        this.weiBoButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                Platform qq = ShareSDK.getPlatform(SinaWeibo.NAME);
+////                thirdPartLogin(qq);
+//            }
+//        });
 
         this.qqButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +149,7 @@ public class LoginController extends ControllerAbstract {
 
                 if(user != null){
                     UserDataCache.getInstance().add(user);
-                    toMainActivity();
+                    goBackHome();
                     return;
                 }else{
                     user = new User();
@@ -158,7 +163,7 @@ public class LoginController extends ControllerAbstract {
                         user.setSex(Consistent.WOMEN);
                     }
                     UserDataCache.getInstance().regist(user,(u)->{
-                        toMainActivity();
+                        goBackHome();
                     });
                 }
 
@@ -209,17 +214,12 @@ public class LoginController extends ControllerAbstract {
                     return;
                 }
                 ToastUtil.showShort(getView().getContext(),"success");
-                toMainActivity();
+                goBackHome();
             }
         });
     }
 
-    private void toMainActivity(){
-        Intent intent = new Intent();
-        intent.setClass(getView().getContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        getView().getContext().startActivity(intent);
-    }
+
 
 
     public void setActivity(Activity activity){

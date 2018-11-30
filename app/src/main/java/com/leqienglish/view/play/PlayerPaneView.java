@@ -171,9 +171,15 @@ public class PlayerPaneView extends RelativeLayout {
 
         this.closeRecordPlay();
         this.closeRecord();
-        this.closeAudioPlay(PlayMediaPlayer.PAUSE_NOT_CHAGNE);
+        this.closeAudioPlay(PlayMediaPlayer.COMPLETE);
 
 
+    }
+
+    public void stop(){
+        this.closeRecordPlay();
+        this.closeRecord();
+        this.closeAudioPlay(PlayMediaPlayer.PAUSE_CHAGNE);
     }
 
 

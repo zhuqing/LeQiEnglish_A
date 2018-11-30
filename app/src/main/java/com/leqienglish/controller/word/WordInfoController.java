@@ -174,7 +174,7 @@ public class WordInfoController extends ControllerAbstract {
 
             Spanned result = Html.fromHtml((i + 1) + "." + addStyle(getEnStr(actical.getScentence())));
             holder.title.setText(result);
-            holder.chTextView.setText(this.getEnStr(actical.getScentence()));
+            holder.chTextView.setText(this.getCh(actical.getScentence()));
             holder.toContent.setText("来自："+actical.getContentTitle());
 
             holder.play.setTag(actical);

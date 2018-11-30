@@ -16,15 +16,7 @@ MobSDK {
                 appSecret "5ad231774720aa3d0d83509211ba7cae"
                 bypassApproval  "false"
             }
-            SinaWeibo {
-                id "2"
-                sortId "2"
-                appKey "4272638368"
-                appSecret "d544c9e0d2f43e9b0029c599326af8a1"
-                callbackUri "http://www.leqienglish.com"
-                shareByAppClient true
 
-            }
 
             QZone {
                 id "3"

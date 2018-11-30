@@ -8,9 +8,7 @@ import com.leqienglish.util.LQHandler;
 
 import java.io.IOException;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.schedulers.RxThreadFactory;
 import xyz.tobebetter.entity.english.play.AudioPlayPoint;
 
 public class PlayMediaPlayer {
@@ -53,6 +51,8 @@ public class PlayMediaPlayer {
         completeType = type;
 
         mediaPlayer.pause();
+
+
     }
 
     public void play(AudioPlayPoint audioPlayPoint, LQHandler.Consumer playComplete) {
@@ -170,6 +170,7 @@ public class PlayMediaPlayer {
 
     public void setResource(String resource) throws IOException {
         this.resource = resource;
+        mediaPlayer = null;
         initMediaPlayer();
     }
 

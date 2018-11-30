@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.segment.RecitingSegmentActivity;
+import com.leqienglish.activity.segment.SegmentWordsActivity;
 import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.data.content.RecitedSegmentDataCache;
 import com.leqienglish.data.user.UserDataCache;
@@ -22,6 +23,7 @@ import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.SharePlatform;
 import com.leqienglish.view.play.PlayerPaneView;
 import com.leqienglish.view.word.WordInfoView;
 
@@ -49,6 +51,8 @@ public class PlayAudioAController extends ControllerAbstract {
 
     private LinearLayout frameLayout;
     private TextView titleView;
+    private Button shareButton;
+    private Button wordsButton;
 
     private PlayerPaneView paneView;
 
@@ -74,8 +78,8 @@ public class PlayAudioAController extends ControllerAbstract {
         this.frameLayout = this.getView().findViewById(R.id.play_audio_layout);
         this.paneView = new PlayerPaneView(this.getView().getContext(), null);
         this.startReciteButton = (Button) this.findViewById(R.id.play_audio_start_recite);
-
-
+        this.shareButton = (Button) this.findViewById(R.id.play_audio_share);
+        this.wordsButton = (Button) this.findViewById(R.id.play_audio_segment_word);
         this.views = new ArrayList<>();
 
         try {
@@ -112,6 +116,34 @@ public class PlayAudioAController extends ControllerAbstract {
                 intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
                 intent.setClass(getView().getContext(), RecitingSegmentActivity.class);
                 getView().getContext().startActivity(intent);
+
+            }
+        });
+
+        this.wordsButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
+                intent.setClass(getView().getContext(), SegmentWordsActivity.class);
+                getView().getContext().startActivity(intent);
+            }
+        });
+
+        this.shareButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                if(segment == null){
+                    return;
+                }
+                String userName = UserDataCache.getInstance().getUserName();
+                String userId = UserDataCache.getInstance().getUserId();
+                String hasFinished = "刚刚完成了\""+segment.getTitle()+"\"的背诵";
+                String segmentId = segment.getId();
+                StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
+                stringBuilder.append("html/share/shareContent.html").append("?userId=").append(userId).append("&segmentId=").append(segmentId);
+                SharePlatform.onShare(getView().getContext(),userName+hasFinished,"我"+hasFinished,LQService.getLogoPath(),stringBuilder.toString());
 
             }
         });
@@ -188,7 +220,7 @@ public class PlayAudioAController extends ControllerAbstract {
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.title = view.findViewById(R.id.play_audio_text);
             viewHolder.play_audio_playerpane = view.findViewById(R.id.play_audio_playerpane);
-
+            viewHolder.ch = view.findViewById(R.id.play_audio_text_ch);
             viewHolder.view = view;
 
             viewHolder.title.setOnTouchListener(new View.OnTouchListener() {
@@ -261,6 +293,10 @@ public class PlayAudioAController extends ControllerAbstract {
 
             viewHolder.audioPlayPoint = audioPlayPoint;
             viewHolder.title.setText(audioPlayPoint.getEnText());
+            if(audioPlayPoint.getChText()!=null){
+                viewHolder.ch.setText(audioPlayPoint.getChText());
+            }
+
             view.setTag(viewHolder);
             this.views.add(view);
             this.frameLayout.addView(view);
@@ -303,10 +339,12 @@ public class PlayAudioAController extends ControllerAbstract {
     @Override
     public void destory() {
 
+        this.paneView.destroy();
     }
     final class ViewHolder {
         View view;
         TextView title;
+        TextView ch;
         RelativeLayout play_audio_playerpane;
         Button playButton;
         AudioPlayPoint audioPlayPoint;

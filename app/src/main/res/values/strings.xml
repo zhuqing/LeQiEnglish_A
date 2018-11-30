@@ -13,6 +13,7 @@
 
     <string name="recite">背诵</string>
 
+
     <string name="my_recite_article">我的背诵(0)</string>
     <string name="add_recite_article">添加背诵文章</string>
     <string name="show_all_recite_article">查看全部></string>
@@ -40,7 +41,8 @@
     <string name="pause">暂停</string>
     <string name="close">关闭</string>
     <string name="play">播放</string>
-
+    <string name="playing">播放中</string>
+    <string name="recording">录音中</string>
 
     <string name="man">男</string>
     <string name="woman">女</string>
@@ -85,6 +87,8 @@
     <string name="catalogs">分类：</string>
 
     <string name="upgreade">升级</string>
+
+    <string name="regist_quick">快速注册</string>
     <string name="ok">确认</string>
 
 
@@ -100,6 +104,11 @@
     <string name="finished">完成</string>
 
     <string name="back_home">返回主页</string>
+    <string name="share_5">分享给朋友</string>
+
+    <string name="slogan1">背演讲，记单词</string>
+    <string name="slogan2">就用乐其英语</string>
+    <string name="app_rights">版权归乐其英语(www.leqienglish.com)所有</string>
 
 
 </resources>

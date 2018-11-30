@@ -1,13 +1,13 @@
 package com.leqienglish.activity.user;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.leqienglish.R;
+import com.leqienglish.activity.LeQiAppCompatActivity;
 import com.leqienglish.controller.user.LoginController;
 
-public class UserLoginActivity extends AppCompatActivity {
+public class UserLoginActivity extends LeQiAppCompatActivity {
 
     private LoginController loginController;
 
@@ -22,6 +22,10 @@ public class UserLoginActivity extends AppCompatActivity {
         loginController.init();
     }
 
+    @Override
+    protected String getActionBarTitle() {
+        return "登录";
+    }
 
 
 }

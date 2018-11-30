@@ -53,7 +53,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.title_word_recite);
+            actionBar.setTitle(content.getTitle());
         }
     }
 

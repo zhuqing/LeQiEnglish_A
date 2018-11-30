@@ -37,8 +37,23 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/recite_words_review_share"
+        style="@style/font_size_20_white_bold"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_above="@id/recite_words_review_continue"
+        android:background="@drawable/background_green_corner"
+        android:text="@string/share_5" />
+
+    <Button
         android:id="@+id/recite_words_review_continue"
-        style="@style/font_size_24_white_bold"
+        style="@style/font_size_20_white_bold"
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,12 +63,12 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/background_red_corner"
+        android:background="@drawable/background_green_corner"
         android:text="@string/continue_recite_word" />
 
     <Button
         android:id="@+id/recite_words_review_finished"
-        style="@style/font_size_24_white_bold"
+        style="@style/font_size_20_white_bold"
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -62,6 +77,6 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/background_green_corner"
+        android:background="@drawable/background_red_corner"
         android:text="@string/back_home" />
 </RelativeLayout>

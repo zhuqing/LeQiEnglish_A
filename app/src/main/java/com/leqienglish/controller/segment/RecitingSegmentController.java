@@ -1,5 +1,6 @@
 package com.leqienglish.controller.segment;
 
+import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
@@ -9,16 +10,19 @@ import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.controller.ControllerAbstract;
+import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.playandrecord.LQMediaPlayer;
 import com.leqienglish.playandrecord.PlayAudioThread;
 import com.leqienglish.playandrecord.RecordAudioThread;
+import com.leqienglish.pop.actionsheet.ActionSheet;
+import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.string.StringUtil;
 import com.leqienglish.util.time.CountDownUtil;
 
 import java.util.List;
-
 
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.english.play.AudioPlayPoint;
@@ -27,6 +31,7 @@ public class RecitingSegmentController extends ControllerAbstract {
     private Button startButton;
 
     private  RecordAudioThread recordAudioThread;
+    private PlayAudioThread playAudioThread;
 
     private TextView countDownTextView;
 
@@ -34,10 +39,18 @@ public class RecitingSegmentController extends ControllerAbstract {
 
 
 
-    private int playStatus = 0;//0:没有播放，1录英；2。播放
 
     private AudioPlayPoint audioPlayPoint;
     private  CountDownUtil countDownUtil;
+
+    private enum PlayStatusEnum{
+        PLAY_RECORD,//播放录音
+        RECORD,//录音
+        STOP,//停止
+        EXECUTEING;//正在执行不处理
+    }
+
+    private PlayStatusEnum currentStatus = PlayStatusEnum.STOP;//默认是停止状态
 
 
     public RecitingSegmentController(View view, Segment segment) {
@@ -59,26 +72,30 @@ public class RecitingSegmentController extends ControllerAbstract {
         this.startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(playStatus == 2){
-                    
-                }
+                switch (currentStatus){
+                    case STOP:
+                        currentStatus = PlayStatusEnum.EXECUTEING;
+                        playDing();
+                        break;
+                    case RECORD:
+                        currentStatus = PlayStatusEnum.PLAY_RECORD;
+                        if(recordAudioThread!=null){
+                            recordAudioThread.destroy();
+                            playRecord(recordAudioThread.getByteBufferList());
+                        }else{
 
-                if(playStatus == 1){
-
-                    if(recordAudioThread!=null){
-                        recordAudioThread.destroy();
-                        playRecord(recordAudioThread.getByteBufferList());
-                    }else{
+                            currentStatus = PlayStatusEnum.STOP;
+                            cancelCountDown();
+                        }
+                        break;
+                    case PLAY_RECORD:
+                        currentStatus = PlayStatusEnum.STOP;
                         cancelCountDown();
-                        playStatus =0;
-                    }
-
-                    return;
-                }else if( playStatus == 0){
-                    playStatus = 1;
-
-                    playDing();
+                        break;
                 }
+
+
+
             }
         });
     }
@@ -88,13 +105,21 @@ public class RecitingSegmentController extends ControllerAbstract {
         if(countDownUtil == null||audioPlayPoint == null){
             return;
         }
-        playStatus = 0;
+        if(playAudioThread != null){
+            playAudioThread.destroy();
+        }
+
+        if(recordAudioThread!=null){
+            recordAudioThread.destroy();
+        }
+
         countDownUtil.cancel();
         this.countDownTextView.setText(StringUtil.toMinsAndSeconds(getDuring()));
         startButton.setBackgroundResource(R.drawable.background_green_selector_blue_50dp);
         startButton.setText(R.string.start);
     }
 
+    //顶顶两声后开始录音
     private void playDing(){
         recordAudioThread = null;
         LQMediaPlayer lqMediaPlayer = new LQMediaPlayer();
@@ -110,14 +135,15 @@ public class RecitingSegmentController extends ControllerAbstract {
 
     private void playRecord(List<short[]> shorts){
         startButton.setBackgroundResource(R.drawable.background_red_selector_blue_50dp);
-        startButton.setText(R.string.cancel);
-        playStatus = 2;
+        startButton.setText(R.string.playing);
+
         this.countDownUtil.cancel();
-        PlayAudioThread playAudioThread = new PlayAudioThread();
+        playAudioThread = new PlayAudioThread();
         playAudioThread.playRecord(shorts, new LQHandler.Consumer() {
             @Override
             public void accept(Object o) {
                 cancelCountDown();
+                playFinish();
             }
         });
 
@@ -131,9 +157,31 @@ public class RecitingSegmentController extends ControllerAbstract {
                playRecord(shorts);
            }
        });
-
+        startButton.setBackgroundResource(R.drawable.background_red_selector_blue_50dp);
+        startButton.setText(R.string.recording);
 
         recordAudioThread.record();
+        currentStatus = PlayStatusEnum.RECORD;
+    }
+
+
+    private void playFinish(){
+        new ActionSheet.DialogBuilder(getView().getContext())
+                .addButton("分享给朋友", (v)->{
+                    String userName = UserDataCache.getInstance().getUserName();
+                    String userId = UserDataCache.getInstance().getUserId();
+                    String hasFinished = "刚刚完成了\""+segment.getTitle()+"\"的背诵";
+                    String segmentId = segment.getId();
+                    StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
+                    stringBuilder.append("html/share/shareContent.html").append("?userId=").append(userId).append("&segmentId=").append(segmentId);
+                    SharePlatform.onShare(getView().getContext(),userName+hasFinished,"我"+hasFinished,LQService.getLogoPath(),stringBuilder.toString());
+                })
+                .addButton("返回",(v)->{
+                   Activity activity = (Activity) getView().getContext();
+                   activity.finish();
+                })
+                .addCloseButton("继续背诵",null)
+               .create();
     }
 
 
@@ -146,6 +194,7 @@ public class RecitingSegmentController extends ControllerAbstract {
             return 0L;
         }
 
+
         return audioPlayPoint.getEndTime()-audioPlayPoint.getStartTime()+5000;
     }
 
@@ -154,8 +203,7 @@ public class RecitingSegmentController extends ControllerAbstract {
         if(audioPlayPoint == null){
             return;
         }
-        startButton.setBackgroundResource(R.drawable.background_red_selector_blue_50dp);
-        startButton.setText(R.string.play);
+
         countDownUtil = CountDownUtil.createTime(getDuring());
         countDownUtil.runCount(new CoundDownHandler());
     }
@@ -183,7 +231,12 @@ public class RecitingSegmentController extends ControllerAbstract {
 
     @Override
     public void destory() {
-
+        if(this.playAudioThread!=null){
+            this.playAudioThread.destroy();
+        }
+        if(this.recordAudioThread!=null){
+            this.recordAudioThread.destroy();
+        }
     }
 
 

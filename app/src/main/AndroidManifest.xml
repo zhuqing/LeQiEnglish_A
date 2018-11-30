@@ -17,15 +17,34 @@
         android:roundIcon="@mipmap/le_jin"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+    <activity
+        android:name=".activity.welcome.WelcomeActivity"
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        android:label="@string/app_name">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
+    <!--<application-->
+        <!--android:allowBackup="true"-->
+        <!--android:icon="@mipmap/le_jin"-->
+        <!--android:label="@string/app_name"-->
+        <!--android:roundIcon="@mipmap/le_jin"-->
+        <!--android:supportsRtl="true"-->
+        <!--android:theme="@style/AppTheme">-->
+        <!--<activity-->
+            <!--android:name=".MainActivity"-->
+            <!--android:label="@string/app_name">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+        <activity android:name=".MainActivity" />
         <activity android:name=".activity.PlayAudioActivity" />
         <activity android:name=".activity.content.ArticleInfoActivity" />
         <activity android:name=".activity.suggestion.SuggestionActivity" />
@@ -42,6 +61,9 @@
         <activity android:name=".activity.reciting.RecitingArticleListActivity"></activity>
 
         <activity android:name=".activity.word.ReciteWordsReviewActivity"></activity>
+
+
+        <activity android:name=".activity.segment.SegmentWordsActivity" />
 
         <!-- 友盟分享 -->
         <!-- 微信 -->

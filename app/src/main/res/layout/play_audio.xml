@@ -28,16 +28,46 @@
                 android:orientation="vertical"></LinearLayout>
 
             <Button
-                android:id="@+id/play_audio_start_recite"
-                android:layout_margin="40dp"
+                android:id="@+id/play_audio_share"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="30dp"
                 android:layout_below="@id/play_audio_layout"
                 android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                style="@style/button_white"
+
+                style="@style/font_size_20_white_bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_green_corner"
-                android:gravity="center"
+
+                android:text="@string/share_5" />
+            <Button
+                android:id="@+id/play_audio_segment_word"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="30dp"
+                android:layout_below="@id/play_audio_share"
+                android:layout_centerHorizontal="true"
+
+                style="@style/font_size_20_white_bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_green_corner"
+
+                android:text="查看单词" />
+            <Button
+                android:id="@+id/play_audio_start_recite"
+                android:layout_marginTop="30dp"
+                android:layout_below="@id/play_audio_segment_word"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                style="@style/font_size_20_white_bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_red_corner"
+
                 android:text="开始背诵" />
         </RelativeLayout>
     </ScrollView>

@@ -53,6 +53,14 @@ public class UserDataCache extends DataCacheAbstract<User> {
         return this.findOrCreateUser();
     }
 
+    public String getUserName(){
+        User user = this.getUser();
+        if(user == null || user.getName()== null){
+            return "User";
+        }
+        return user.getName();
+    }
+
     /**
      * 获取用户的Id
      *

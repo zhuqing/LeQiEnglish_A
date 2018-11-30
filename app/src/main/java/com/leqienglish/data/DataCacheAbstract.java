@@ -128,7 +128,9 @@ public abstract class DataCacheAbstract<T> {
      *
      * @return
      */
-    public abstract void clearData();
+    public  void clearData(){
+        this.setCacheData(null);
+    }
 
     protected void delete() {
 
@@ -147,12 +149,19 @@ public abstract class DataCacheAbstract<T> {
      */
     public void load(LQHandler.Consumer<T> consumer) {
 
-        if (!this.needUpdate()) {
+        if (!this.needUpdate()) {//如果不需要更新,取缓存中的数据返回
             if (this.getCacheData() != null) {
                 if (consumer != null) {
                     consumer.accept(this.cacheData);
                 }
                 return;
+            }
+        }else{//如果需要更新数据，先去取缓存中的数据，再取服务端取新数据，重新刷新。
+            if (this.getCacheData() != null) {
+                if (consumer != null) {
+                    consumer.accept(this.cacheData);
+                }
+
             }
         }
 
@@ -236,7 +245,7 @@ public abstract class DataCacheAbstract<T> {
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-
+                clearData();
                 T temp = getFromService();
                 setCacheData(temp);
                 putCache(temp);

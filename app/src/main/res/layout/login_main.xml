@@ -34,33 +34,57 @@
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingLeft="30dp"
             android:paddingRight="30dp">
 
             <Button
                 android:id="@+id/login_main_login"
-                style="@style/font_size_20_white"
+                style="@style/font_size_20_white_bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
                 android:background="@drawable/background_green_selector_blue"
                 android:text="@string/login" />
 
-            <TextView
-                android:layout_gravity="bottom"
+            <Button
                 android:id="@+id/login_main_regist"
-                style="@style/font_size_14_blue"
+                style="@style/font_size_20_white_bold"
+                android:layout_marginTop="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:background="@drawable/background_green_selector_blue"
+                android:text="@string/regist_quick" />
+            <Button
+                android:id="@+id/login_main_cancel"
+                style="@style/font_size_20_white_bold"
+                android:layout_marginTop="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:background="@drawable/background_red_corner"
+                android:text="@string/cancel" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:text="@string/regist" />
+                android:layout_centerHorizontal="true"
+                android:layout_above="@id/third_login_part"
+
+                android:text="——————————第三方登录——————————"/>
+
         </LinearLayout>
 
 
     </LinearLayout>
 
+
+
     <LinearLayout
+        android:id="@+id/third_login_part"
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
 
@@ -70,22 +94,22 @@
         android:paddingLeft="30dp"
         android:paddingRight="30dp">
 
-        <Button
-            android:id="@+id/login_main_weibo"
-            android:background="@drawable/weibo_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginRight="30dp"/>
+        <!--<Button-->
+            <!--android:id="@+id/login_main_weibo"-->
+            <!--android:background="@drawable/weibo_button"-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="60dp"-->
+            <!--android:layout_marginRight="30dp"/>-->
 
-        <Button
-            android:id="@+id/login_main_weixin"
-            android:background="@drawable/weixin_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp" />
+        <!--<Button-->
+            <!--android:id="@+id/login_main_weixin"-->
+            <!--android:background="@drawable/weixin_button"-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="60dp" />-->
 
         <Button
             android:id="@+id/login_main_qq"
-            android:layout_marginLeft="30dp"
+
             android:background="@drawable/qq_button"
             android:layout_width="60dp"
             android:layout_height="60dp" />

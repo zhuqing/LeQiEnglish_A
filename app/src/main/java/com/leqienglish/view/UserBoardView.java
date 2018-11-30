@@ -66,7 +66,7 @@ public class UserBoardView extends RelativeLayout implements RefreshI{
                 if(userReciteRecord == null){
                     return;
                 }
-                allMinute.setText(userReciteRecord.getLearnTime()+"");
+                allMinute.setText(userReciteRecord.getLearnTime()/60+"");
                 allDays.setText("累计打卡"+userReciteRecord.getLearnDay()+"天");
             }
         });

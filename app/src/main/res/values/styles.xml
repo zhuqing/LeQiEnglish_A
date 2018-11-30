@@ -85,13 +85,28 @@
         <item name="android:textColor">@color/no3_white</item>
     </style>
 
+    <style name="font_size_20_white_bold">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/no3_white</item>
+    </style>
+
     <style name="font_size_48_green_bold">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">48dp</item>
         <item name="android:textColor">@color/green</item>
     </style>
 
-
+    <style name="font_size_30_green_bold">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30dp</item>
+        <item name="android:textColor">@color/green</item>
+    </style>
+    <style name="font_size_30_red_bold">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30dp</item>
+        <item name="android:textColor">@color/red</item>
+    </style>
     <style name="font_size_24_white_bold">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">24dp</item>
