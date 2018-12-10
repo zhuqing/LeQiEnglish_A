@@ -1,7 +1,10 @@
 package com.leqienglish.data.segment;
 
+import android.os.AsyncTask;
+
 import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.database.ExecuteSQL;
+import com.leqienglish.util.LQHandler;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -84,6 +87,45 @@ public class SegmentDataCache extends DataCacheAbstract<List<Segment>> {
         }
 
         return null;
+    }
+
+    @Override
+    protected void try2loadNewest(LQHandler.Consumer<List<Segment>> consumer) {
+        super.try2loadNewest(consumer);
+
+        AsyncTask asyncTask = new AsyncTask<Object, Object, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Object[] objects) {
+                MultiValueMap<String,String> param = new LinkedMultiValueMap<>();
+                param.add("id", getContent().getId());
+                try {
+                    Content newContent = getRestClient().get("/english/content/findById",param,Content.class);
+
+                    if(newContent.getUpdateDate() <= getContent().getUpdateDate()){
+                        return false;
+                    }
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+
+                }
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean t) {
+                super.onPostExecute(t);
+                if(t){
+                    loadNewest(consumer);
+                }
+
+
+            }
+        };
+
+        asyncTask.execute();
+
     }
 
     @Override

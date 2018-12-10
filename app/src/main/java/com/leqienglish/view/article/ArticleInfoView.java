@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.PlayAudioActivity;
 import com.leqienglish.activity.load.LoadingActivity;
-import com.leqienglish.activity.word.ArticleWordListActivity;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.data.content.RecitedSegmentDataCache;
 import com.leqienglish.data.segment.SegmentDataCache;
@@ -35,7 +34,6 @@ import com.leqienglish.util.image.ImageUtil;
 import com.leqienglish.view.adapter.LeQiBaseAdapter;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +61,8 @@ public class ArticleInfoView extends RelativeLayout {
 
     private Bitmap blurBitMap;
 
+    List<UserAndSegment> userAndSegments;
+
     private RecitedSegmentDataCache recitedSegmentDataCache;
 
     public ArticleInfoView(Context context, AttributeSet attrs) {
@@ -85,25 +85,18 @@ public class ArticleInfoView extends RelativeLayout {
                     return;
                 }
                 Intent intent = new Intent();
-                if(position == 0){
-                    intent.setClass(getContext(), ArticleWordListActivity.class);
-                    Bundle bundle = BundleUtil.create(BundleUtil.DATA, content);
-                    intent.putExtras(bundle);
 
-                }else{
+                String path = FileUtil.getPath(content, segment);
 
-                    String path = FileUtil.getPath(content,segment);
+                Bundle bundle = BundleUtil.create(BundleUtil.DATA, segment);
+                BundleUtil.create(bundle, BundleUtil.PATH, path);
+                intent.putExtras(bundle);
 
-                    Bundle bundle = BundleUtil.create(BundleUtil.DATA, segment);
-                    BundleUtil.create(bundle, BundleUtil.PATH, path);
-                    intent.putExtras(bundle);
-
-                    String filePath = FileUtil.toLocalPath(path);
-                    if(new File(filePath).exists()){
-                        intent.setClass(getContext(), PlayAudioActivity.class);
-                    }else{
-                        intent.setClass(getContext(), LoadingActivity.class);
-                    }
+                String filePath = FileUtil.toLocalPath(path);
+                if (new File(filePath).exists()) {
+                    intent.setClass(getContext(), PlayAudioActivity.class);
+                } else {
+                    intent.setClass(getContext(), LoadingActivity.class);
                 }
 
 
@@ -114,11 +107,12 @@ public class ArticleInfoView extends RelativeLayout {
 
     /**
      * 创建模糊图片
+     *
      * @return
      */
     private Bitmap buildBlurBitmap() {
         Bitmap sbit = BitmapFactory.decodeResource(this.getResources(), R.drawable.obm);
-        return ImageUtil.fastBlur( sbit, 30);
+        return ImageUtil.fastBlur(sbit, 30);
     }
 
     public void load() {
@@ -130,8 +124,8 @@ public class ArticleInfoView extends RelativeLayout {
         this.recitedSegmentDataCache = RecitedSegmentDataCache.getInstance(content);
 
         this.blurBitMap = this.buildBlurBitmap();
-        this.roundBlurBitMap = ImageUtil.createRoundCornerImage(blurBitMap,30, ImageUtil.HalfType.ALL);
-        this.getRootView().setBackground(new BitmapDrawable(this.getResources(),blurBitMap));
+        this.roundBlurBitMap = ImageUtil.createRoundCornerImage(blurBitMap, 30, ImageUtil.HalfType.ALL);
+        this.getRootView().setBackground(new BitmapDrawable(this.getResources(), blurBitMap));
         this.titleView.setText(this.getContent().getTitle());
 
         SegmentDataCache segmentDataCache = new SegmentDataCache(this.getContent());
@@ -147,45 +141,49 @@ public class ArticleInfoView extends RelativeLayout {
 
     }
 
-    private void loadHasRecited(){
+    private void loadHasRecited() {
         this.recitedSegmentDataCache.load(new LQHandler.Consumer<List<UserAndSegment>>() {
             @Override
             public void accept(List<UserAndSegment> userAndSegments) {
-                if(userAndSegments == null){
+                if (userAndSegments == null) {
                     userAndSegments = Collections.EMPTY_LIST;
                 }
-                acticleInfoPrecent.setText("已完成"+userAndSegments.size()+"/"+(gridViewAdapter.getCount()-1));
-                updatePrecent((int)(userAndSegments.size()*1.0/(gridViewAdapter.getCount()-1)*100));
+
+                ArticleInfoView.this.userAndSegments = userAndSegments;
+
+                acticleInfoPrecent.setText("已完成" + userAndSegments.size() + "/" + (gridViewAdapter.getCount()));
+                updatePrecent((int) (userAndSegments.size() * 1.0 / (gridViewAdapter.getCount()) * 100));
+                gridView.smoothScrollToPosition(userAndSegments.size());
             }
         });
     }
 
 
-    private void updatePrecent(Integer precent){
-        if(UserDataCache.getInstance().getUser() == null){
+    private void updatePrecent(Integer precent) {
+        if (UserDataCache.getInstance().getUser() == null) {
             return;
         }
-        Map<String,String> param = new HashMap<>();
+        Map<String, String> param = new HashMap<>();
 
         param.put("userId", UserDataCache.getInstance().getUser().getId());
-        param.put("contentId",content.getId());
-        param.put("precent",precent+"");
+        param.put("contentId", content.getId());
+        param.put("precent", precent + "");
 
 
         LQService.put("userAndContent/updatePrecent", null, UserAndContent.class, param, new LQHandler.Consumer<UserAndContent>() {
             @Override
             public void accept(UserAndContent userReciteRecord) {
-                MyRecitingContentDataCache.getInstance().update(content.getId(),precent);
+                MyRecitingContentDataCache.getInstance().update(content.getId(), precent);
             }
         });
     }
 
 
-    private Segment getWordsSegment(){
+    private Segment getWordsSegment() {
         Segment word = new Segment();
 
         word.setTitle("单词列表");
-        return  word;
+        return word;
     }
 
 
@@ -196,15 +194,6 @@ public class ArticleInfoView extends RelativeLayout {
         }
 
 
-
-        List<Segment> newList = new ArrayList<>();
-
-        newList.add(this.getWordsSegment());
-        newList.addAll(segmentList);
-
-        segmentList = newList;
-
-
         this.gridViewAdapter.setItems(segmentList);
         this.gridView.setAdapter(this.gridViewAdapter);
 
@@ -213,7 +202,7 @@ public class ArticleInfoView extends RelativeLayout {
 
         float density = Resources.getSystem().getDisplayMetrics().density;
 
-        int gridviewWidth = (int) (size * (length + 40) * density);
+        int gridviewWidth = (int) (size * (length + 30) * density);
         int itemWidth = (int) (length * density);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -270,7 +259,7 @@ public class ArticleInfoView extends RelativeLayout {
                 return view;
             }
 
-            holder.title.setText(actical.getTitle().substring(actical.getTitle().length() - 4));
+            holder.title.setText(actical.getTitle());
             final ArticleInfoView.ViewHolder fviewHolder = holder;
 
 

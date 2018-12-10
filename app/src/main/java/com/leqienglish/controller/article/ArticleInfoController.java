@@ -63,7 +63,6 @@ public class ArticleInfoController extends ControllerAbstract {
             public void onClick(View v) {
 
                 if(hasAdd2MyReciting){
-
                     removeFromMyReciting();
                 }else {
                     add();

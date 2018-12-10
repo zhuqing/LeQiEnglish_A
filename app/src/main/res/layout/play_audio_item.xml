@@ -15,12 +15,13 @@
             <TextView
                 android:id="@+id/play_audio_text"
                 android:textIsSelectable="true"
-                style="@style/font_size_24_black"
+                style="@style/font_size_16_black_bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true" />
 
             <TextView
+                style="@style/font_size_12_gray"
                 android:id="@+id/play_audio_text_ch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,5 +1,6 @@
 package com.leqienglish.controller.user;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -151,14 +152,7 @@ public class UserManagerPaneController extends ControllerAbstract implements Ref
                 getView().getContext().startActivity(intent);
             }
         });
-//        UserDataCache.getInstance().load(new LQHandler.Consumer<User>() {
-//            @Override
-//            public void accept(User user) {
-//                if(user == null){
-//                    return;
-//                }
-//            }
-//        });
+
     }
 
     private void checkVersion() {
@@ -167,7 +161,7 @@ public class UserManagerPaneController extends ControllerAbstract implements Ref
             @Override
             public void accept(Version version) {
                 if (version != null) {
-                    openNewVersionDialog(version);
+                    openNewVersionDialog(version,getView().getContext());
                 } else {
                     hasNewestDialog();
                 }
@@ -198,30 +192,7 @@ public class UserManagerPaneController extends ControllerAbstract implements Ref
 
     private void openNewVersionDialog(Version version) {
 
-
-        View myView = LayoutInflater.from(this.getView().getContext()).inflate(R.layout.newversion_dialog, null);
-        TextView textView = myView.findViewById(R.id.new_version_message);
-        Spanned spanned = Html.fromHtml(version.getType() + version.getMessage());
-
-        textView.setText(spanned);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.getView().getContext());
-
-        builder.setTitle(R.string.upgreade)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        VersionDataCache.getInstance().add(version);
-                    }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        }).setView(myView)
-                .create();
-
-        builder.show();
+        VersionDataCache.getInstance().openNewVersionDialog(version,getView().getContext());
     }
 
     //重新加载用户数据
@@ -229,6 +200,41 @@ public class UserManagerPaneController extends ControllerAbstract implements Ref
     public void clearAndRefresh(LQHandler.Consumer<Boolean> fininshed) {
         UserReciteRecordDataCache.getInstance().clearData();
         refresh(fininshed);
+    }
+
+
+    private void openNewVersionDialog(Version version, Context context){
+
+        View myView = LayoutInflater.from(context).inflate(R.layout.newversion_dialog, null);
+        TextView textView = myView.findViewById(R.id.new_version_message);
+        Spanned spanned = Html.fromHtml(version.getMessage());
+
+        textView.setText(spanned);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder.setTitle(R.string.upgreade)
+                .setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        VersionDataCache.getInstance().installNewApk(context,version);
+
+                    }
+                }).setNeutralButton(R.string.install_next, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        })
+                .setNegativeButton(R.string.install_ignore, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        VersionDataCache.getInstance().add(version);
+                    }
+                }).setView(myView)
+                .create();
+
+        builder.show();
     }
 
     //刷新用户数据

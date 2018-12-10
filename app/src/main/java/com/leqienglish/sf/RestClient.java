@@ -5,13 +5,13 @@ import com.leqienglish.util.AppType;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
-import com.leqienglish.util.network.NetWorkUtil;
 import com.leqienglish.util.toast.ToastUtil;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -44,7 +44,11 @@ public class RestClient {
     protected final ObjectMapper mapper = new ObjectMapper();
 
     public RestClient(String host) {
-        restTemplate = new RestTemplate();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+                 requestFactory.setConnectTimeout(20000);// 设置超时
+                requestFactory.setReadTimeout(30000);
+        restTemplate = new RestTemplate(requestFactory);
+
         this.serverPath = host;
     }
 
@@ -59,6 +63,8 @@ public class RestClient {
     public <T> T delete(String path, Object obj, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
         return excute(HttpMethod.DELETE, path, obj, parameter, claz);
     }
+
+
 
     public <T> T upload(String path, MultiValueMap<String, Object> value, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
 
@@ -89,10 +95,6 @@ public class RestClient {
     private <T> T excute(HttpMethod method, String path, Object obj, MultiValueMap<String, String> parameter, Class<T> claz) throws Exception {
 
 
-        if (!NetWorkUtil.isConnect(AppType.mainContext)) {
-            //ToastUtil.showShort(AppType.mainContext, "没有网络");
-            return null;
-        }
 
         if (parameter == null) {
             parameter = new LinkedMultiValueMap<>();
@@ -141,6 +143,7 @@ public class RestClient {
     public void downLoad(String path, String filePath, LQHandler.Consumer<Double> hasdownload) throws MalformedURLException, IOException, Exception {
         downloadByFullPath(serverPath + "/" + path,filePath,hasdownload);
     }
+
 
 
     public void downloadByFullPath(String httpPath , String filePath, LQHandler.Consumer<Double> hasdownload ) throws Exception {

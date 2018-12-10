@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.leqienglish.R;
@@ -15,8 +13,7 @@ import xyz.tobebetter.version.Version;
 
 public class NewVersionDialog extends CustomDialog {
     private TextView message;
-    private Button cancel;
-    private Button upgreade;
+
 
     private Version version;
 
@@ -36,8 +33,7 @@ public class NewVersionDialog extends CustomDialog {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.newversion_dialog);
 
-        this.cancel = this.findViewById(R.id.new_version_cancel);
-        this.upgreade = this.findViewById(R.id.new_version_ok);
+
         this.message = this.findViewById(R.id.new_version_message);
 
         this.initListener();
@@ -45,22 +41,7 @@ public class NewVersionDialog extends CustomDialog {
     }
 
     private void initListener(){
-        this.cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NewVersionDialog.this.dismiss();
-            }
-        });
 
-        this.upgreade.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                dismiss();
-                if(versionConsumer !=null) {
-                    versionConsumer.accept(version);
-                }
-            }
-        });
     }
 
     private void initData(){

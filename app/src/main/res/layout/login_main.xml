@@ -101,15 +101,18 @@
             <!--android:layout_height="60dp"-->
             <!--android:layout_marginRight="30dp"/>-->
 
-        <!--<Button-->
-            <!--android:id="@+id/login_main_weixin"-->
-            <!--android:background="@drawable/weixin_button"-->
-            <!--android:layout_width="60dp"-->
-            <!--android:layout_height="60dp" />-->
+        <Button
+            android:id="@+id/login_main_weixin"
+            android:background="@drawable/weixin_button"
+            android:layout_width="60dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_height="60dp" />
 
         <Button
             android:id="@+id/login_main_qq"
-
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:background="@drawable/qq_button"
             android:layout_width="60dp"
             android:layout_height="60dp" />

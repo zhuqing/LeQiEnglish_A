@@ -30,10 +30,13 @@
         android:layout_width="match_parent"
         android:layout_height="200dp">
         <TextView
-            android:id="@+id/article_info_item_title"
-            style="@style/font_size_18_green_bold"
-            android:layout_centerHorizontal="true"
 
+            android:id="@+id/article_info_item_title"
+            style="@style/font_size_14_green_bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

@@ -154,6 +154,7 @@ public abstract class DataCacheAbstract<T> {
                 if (consumer != null) {
                     consumer.accept(this.cacheData);
                 }
+                try2loadNewest(consumer);
                 return;
             }
         }else{//如果需要更新数据，先去取缓存中的数据，再取服务端取新数据，重新刷新。
@@ -181,7 +182,7 @@ public abstract class DataCacheAbstract<T> {
 
                 setCacheData(t);
                 //没有网络直接返回
-                if (!NetWorkUtil.isConnect(AppType.mainContext)) {
+                if (!LQService.isConnect) {
                     return t;
                 }
                 if (t == null) {
@@ -204,6 +205,16 @@ public abstract class DataCacheAbstract<T> {
 
         asyncTask.execute();
     }
+
+    /**
+     * 只从缓存中加载数据时使用
+     * @param consumer
+     */
+    protected void try2loadNewest(LQHandler.Consumer<T> consumer){
+
+    }
+
+
 
 
     /**

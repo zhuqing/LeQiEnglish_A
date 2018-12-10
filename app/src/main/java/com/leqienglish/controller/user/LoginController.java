@@ -26,6 +26,7 @@ import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.wechat.friends.Wechat;
 import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.user.User;
 
@@ -69,7 +70,7 @@ public class LoginController extends ControllerAbstract {
 
         this.qqButton = this.getView().findViewById(R.id.login_main_qq);
 //        this.weiBoButton = this.getView().findViewById(R.id.login_main_weibo);
-//        this.weiXinButton = this.getView().findViewById(R.id.login_main_weixin);
+        this.weiXinButton = this.getView().findViewById(R.id.login_main_weixin);
 
         this.initListener();
     }
@@ -101,15 +102,14 @@ public class LoginController extends ControllerAbstract {
         });
 
 
-//        this.weiXinButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SharePlatform.onShare(getView().getContext(),"乐其英语，乐在其中","fenxiang","http://www.leqienglish.com/res/static/images/logo.png","http://www.leqienglish.com");
-//                //Platform weixin = ShareSDK.getPlatform(Wechat.NAME);
-//
-//                //thirdPartLogin(weixin);
-//            }
-//        });
+        this.weiXinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // SharePlatform.onShare(getView().getContext(),"乐其英语，乐在其中","fenxiang","http://www.leqienglish.com/res/static/images/logo.png","http://www.leqienglish.com");
+                Platform weixin = ShareSDK.getPlatform(Wechat.NAME);
+                thirdPartLogin(weixin);
+            }
+        });
 
 //        this.weiBoButton.setOnClickListener(new View.OnClickListener() {
 //            @Override

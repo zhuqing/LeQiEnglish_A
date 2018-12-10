@@ -7,7 +7,7 @@ import android.view.WindowManager;
 
 import com.leqienglish.MainActivity;
 import com.leqienglish.R;
-import com.leqienglish.util.TaskUtil;
+import com.leqienglish.sf.LQService;
 
 public class WelcomeActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
@@ -20,9 +20,12 @@ public class WelcomeActivity extends Activity {
                 WindowManager.LayoutParams. FLAG_FULLSCREEN);
         setContentView(R.layout.welcome);
 
-        TaskUtil.runlater((b)->{
+
+
+        LQService.checkNet((b)->{
+            LQService.isConnect = b;
             this.toMainActivity();
-        },2000L);
+        });
     }
 
     private void toMainActivity(){

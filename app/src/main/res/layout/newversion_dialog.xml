@@ -7,23 +7,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
 
-    <Button
-        android:layout_below="@id/new_version_message"
-        android:id="@+id/new_version_ok"
-        style="@style/font_size_20_white"
-        android:background="@drawable/background_green_selector_blue"
-        android:text="@string/upgreade"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <!--<Button-->
+        <!--android:layout_below="@id/new_version_message"-->
+        <!--android:id="@+id/new_version_ok"-->
+        <!--style="@style/font_size_20_white"-->
+        <!--android:background="@drawable/background_green_selector_blue"-->
+        <!--android:text="@string/upgreade"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
-    <Button
-        android:layout_marginTop="5dp"
-        android:layout_below="@id/new_version_ok"
-        android:id="@+id/new_version_cancel"
-        style="@style/font_size_20_white"
-        android:background="@drawable/background_red_corner"
-        android:text="@string/cancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <!--<Button-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:layout_below="@id/new_version_ok"-->
+        <!--android:id="@+id/new_version_cancel"-->
+        <!--style="@style/font_size_20_white"-->
+        <!--android:background="@drawable/background_red_corner"-->
+        <!--android:text="@string/cancel"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
 </RelativeLayout>

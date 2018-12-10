@@ -10,11 +10,11 @@ import com.leqienglish.R;
 import com.leqienglish.data.AppRefreshManager;
 import com.leqienglish.data.RefreshI;
 import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.sf.LQService;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.TaskUtil;
 import com.leqienglish.util.dialog.DialogUtil;
-import com.leqienglish.util.network.NetWorkUtil;
 import com.leqienglish.view.UserBoardView;
 import com.leqienglish.view.article.UserRecitingArticleView;
 import com.leqienglish.view.recommend.RecommendArticle;
@@ -97,8 +97,8 @@ public class HomeListViewController extends ControllerAbstract<View> implements 
 
     @Override
     public void clearAndRefresh(LQHandler.Consumer<Boolean> fininshed) {
-        if(!NetWorkUtil.isConnect(this.getView().getContext())){
-            DialogUtil.show(R.string.title_no_network,this.getView().getContext());
+        if(!LQService.isConnect){
+            DialogUtil.show(R.string.notconnectService,this.getView().getContext());
             TaskUtil.runlater(fininshed,1000L);
             return;
         }

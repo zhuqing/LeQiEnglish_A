@@ -1,5 +1,6 @@
 package com.leqienglish;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,13 +26,13 @@ import com.leqienglish.fragment.HomeFragment;
 import com.leqienglish.fragment.LQFragmentAdapter;
 import com.leqienglish.fragment.SecondFrament;
 import com.leqienglish.fragment.ThirdFrament;
+import com.leqienglish.sf.LQService;
 import com.leqienglish.util.AppType;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.TaskUtil;
 import com.leqienglish.util.dialog.DialogUtil;
 import com.leqienglish.util.file.AndroidFileUtil;
-import com.leqienglish.util.network.NetWorkUtil;
 import com.leqienglish.util.toast.ToastUtil;
 import com.mob.MobSDK;
 
@@ -123,35 +124,8 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         AppType.mainContext = this.getBaseContext();
         MobSDK.init(this);
-       // UMConfigure.init(this,"5be13eb5f1f556358100025f","Umeng",UMConfigure.DEVICE_TYPE_PHONE,"6b4d3870d5bd34d584a486288bf4a998");
-        //PlatformConfig.setQQZone("101515797","efe34c73fd1182ffcbded86368aef2b6");
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.search, menu);
-//        MenuItem menuItem = menu.findItem(R.id.search);
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-//        //设置搜索的事件
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                Toast t = Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT);
-//                t.setGravity(Gravity.TOP, 0, 0);
-//                t.show();
-//
-//               //MainActivity wordInfoController.search(query);
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
 
 
     @Override
@@ -179,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         UserDataCache.getInstance().load(null);
      //   this.getBaseContext().get
 
-        if(!NetWorkUtil.isConnect(this.getBaseContext())){
+        if(!LQService.isConnect){
             showNoNetWork();
             return;
         }
@@ -187,39 +161,45 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void accept(Version version) {
                 if(version!=null){
-                    openNewVersionDialog(version);
+                    openNewVersionDialog(version,getApplicationContext());
                 }
             }
         });
     }
 
     private void showNoNetWork(){
-        DialogUtil.show(R.string.title_no_network,this);
+        DialogUtil.show(R.string.notconnectService,this);
 
     }
 
 
-    private void openNewVersionDialog(Version version){
-
+    private void openNewVersionDialog(Version version, Context context){
 
         View myView = LayoutInflater.from(MainActivity.this).inflate(R.layout.newversion_dialog, null);
         TextView textView = myView.findViewById(R.id.new_version_message);
-        Spanned spanned = Html.fromHtml(version.getType()+version.getMessage());
+        Spanned spanned = Html.fromHtml(version.getMessage());
 
         textView.setText(spanned);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(R.string.upgreade)
-        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                VersionDataCache.getInstance().add(version);
+                VersionDataCache.getInstance().installNewApk(getApplicationContext(),version);
+
             }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        }).setNeutralButton(R.string.install_next, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+            }
+        })
+                .setNegativeButton(R.string.install_ignore, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                VersionDataCache.getInstance().add(version);
             }
         }).setView(myView)
                 .create();

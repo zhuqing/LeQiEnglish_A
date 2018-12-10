@@ -86,7 +86,10 @@
 
     <string name="catalogs">分类：</string>
 
-    <string name="upgreade">升级</string>
+    <string name="upgreade">是否安装最新版本？</string>
+    <string name="install">安装</string>
+    <string name="install_next">过会再说</string>
+    <string name="install_ignore">忽略</string>
 
     <string name="regist_quick">快速注册</string>
     <string name="ok">确认</string>
@@ -111,4 +114,6 @@
     <string name="app_rights">版权归乐其英语(www.leqienglish.com)所有</string>
 
 
+
+    <string name="notconnectService">无法连接到服务端</string>
 </resources>
