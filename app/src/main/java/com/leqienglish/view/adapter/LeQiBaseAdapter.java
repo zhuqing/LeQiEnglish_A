@@ -1,19 +1,10 @@
 package com.leqienglish.view.adapter;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
-import com.leqienglish.R;
-import com.leqienglish.view.article.ArticleInfoView;
 
 import java.util.Collections;
 import java.util.List;
-
-import xyz.tobebetter.entity.english.Segment;
-import xyz.tobebetter.entity.word.Word;
 
 public abstract class LeQiBaseAdapter<T> extends BaseAdapter {
 
@@ -62,6 +53,15 @@ public abstract class LeQiBaseAdapter<T> extends BaseAdapter {
         }
         this.items = list;
         notifyDataSetChanged();
+    }
+
+    public void addMore(List<T> list){
+        if(list == null){
+            list = Collections.EMPTY_LIST;
+        }
+        this.items .addAll(list);
+        notifyDataSetChanged();
+
     }
 
 

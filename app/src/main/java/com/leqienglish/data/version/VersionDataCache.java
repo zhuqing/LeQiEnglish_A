@@ -38,7 +38,9 @@ import static com.leqienglish.database.Constants.VERSION_CACHE_TYPE;
  */
 public class VersionDataCache extends DataCacheAbstract<Version> {
     private LOGGER logger = new LOGGER(VersionDataCache.class);
-    private long currentNo = 0L;
+    private long currentNo = 1001L;
+
+    public static final String currentCode = "1.00.1";
 
     private Version newsetVersion;
 

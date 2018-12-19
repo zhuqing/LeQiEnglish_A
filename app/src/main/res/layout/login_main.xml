@@ -74,7 +74,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_above="@id/third_login_part"
 
-                android:text="——————————第三方登录——————————"/>
+                android:text="——第三方登录——"/>
 
         </LinearLayout>
 

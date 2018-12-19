@@ -2,15 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     android:background="@drawable/backgrond_top_bottom_grey"
     >
 
 
 
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp">
+           >
 
             <TextView
                 android:id="@+id/play_audio_text"
@@ -35,5 +37,5 @@
                 android:layout_alignParentBottom="true">
 
             </RelativeLayout>
-        </RelativeLayout>
+        </LinearLayout>
 </RelativeLayout>

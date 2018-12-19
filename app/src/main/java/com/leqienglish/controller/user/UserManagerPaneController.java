@@ -97,7 +97,7 @@ public class UserManagerPaneController extends ControllerAbstract implements Ref
         catalogs.add(createCatalog("01", "意见反馈"));
         catalogs.add(createCatalog("02", "文章背诵"));
         catalogs.add(createCatalog("03", "单词背诵"));
-        catalogs.add(createCatalog("04", "当前版本\t1.00.1"));
+        catalogs.add(createCatalog("04", "当前版本\t"+VersionDataCache.currentCode));
 
         simpleItemAdapter.updateListView(catalogs);
     }

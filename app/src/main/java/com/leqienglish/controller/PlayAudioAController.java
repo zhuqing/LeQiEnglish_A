@@ -19,6 +19,7 @@ import com.leqienglish.data.user.UserReciteRecordDataCache;
 import com.leqienglish.data.word.WordInfoDataCache;
 import com.leqienglish.pop.actionsheet.ActionSheet;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
@@ -27,6 +28,7 @@ import com.leqienglish.util.SharePlatform;
 import com.leqienglish.view.play.PlayerPaneView;
 import com.leqienglish.view.word.WordInfoView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,7 +44,7 @@ import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 import xyz.tobebetter.entity.word.Word;
 
 public class PlayAudioAController extends ControllerAbstract {
-    private LOGGER logger = new LOGGER(PlayAudioAController.class);
+    private LOGGER LOG = new LOGGER(PlayAudioAController.class);
     private Segment segment;
     private String filePath;
 
@@ -82,17 +84,56 @@ public class PlayAudioAController extends ControllerAbstract {
         this.wordsButton = (Button) this.findViewById(R.id.play_audio_segment_word);
         this.views = new ArrayList<>();
 
-        try {
-            this.paneView.setMp3Path(FileUtil.getFileAbsolutePath(this.filePath));
-            this.playEntities = AudioPlayPoint.toAudioPlays(segment.getContent());
-            loadView(playEntities);
-            this.minutes = this.getMinute(playEntities);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        loadMp3(this.filePath, new LQHandler.Consumer<Boolean>() {
+                @Override
+                public void accept(Boolean aBoolean) {
+                    try {
+                        playEntities = AudioPlayPoint.toAudioPlays(segment.getContent());
+                        loadView(playEntities);
+                        minutes = getMinute(playEntities);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+
+
 
         saveWord(segment, UserDataCache.getInstance().getUser());
         this.initListener();
+    }
+
+    private void loadMp3(String path, LQHandler.Consumer<Boolean> consumer) {
+        try {
+            this.paneView.setMp3Path(FileUtil.getFileAbsolutePath(this.filePath));
+            consumer.accept(true);
+        }catch (Exception e) {
+            //Map3文件加载失败，重新加载文件
+            try {
+                FileUtil.delete(FileUtil.getFileAbsolutePath(this.filePath));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                consumer.accept(false);
+                return;
+            }
+            LoadFile.loadFile(this.filePath, new LQHandler.Consumer<String>() {
+                @Override
+                public void accept(String s) {
+                    try {
+                        paneView.setMp3Path(s);
+                        consumer.accept(true);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                        consumer.accept(false);
+                    }
+
+                }
+            });
+            e.printStackTrace();
+        }
     }
 
     private int getMinute(List<AudioPlayPoint> playEntities){
@@ -265,31 +306,18 @@ public class PlayAudioAController extends ControllerAbstract {
             viewHolder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    if (lastView == view) {
-                        return;
-                    }
-
-                    if (lastView != null) {
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), lastView.getHeight() - 300);
-                        lastView.setLayoutParams(layoutParams);
-                        ViewHolder viewHolder = (ViewHolder) lastView.getTag();
-                        lastView.setBackgroundResource(R.drawable.backgrond_top_bottom_grey);
-                        viewHolder.play_audio_playerpane.removeAllViews();
-                        paneView.destroy();
-                    }
-
-
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), view.getHeight() + 300);
-                    view.setLayoutParams(layoutParams);
-                    view.setBackgroundResource(R.drawable.backgrond_top_bottom_white);
-                    ViewHolder viewHolder = (ViewHolder) view.getTag();
-                    viewHolder.play_audio_playerpane.addView(paneView);
-                    paneView.play(viewHolder.audioPlayPoint);
-                    lastView = view;
+                    startPlay(view);
 
                 }
             });
+            viewHolder.ch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startPlay(view);
+
+                }
+            });
+
 
             viewHolder.audioPlayPoint = audioPlayPoint;
             viewHolder.title.setText(audioPlayPoint.getEnText());
@@ -304,6 +332,42 @@ public class PlayAudioAController extends ControllerAbstract {
         }
 
 
+    }
+
+
+    /**
+     * 相应的界面切换成播放状态
+     * @param view
+     */
+    private void startPlay(View view){
+        if (lastView == view) {
+            return;
+        }
+
+
+
+        if (lastView != null) {
+            LOG.i(lastView.getHeight()+"");
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), lastView.getHeight() - 300+5);
+            lastView.setLayoutParams(layoutParams);
+            ViewHolder viewHolder = (ViewHolder) lastView.getTag();
+            lastView.setBackgroundResource(R.drawable.backgrond_top_bottom_grey);
+            viewHolder.play_audio_playerpane.setVisibility(View.GONE);
+            viewHolder.play_audio_playerpane.removeAllViews();
+            paneView.destroy();
+        }
+
+        LOG.i(view.getHeight()+"");
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), view.getHeight() + 300-5);
+        view.setLayoutParams(layoutParams);
+        view.setBackgroundResource(R.drawable.backgrond_top_bottom_white);
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        viewHolder.play_audio_playerpane.addView(paneView);
+        viewHolder.play_audio_playerpane.setVisibility(View.VISIBLE);
+        paneView.play(viewHolder.audioPlayPoint);
+        lastView = view;
+        frameLayout.requestLayout();
     }
 
     private void showWordInfo(String word){

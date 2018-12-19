@@ -48,8 +48,8 @@ public class LQService {
 
     public static String getHttp() {
         if (http == null) {
-            http = "http://www.leqienglish.com/";
-//            http = "http://192.168.43.9:8080/";
+//            http = "http://www.leqienglish.com/";
+            http = "http://192.168.8.146:8080/";
         }
 
         return http;

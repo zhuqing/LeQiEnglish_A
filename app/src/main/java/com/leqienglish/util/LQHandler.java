@@ -9,6 +9,10 @@ public class LQHandler{
         public R call(T t);
     }
 
+    public interface predict<T,Boolean> {
+        public Boolean call(T t);
+    }
+
     public interface Consumer<T>{
 
         public void accept(T t);

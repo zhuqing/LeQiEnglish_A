@@ -57,6 +57,7 @@ public class PlayMediaPlayer {
 
     public void play(AudioPlayPoint audioPlayPoint, LQHandler.Consumer playComplete) {
         this.setAudioPlayPoint(audioPlayPoint);
+        completeType = PAUSE_NOT_CHAGNE;
         this.setPlayComplete(playComplete);
         if(this.mediaPlayer.isPlaying()){
             completeType = PAUSE_NOT_CHAGNE;

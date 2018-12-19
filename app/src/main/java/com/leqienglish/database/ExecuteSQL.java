@@ -133,7 +133,7 @@ public class ExecuteSQL {
     public static <T extends Entity> void insertLearnE(final List<T> data, String parentId, String type) {
         try {
             List<SQLEntity> sqlEntities = toSQLEntitys(type, parentId, data);
-            log.d("insertLearnE，type="+type+",size="+sqlEntities.size());
+
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();
             db.beginTransaction();
             for (SQLEntity sqlEnity : sqlEntities) {
@@ -598,13 +598,10 @@ public class ExecuteSQL {
             return null;
         }
         SQLEntity jsonData = null;
-        while (cursor.moveToNext()) {
-            jsonData = toSqlEntity(cursor);
-        }
-        log.d("getJSONDataById jsonData=" + jsonData);
-        cursor.close();
 
+        jsonData = executeSQL.toSqlEntity(cursor);
         return jsonData;
+
     }
 
 }

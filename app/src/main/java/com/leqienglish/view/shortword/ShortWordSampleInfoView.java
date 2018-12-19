@@ -94,7 +94,7 @@ public class ShortWordSampleInfoView extends LinearLayout {
 
 
             SentenceSimpleInfoView sentenceSimpleInfoView = (SentenceSimpleInfoView) convertView;
-            sentenceSimpleInfoView.setItem(this.getItem(position));
+            sentenceSimpleInfoView.setItem(this.getItem(position),position+1);
             return convertView;
         }
     }

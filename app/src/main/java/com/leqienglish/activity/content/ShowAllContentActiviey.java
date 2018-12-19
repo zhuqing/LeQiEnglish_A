@@ -1,7 +1,6 @@
 package com.leqienglish.activity.content;
 
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Gravity;
@@ -13,7 +12,6 @@ import android.widget.Toast;
 import com.leqienglish.R;
 import com.leqienglish.controller.content.ShowAllContentController;
 import com.leqienglish.util.LOGGER;
-import com.leqienglish.view.recommend.RecommendArticle;
 
 public class ShowAllContentActiviey extends AppCompatActivity {
     private LOGGER logger = new LOGGER(ShowAllContentActiviey.class);

@@ -145,6 +145,13 @@ public class LoginController extends ControllerAbstract {
                     ToastUtil.showShort(getView().getContext(),"授权失败");
                     return;
                 }
+
+                User user1 = new User();
+
+                user1.setImagePath(platform.getDb().getUserIcon());
+                user1.setName(platform.getDb().getUserName());
+                user1.setOtherSysId(platform.getDb().getUserId());
+
                 User user = UserDataCache.getInstance().findByOtherSysId(platform.getDb().getUserId());
 
                 if(user != null){

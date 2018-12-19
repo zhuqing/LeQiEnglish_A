@@ -24,6 +24,8 @@ public class AppType {
     public final static int CHECKEMAIL = 2;
     public final static int URL_ERROR = -100;
 
+    public final static int PAGE_SIZE = 15;
+
     /**
      * firstPage
      */

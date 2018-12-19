@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.PlayAudioActivity;
-
-import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.AppType;
 import com.leqienglish.util.BundleUtil;
@@ -19,7 +17,6 @@ import com.leqienglish.view.LoadingView;
 
 import java.io.IOException;
 
-import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
 
 /**
@@ -84,6 +81,7 @@ public class LoadingActivity extends AppCompatActivity {
                     intent.setClass(LoadingActivity.this, PlayAudioActivity.class);
                     //  intent.
                     LoadingActivity.this.startActivity(intent);
+                    finish();
                     break;
                 case AppType.DOWNLOAD_ERROR:
                     break;

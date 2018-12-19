@@ -6,12 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.leqienglish.R;
 import com.leqienglish.playandrecord.PlayAudioThread;
 import com.leqienglish.playandrecord.PlayMediaPlayer;
-
 import com.leqienglish.playandrecord.RecordAudioThread;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
@@ -27,7 +25,7 @@ public class PlayerPaneView extends RelativeLayout {
     private Button record;
     private Button playRecord;
 
-    private TextView tip ;
+  //  private TextView tip ;
 
     private String mp3Path;
 
@@ -47,7 +45,7 @@ public class PlayerPaneView extends RelativeLayout {
         this.play = this.findViewById(R.id.play_record_bar_play);
         this.record = this.findViewById(R.id.play_record_bar_record);
         this.playRecord = this.findViewById(R.id.play_record_bar_play_record);
-        this.tip= this.findViewById(R.id.play_record_bar_tip);
+       // this.tip= this.findViewById(R.id.play_record_bar_tip);
 
 
         this.play.setOnClickListener(new OnClickListener() {
@@ -85,7 +83,7 @@ public class PlayerPaneView extends RelativeLayout {
 
                 recordAudioThread = new RecordAudioThread(duration,createPlayRecordConsumer() );
                 recordAudioThread.record();
-                tip.setText("点击按钮结束录音");
+               // tip.setText("点击按钮结束录音");
 
             }
         });
@@ -130,8 +128,9 @@ public class PlayerPaneView extends RelativeLayout {
         if (recordAudioThread != null && recordAudioThread.isRunning()) {
             recordAudioThread.destroy();
         }
-        tip.setText("");
+       // tip.setText("");
         record.setBackgroundResource(R.drawable.leqi_record);
+
     }
 
     private void closeAudioPlay(String type) {
@@ -161,9 +160,10 @@ public class PlayerPaneView extends RelativeLayout {
 
         logger.d("play="+audioPlayPoint.getEnText()+"\nstart:"+audioPlayPoint.getStartTime());
 
-        play.setBackgroundResource(R.drawable.leqi_stop);
+
 
         PlayMediaPlayer.getInstance().play(audioPlayPoint, changePlayButtonBackground());
+        play.setBackgroundResource(R.drawable.leqi_stop);
 
     }
 
@@ -219,12 +219,9 @@ public class PlayerPaneView extends RelativeLayout {
         return mp3Path;
     }
 
-    public void setMp3Path(String mp3Path) {
+    public void setMp3Path(String mp3Path) throws IOException {
         this.mp3Path = mp3Path;
-        try {
-            PlayMediaPlayer.getInstance().setResource(mp3Path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        PlayMediaPlayer.getInstance().setResource(mp3Path);
+
     }
 }

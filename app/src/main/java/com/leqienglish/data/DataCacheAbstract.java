@@ -11,6 +11,9 @@ import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.date.DateUtil;
 import com.leqienglish.util.network.NetWorkUtil;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -62,6 +65,10 @@ public abstract class DataCacheAbstract<T> {
 
         return needUpdate(updateTime, currentTime);
 
+    }
+
+    protected MultiValueMap<String, String> getMutilValueMap(){
+       return new LinkedMultiValueMap<>();
     }
 
     /**

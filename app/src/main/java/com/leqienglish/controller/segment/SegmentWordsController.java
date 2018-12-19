@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.leqienglish.R;
@@ -130,9 +131,12 @@ public class SegmentWordsController extends ControllerAbstract {
         public View getView(int position, View convertView, ViewGroup parent) {
             if(convertView == null){
                 convertView = new ShortWordSampleInfoView(SegmentWordsController.this.getView().getContext(),null);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,520);
+                convertView.setLayoutParams(layoutParams);
             }
 
             ShortWordSampleInfoView wordInfoView = (ShortWordSampleInfoView) convertView;
+
             wordInfoView.setItem(this.getItem(position));
             return convertView;
         }

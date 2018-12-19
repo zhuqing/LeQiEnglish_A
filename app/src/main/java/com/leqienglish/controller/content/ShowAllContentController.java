@@ -85,6 +85,8 @@ public class ShowAllContentController extends ControllerAbstract {
 
         this.initListener();
         this.load();
+
+        search("");
     }
 
     private void load(){
@@ -98,6 +100,7 @@ public class ShowAllContentController extends ControllerAbstract {
                 simpleItemAdapter.updateListView(list);
             }
         });
+
     }
 
     private Catalog createAllCatalog(){
@@ -137,9 +140,10 @@ public class ShowAllContentController extends ControllerAbstract {
         if(!StringUtil.isNullOrEmpty(searchCatalog.getId())) {
             param.put("catalogId", this.searchCatalog.getId());
         }
-        if(!StringUtil.isNullOrEmpty(searchText)){
+        if(searchText!=null){
             param.put("title", searchText);
         }
+
 
         LQService.get("/english/content/findContentsByCatalogIdAndTitle", Content[].class, param, new LQHandler.Consumer<Content[]>() {
             @Override

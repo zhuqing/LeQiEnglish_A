@@ -30,12 +30,12 @@ public class SentenceSimpleInfoView extends LinearLayout {
         this.englishTextView = this.findViewById(R.id.sentence_simple_info_english);
     }
 
-    public void setItem(Sentence sentence){
+    public void setItem(Sentence sentence,int index){
         this.sentence = sentence;
         if(sentence.getEnglish()== null|| sentence.getEnglish().isEmpty()){
             this.englishTextView.setText("");
         }else{
-            this.englishTextView.setText(sentence.getEnglish());
+            this.englishTextView.setText(index+"."+sentence.getEnglish());
         }
         if(sentence.getChinese()== null|| sentence.getChinese().isEmpty()){
             this.chineaseTextView.setText("");

@@ -1,10 +1,10 @@
 package com.leqienglish.data.word;
 
-import com.leqienglish.data.DataCacheAbstract;
+import com.leqienglish.data.DataPageCacheAbstract;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.database.ExecuteSQL;
+import com.leqienglish.util.AppType;
 
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import static com.leqienglish.database.Constants.MY_WORDS_TYPE;
 /**
  * 我的单词的缓存
  */
-public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
+public class MyWordDataCache extends DataPageCacheAbstract<List<Word>> {
 
 
     private static MyWordDataCache myWordDataCache;
@@ -68,13 +68,20 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
         ExecuteSQL.insertLearnE(words, UserDataCache.getInstance().getCacheData().getId(), MY_WORDS_TYPE);
     }
 
+
+    protected boolean needUpdate() {
+        return false;
+    }
+
     @Override
     protected List<Word> getFromService() {
         if (UserDataCache.getInstance().getCacheData() == null) {
             return null;
         }
-        MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> param = this.getMutilValueMap();
         param.add("userId", UserDataCache.getInstance().getCacheData().getId());
+        param.add(PAGE, "1");
+        param.add(PAGE_SIZE, AppType.PAGE_SIZE+"");
         try {
             Word[] segments = this.getRestClient().get("/english/word/findByUserId", param, Word[].class);
             if (segments == null) {
@@ -108,6 +115,7 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
 
     @Override
     public void clearData() {
+        super.clearData();
         ExecuteSQL.delete(MY_WORDS_TYPE, UserDataCache.getInstance().getCacheData().getId());
     }
 
@@ -128,4 +136,28 @@ public class MyWordDataCache extends DataCacheAbstract<List<Word>> {
     }
 
 
+    @Override
+    protected List<Word> getMoreFromService() {
+
+        if (UserDataCache.getInstance().getCacheData() == null) {
+            return null;
+        }
+        MultiValueMap<String, String> param = this.getMutilValueMap();
+        param.add("userId", UserDataCache.getInstance().getCacheData().getId());
+        try {
+            Word[] segments = this.getRestClient().get("/english/word/findByUserId", param, Word[].class);
+            if (segments == null) {
+                return null;
+            }
+
+            List<Word> wordList = new ArrayList<>(Arrays.asList(segments));
+
+            return wordList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
 }

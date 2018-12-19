@@ -59,7 +59,7 @@
     <string name="message_no_password">没有输入密码！</string>
 
 
-    <string name="message_tip_start_record">点击开始录音</string>
+    <string name="message_tip_start_record">点击开始录音/播放录音</string>
 
     <string name="message_tip_start_ding_record">点击开始,叮叮两声后开始录音</string>
 
