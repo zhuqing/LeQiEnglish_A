@@ -21,6 +21,23 @@
 
       </android.support.v4.view.ViewPager>
 
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_floatingbutton"
+            android:layout_centerInParent="true"
+            android:background="@color/no3_white"
+            android:layout_margin="16dp"
+            android:layout_gravity="bottom|end"
+            android:src="@drawable/play_button_whait"
+            app:borderWidth="0dp"
+            app:backgroundTint="@color/blue"
+            app:rippleColor="#33728dff"
+            app:elevation="8dp"
+            app:pressedTranslationZ="16dp"/>
+
+
+
     </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView

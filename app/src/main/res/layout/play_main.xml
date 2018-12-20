@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/play_main_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<ListView
+    android:id="@+id/play_main_listview"
+    android:layout_width="match_parent"
+
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true">
+
+</ListView>
+
+    <com.leqienglish.view.play.PlayBarView
+        android:id="@+id/play_main_playBardView"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></com.leqienglish.view.play.PlayBarView>
+</RelativeLayout>

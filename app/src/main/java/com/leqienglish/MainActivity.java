@@ -2,9 +2,11 @@ package com.leqienglish;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.leqienglish.activity.play.PlayMainActivity;
 import com.leqienglish.controller.HomeListViewController;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.version.VersionDataCache;
@@ -52,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navigation;
 
     private Integer rebackCount = 0;
+
+    private FloatingActionButton floatingActionButton;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -119,11 +124,26 @@ public class MainActivity extends AppCompatActivity {
 
         this.initViewPage();
 
+        this.floatingActionButton = this.findViewById(R.id.main_floatingbutton);
+
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         AppType.mainContext = this.getBaseContext();
         MobSDK.init(this);
+        this.initEventHandler();
+    }
+
+    private void initEventHandler(){
+        this.floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+              //  intent.putExtras(BundleUtil.create(BundleUtil.DATA, content));
+                intent.setClass(getApplicationContext(), PlayMainActivity.class);
+                getApplicationContext().startActivity(intent);
+            }
+        });
     }
 
 

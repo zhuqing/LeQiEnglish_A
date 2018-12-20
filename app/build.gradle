@@ -55,6 +55,7 @@ MobSDK {
 }
 android {
     compileSdkVersion 26
+
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.leqienglish"
@@ -127,6 +128,7 @@ dependencies {
     implementation 'com.zzhoujay.richtext:richtext:2.5.4'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.13'
+
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     implementation files('libs/LQ-CLIENT-UTIL-1.0-SNAPSHOT.jar')

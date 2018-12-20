@@ -52,6 +52,9 @@ public abstract class DataCacheAbstract<T> {
         if (!NetWorkUtil.isConnect(AppType.mainContext)) {
             return false;
         }
+        if(this.getUpdateTimeType() == null){
+            return false;
+        }
 
         Long updateTime = this.getUpdateTime();
 
