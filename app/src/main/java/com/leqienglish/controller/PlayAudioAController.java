@@ -25,12 +25,14 @@ import com.leqienglish.util.FileUtil;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.SharePlatform;
+import com.leqienglish.util.TaskUtil;
 import com.leqienglish.view.play.PlayerPaneView;
 import com.leqienglish.view.word.WordInfoView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +69,6 @@ public class PlayAudioAController extends ControllerAbstract {
     private long during;
 
 
-
     public PlayAudioAController(View view, Segment segment, String path) {
         super(view);
         this.segment = segment;
@@ -84,33 +85,52 @@ public class PlayAudioAController extends ControllerAbstract {
         this.wordsButton = (Button) this.findViewById(R.id.play_audio_segment_word);
         this.views = new ArrayList<>();
 
+        TaskUtil.run(new LQHandler.Supplier<List<AudioPlayPoint>>() {
+                         @Override
+                         public List<AudioPlayPoint> get() {
+                             try {
+                                 List<AudioPlayPoint> entitys = AudioPlayPoint.toAudioPlays(segment.getContent());
+                                 minutes = getMinute(entitys);
+                                 return entitys;
+                             } catch (Exception e) {
+                                 e.printStackTrace();
+                             }
+                             return Collections.EMPTY_LIST;
+
+                         }
+                     }, new LQHandler.Consumer<List<AudioPlayPoint>>() {
+                         @Override
+                         public void accept(List<AudioPlayPoint> audioPlayPoint) {
+                             playEntities = audioPlayPoint;
+                             loadView(playEntities);
+                         }
+                     }
+        );
 
         loadMp3(this.filePath, new LQHandler.Consumer<Boolean>() {
-                @Override
-                public void accept(Boolean aBoolean) {
-                    try {
-                        playEntities = AudioPlayPoint.toAudioPlays(segment.getContent());
-                        loadView(playEntities);
-                        minutes = getMinute(playEntities);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            });
+            @Override
+            public void accept(Boolean aBoolean) {
 
 
+            }
+        });
 
 
         saveWord(segment, UserDataCache.getInstance().getUser());
         this.initListener();
     }
 
+    /**
+     * 加载Mp3 ，如果文件
+     *
+     * @param path
+     * @param consumer
+     */
     private void loadMp3(String path, LQHandler.Consumer<Boolean> consumer) {
         try {
             this.paneView.setMp3Path(FileUtil.getFileAbsolutePath(this.filePath));
             consumer.accept(true);
-        }catch (Exception e) {
+        } catch (Exception e) {
             //Map3文件加载失败，重新加载文件
             try {
                 FileUtil.delete(FileUtil.getFileAbsolutePath(this.filePath));
@@ -136,17 +156,21 @@ public class PlayAudioAController extends ControllerAbstract {
         }
     }
 
-    private int getMinute(List<AudioPlayPoint> playEntities){
+    /**
+     * 获取时长
+     *
+     * @param playEntities
+     * @return
+     */
+    private int getMinute(List<AudioPlayPoint> playEntities) {
         AudioPlayPoint start = playEntities.get(0);
+        AudioPlayPoint end = playEntities.get(playEntities.size() - 1);
+        int length = (int) (end.getEndTime() - start.getStartTime());
 
-        AudioPlayPoint end = playEntities.get(playEntities.size()-1);
-
-        int length = (int) (end.getEndTime()-start.getStartTime());
-
-        return length/60/1000;
+        return length / 60 / 1000;
     }
 
-    private void initListener(){
+    private void initListener() {
         startReciteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,7 +185,7 @@ public class PlayAudioAController extends ControllerAbstract {
             }
         });
 
-        this.wordsButton.setOnClickListener(new View.OnClickListener(){
+        this.wordsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -171,20 +195,20 @@ public class PlayAudioAController extends ControllerAbstract {
             }
         });
 
-        this.shareButton.setOnClickListener(new View.OnClickListener(){
+        this.shareButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if(segment == null){
+                if (segment == null) {
                     return;
                 }
                 String userName = UserDataCache.getInstance().getUserName();
                 String userId = UserDataCache.getInstance().getUserId();
-                String hasFinished = "刚刚完成了\""+segment.getTitle()+"\"的背诵";
+                String hasFinished = "刚刚完成了\"" + segment.getTitle() + "\"的背诵";
                 String segmentId = segment.getId();
                 StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
                 stringBuilder.append("html/share/shareContent.html").append("?userId=").append(userId).append("&segmentId=").append(segmentId);
-                SharePlatform.onShare(getView().getContext(),userName+hasFinished,"我"+hasFinished,LQService.getLogoPath(),stringBuilder.toString());
+                SharePlatform.onShare(getView().getContext(), userName + hasFinished, "我" + hasFinished, LQService.getLogoPath(), stringBuilder.toString());
 
             }
         });
@@ -194,10 +218,10 @@ public class PlayAudioAController extends ControllerAbstract {
     /**
      * 更新背诵时间
      */
-    private void updateTimes(){
-        Map<String,String> param = new HashMap<>();
+    private void updateTimes() {
+        Map<String, String> param = new HashMap<>();
         param.put("id", UserReciteRecordDataCache.getInstance().getCacheData().getId());
-        param.put("minutes",this.minutes+"");
+        param.put("minutes", this.minutes + "");
 
         LQService.put("userReciteRecord/updateReciteMinutes", null, UserReciteRecord.class, param, new LQHandler.Consumer<UserReciteRecord>() {
             @Override
@@ -207,9 +231,9 @@ public class PlayAudioAController extends ControllerAbstract {
         });
     }
 
-    private void addUserAndSegment(){
+    private void addUserAndSegment() {
         User user = UserDataCache.getInstance().getUser();
-        if(user == null|| this.segment == null){
+        if (user == null || this.segment == null) {
             return;
         }
 
@@ -218,7 +242,7 @@ public class PlayAudioAController extends ControllerAbstract {
         userAndSegment.setSegmentId(segment.getId());
         userAndSegment.setContentId(this.segment.getContentId());
 
-        LQService.post("userAndSegment/create",userAndSegment,UserAndSegment.class,null, new LQHandler.Consumer<UserAndSegment>(){
+        LQService.post("userAndSegment/create", userAndSegment, UserAndSegment.class, null, new LQHandler.Consumer<UserAndSegment>() {
             @Override
             public void accept(UserAndSegment userAndSegment) {
                 Content content = new Content();
@@ -231,22 +255,23 @@ public class PlayAudioAController extends ControllerAbstract {
 
     /**
      * 记录该段下的单词
+     *
      * @param segment
      * @param user
      */
-    private void saveWord(Segment segment , User user){
-        if(segment == null|| user == null){
+    private void saveWord(Segment segment, User user) {
+        if (segment == null || user == null) {
             return;
         }
 
 
-        Map<String,String> param = new HashMap<>();
-        param.put("userId",user.getId());
-        param.put("segmentId",segment.getId());
+        Map<String, String> param = new HashMap<>();
+        param.put("userId", user.getId());
+        param.put("segmentId", segment.getId());
         LQService.post("/userAndWord/insertAllBySegmentId", null, String.class, param, new LQHandler.Consumer<String>() {
             @Override
             public void accept(String userAndContent) {
-               // ToastUtil.showShort(getView().getContext(),userAndContent);
+                // ToastUtil.showShort(getView().getContext(),userAndContent);
             }
         });
 
@@ -268,39 +293,38 @@ public class PlayAudioAController extends ControllerAbstract {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if(event.getAction() == MotionEvent.ACTION_UP){
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
 
                         long end = System.currentTimeMillis();
 
                         /**
                          * 如果按下的时间小于300毫秒，不处理
                          */
-                        if(end-during<300){
+                        if (end - during < 300) {
                             return false;
                         }
 
-                        if(!viewHolder.title.hasSelection()){
+                        if (!viewHolder.title.hasSelection()) {
                             return false;
                         }
-                        String wordStr = viewHolder.title.getText().subSequence(viewHolder.title.getSelectionStart(),viewHolder.title.getSelectionEnd()).toString();
+                        String wordStr = viewHolder.title.getText().subSequence(viewHolder.title.getSelectionStart(), viewHolder.title.getSelectionEnd()).toString();
                         wordStr = wordStr.trim();
 
 
-                        if(wordStr.isEmpty()){
+                        if (wordStr.isEmpty()) {
                             return false;
                         }
-                       /// wordInfoPopupWindow = new WordInfoPopupWindow(getView().getContext());
+                        /// wordInfoPopupWindow = new WordInfoPopupWindow(getView().getContext());
                         paneView.destroy();
                         showWordInfo(wordStr);
 
 
-                    } else if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         during = System.currentTimeMillis();
                     }
                     return false;
-                }} );
-
-
+                }
+            });
 
 
             viewHolder.title.setOnClickListener(new View.OnClickListener() {
@@ -321,7 +345,7 @@ public class PlayAudioAController extends ControllerAbstract {
 
             viewHolder.audioPlayPoint = audioPlayPoint;
             viewHolder.title.setText(audioPlayPoint.getEnText());
-            if(audioPlayPoint.getChText()!=null){
+            if (audioPlayPoint.getChText() != null) {
                 viewHolder.ch.setText(audioPlayPoint.getChText());
             }
 
@@ -337,18 +361,18 @@ public class PlayAudioAController extends ControllerAbstract {
 
     /**
      * 相应的界面切换成播放状态
+     *
      * @param view
      */
-    private void startPlay(View view){
+    private void startPlay(View view) {
         if (lastView == view) {
             return;
         }
 
 
-
         if (lastView != null) {
-            LOG.i(lastView.getHeight()+"");
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), lastView.getHeight() - 300+5);
+            LOG.i(lastView.getHeight() + "");
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), lastView.getHeight() - 300 + 5);
             lastView.setLayoutParams(layoutParams);
             ViewHolder viewHolder = (ViewHolder) lastView.getTag();
             lastView.setBackgroundResource(R.drawable.backgrond_top_bottom_grey);
@@ -357,9 +381,9 @@ public class PlayAudioAController extends ControllerAbstract {
             paneView.destroy();
         }
 
-        LOG.i(view.getHeight()+"");
+        LOG.i(view.getHeight() + "");
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), view.getHeight() + 300-5);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(view.getWidth(), view.getHeight() + 300 - 5);
         view.setLayoutParams(layoutParams);
         view.setBackgroundResource(R.drawable.backgrond_top_bottom_white);
         ViewHolder viewHolder = (ViewHolder) view.getTag();
@@ -370,26 +394,26 @@ public class PlayAudioAController extends ControllerAbstract {
         frameLayout.requestLayout();
     }
 
-    private void showWordInfo(String word){
-        WordInfoView wordInfoView = new WordInfoView(getView().getContext(),null);
+    private void showWordInfo(String word) {
+        WordInfoView wordInfoView = new WordInfoView(getView().getContext(), null);
 
         WordInfoDataCache.getInstance(word).load(new LQHandler.Consumer<Word>() {
             @Override
             public void accept(Word word) {
-                if(wordInfoView== null){
+                if (wordInfoView == null) {
                     return;
                 }
 
                 wordInfoView.load(word);
 
                 new ActionSheet.DialogBuilder(getView().getContext())
-                        .addButton("查看详情", (v)->{
+                        .addButton("查看详情", (v) -> {
                             Intent intent = new Intent();
                             intent.putExtras(BundleUtil.create(BundleUtil.DATA, word));
                             intent.setClass(getView().getContext(), WordInfoActivity.class);
                             getView().getContext().startActivity(intent);
                         })
-                        .addCloseButton("关闭",null)
+                        .addCloseButton("关闭", null)
                         .setCustomeView(wordInfoView).create();
                 wordInfoView.play();
             }
@@ -400,18 +424,20 @@ public class PlayAudioAController extends ControllerAbstract {
     public void reload() {
 
     }
+
     @Override
     public void destory() {
 
         this.paneView.destroy();
     }
-    final class ViewHolder {
-        View view;
-        TextView title;
-        TextView ch;
-        RelativeLayout play_audio_playerpane;
-        Button playButton;
-        AudioPlayPoint audioPlayPoint;
+
+    public static final class ViewHolder {
+        public View view;
+        public TextView title;
+        public TextView ch;
+        public  RelativeLayout play_audio_playerpane;
+        public  Button playButton;
+        public  AudioPlayPoint audioPlayPoint;
 
     }
 }

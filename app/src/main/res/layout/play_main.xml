@@ -12,10 +12,16 @@
     android:layout_alignParentTop="true">
 
 </ListView>
+    <com.leqienglish.view.operation.OperationBar
+        android:id="@+id/play_main_operationbar"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"></com.leqienglish.view.operation.OperationBar>
 
     <com.leqienglish.view.play.PlayBarView
         android:id="@+id/play_main_playBardView"
-        android:layout_alignParentBottom="true"
+  android:layout_above="@id/play_main_operationbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></com.leqienglish.view.play.PlayBarView>
+
 </RelativeLayout>

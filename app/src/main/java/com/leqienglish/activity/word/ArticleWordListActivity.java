@@ -21,9 +21,7 @@ public class ArticleWordListActivity extends AppCompatActivity {
         setContentView(R.layout.article_word_list);
 
         Content content= (Content) this.getIntent().getExtras().getSerializable(BundleUtil.DATA);
-
         View view = this.findViewById(R.id.article_word_list_root);
-
         this.articleWordListController = new ArticleWordListController(view,content);
         articleWordListController.init();
 

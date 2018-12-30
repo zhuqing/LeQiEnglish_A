@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="user_board_image">100dp</dimen>
+
+    <dimen name="icon_small">24dp</dimen>
 </resources>

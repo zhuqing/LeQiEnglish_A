@@ -11,6 +11,8 @@ public class BundleUtil {
     public static final String DATA = "DATA";
     public static final String DATA_BL = "DATA_BL";
     public static final String PATH = "PATH";
+    public static final String INDEX = "INDEX";
+
 
     public static final String CONTENT = "CONTENT";
     public static final String SEGMENT = "SEGMENT";

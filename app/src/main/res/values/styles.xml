@@ -175,6 +175,11 @@
         <item name="android:textColor">@color/no5_gray_silver</item>
     </style>
 
+    <style name="font_size_10_gray">
+        <item name="android:textSize">10dp</item>
+        <item name="android:textColor">@color/no5_gray_silver</item>
+    </style>
+
     <style name="font_size_12_white">
         <item name="android:textSize">12dp</item>
         <item name="android:textColor">@color/no3_white</item>

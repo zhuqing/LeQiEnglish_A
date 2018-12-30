@@ -31,7 +31,7 @@
             android:layout_gravity="bottom|end"
             android:src="@drawable/play_button_whait"
             app:borderWidth="0dp"
-            app:backgroundTint="@color/blue"
+            app:backgroundTint="@color/red"
             app:rippleColor="#33728dff"
             app:elevation="8dp"
             app:pressedTranslationZ="16dp"/>

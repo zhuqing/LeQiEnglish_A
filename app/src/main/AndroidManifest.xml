@@ -47,22 +47,23 @@
         <!-- </intent-filter> -->
         <!-- </activity> -->
         <activity android:name=".MainActivity"  android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity android:name=".activity.PlayAudioActivity" />
-        <activity android:name=".activity.content.ArticleInfoActivity" />
-        <activity android:name=".activity.suggestion.SuggestionActivity" />
-        <activity android:name=".activity.user.UserLoginActivity" />
-        <activity android:name=".activity.user.UserRegistActivity" />
-        <activity android:name=".activity.content.ShowAllContentActiviey" />
-        <activity android:name=".activity.load.LoadingActivity" />
-        <activity android:name=".activity.word.WordInfoActivity" />
-        <activity android:name=".activity.word.ArticleWordListActivity" />
-        <activity android:name=".activity.word.ReciteWordsActivity" />
-        <activity android:name=".activity.word.MyReciteWordsInfoActivity" />
-        <activity android:name=".activity.segment.RecitingSegmentActivity" />
-        <activity android:name=".activity.reciting.RecitingArticleListActivity" />
-        <activity android:name=".activity.word.ReciteWordsReviewActivity" />
+        <activity android:name=".activity.PlayAudioActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.content.ArticleInfoActivity"  android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.suggestion.SuggestionActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.user.UserLoginActivity"  android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.user.UserRegistActivity" android:configChanges="keyboardHidden|orientation|screenSize"  />
+        <activity android:name=".activity.content.ShowAllContentActiviey" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.load.LoadingActivity" android:configChanges="keyboardHidden|orientation|screenSize"  />
+        <activity android:name=".activity.word.WordInfoActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.word.ArticleWordListActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.word.ReciteWordsActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.word.MyReciteWordsInfoActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.segment.RecitingSegmentActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.reciting.RecitingArticleListActivity" android:configChanges="keyboardHidden|orientation|screenSize"  />
+        <activity android:name=".activity.word.ReciteWordsReviewActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".activity.play.PlayMainActivity"  android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity android:name=".activity.segment.SegmentWordsActivity" />
+        <activity android:name=".activity.segment.SegmentWordsActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.segment.SegmentPlayActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <!-- 友盟分享 -->
         <!-- 微信 -->

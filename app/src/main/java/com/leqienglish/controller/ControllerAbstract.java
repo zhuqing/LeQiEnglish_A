@@ -1,5 +1,6 @@
 package com.leqienglish.controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
@@ -31,8 +32,17 @@ public abstract class ControllerAbstract<F extends View>{
     public abstract void init();
 
     public abstract void reload();
-
+    public void onResume(){}
+    public void onPause(){}
     public abstract void destory();
+
+    protected Context getContext(){
+        if(this.getView() == null){
+            return null;
+        }
+
+        return this.getView().getContext();
+    }
 
 
     /**

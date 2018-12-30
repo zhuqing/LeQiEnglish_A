@@ -24,11 +24,19 @@ public abstract class LeQiAppCompatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish(); // back button
+                // back button
+                backHandler();
                 return true;
             //    case android.R.id.
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 返回按钮事件处理
+     */
+    protected void backHandler(){
+        this.finish();
     }
 
     @Override

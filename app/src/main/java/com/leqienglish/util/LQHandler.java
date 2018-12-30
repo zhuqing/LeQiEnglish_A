@@ -17,6 +17,11 @@ public class LQHandler{
 
         public void accept(T t);
     }
+
+    public interface Supplier<T>{
+
+        public T get();
+    }
 }
 
 

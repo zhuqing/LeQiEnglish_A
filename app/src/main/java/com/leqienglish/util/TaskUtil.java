@@ -45,4 +45,28 @@ public class TaskUtil {
 
        asyncTask.execute();
     }
+
+    /**
+     *
+     * @param run //异步运行，在主线程中运行
+     * @param runInMain
+     * @param <T>
+     */
+    public static <T> void run(LQHandler.Supplier<T> run , LQHandler.Consumer<T> runInMain){
+        AsyncTask asyncTask =  new AsyncTask<Object, Object, T> () {
+            @Override
+            protected T doInBackground(Object[] objects) {
+
+                return run.get();
+            }
+
+            @Override
+            protected void onPostExecute(T t) {
+                super.onPostExecute(t);
+                runInMain.accept(t);
+            }
+        };
+
+        asyncTask.execute();
+    }
 }

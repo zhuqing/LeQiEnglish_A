@@ -15,17 +15,48 @@ import xyz.tobebetter.entity.Entity;
 
 public abstract class SimpleItemAdapter<T extends Entity> extends LeQiBaseAdapter<T> {
 
-    class ViewHolder{
-        TextView textView;
+    public class ViewHolder{
+       public  TextView textView;
     }
 
 
+    private SelectedModel selectedModel = SelectedModel.SINGLE;
 
     public List<T> selectedList = new ArrayList<>();
+    private List<Integer> selectedIndexs = new ArrayList<>();
 
     protected abstract String toString(T t);
 
-    protected abstract void setStyle(TextView textView);
+    protected  void setStyle(TextView textView){};
+
+    protected   void hasSelected(int position){};
+    protected   void hasDisSelected(int position){};
+
+
+    public void disSelecte(Integer position){
+
+    }
+
+    public void selecte(Integer position){
+        switch (selectedModel){
+            case SINGLE:
+                if(!this.selectedIndexs.isEmpty()){
+                    hasDisSelected(this.selectedIndexs.get(0));
+                }
+
+                this.selectedList.clear();
+                this.selectedIndexs.clear();
+                break;
+
+                case MULTIPLE:
+                    break;
+        }
+
+        this.selectedIndexs.add(position);
+        this.selectedList.add(this.getItem(position));
+
+        hasSelected(position);
+    }
 
 
 
