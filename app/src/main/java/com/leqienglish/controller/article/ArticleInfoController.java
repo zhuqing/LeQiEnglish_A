@@ -2,19 +2,27 @@ package com.leqienglish.controller.article;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 
 import com.leqienglish.R;
+import com.leqienglish.activity.segment.SegmentPlayActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.AppRefreshManager;
+import com.leqienglish.data.content.ContentDataCache;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.data.user.UserHeartedDataCache;
 import com.leqienglish.sf.LQService;
+import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
+import com.leqienglish.util.SharePlatform;
 import com.leqienglish.view.article.ArticleInfoView;
 import com.leqienglish.view.article.UserRecitingArticleView;
+import com.leqienglish.view.operation.OperationBar;
 import com.leqienglish.view.recommend.RecommendArticle;
 
 import java.util.Arrays;
@@ -22,10 +30,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.english.content.ReciteContentVO;
 import xyz.tobebetter.entity.user.User;
+import xyz.tobebetter.entity.user.UserHearted;
 import xyz.tobebetter.entity.user.content.UserAndContent;
 
 public class ArticleInfoController extends ControllerAbstract {
@@ -40,7 +50,11 @@ public class ArticleInfoController extends ControllerAbstract {
 
     public Button button;
 
+    private OperationBar operationBar;
+
     private boolean isReciting;
+
+
 
     public ArticleInfoController(View view,boolean isReciting) {
         super(view);
@@ -51,8 +65,7 @@ public class ArticleInfoController extends ControllerAbstract {
     public void init() {
         this.button = this.getView().findViewById(R.id.add_recite_article_info_button);
         this.articleInfoView = this.getView().findViewById(R.id.add_recite_article_info_view);
-
-
+        this.operationBar = (OperationBar) this.findViewById(R.id.add_recite_article_info_operationBar);
         this.initListener();
         reload();
     }
@@ -69,7 +82,107 @@ public class ArticleInfoController extends ControllerAbstract {
                 }
             }
         });
+
+        this.operationBar.setOperationBarI(new OperationBar.OperationBarI() {
+            @Override
+            public void handler(String id) {
+                switch (id){
+                    case "return":
+
+                        finished();
+                        break;
+                    case "audioPlay":
+                        startPlayAudio();
+                        break;
+                    case "hearted":
+                        hearted();
+                        break;
+                    case "share":
+                        shareClickHandler();
+                        break;
+
+                    default:
+
+
+                }
+            }
+        });
     }
+
+
+
+
+
+
+
+
+    private void startPlayAudio(){
+        Intent intent = new Intent();
+
+        Bundle bundle = BundleUtil.create(BundleUtil.DATA, content);
+        BundleUtil.create(bundle, BundleUtil.INDEX,0);
+        BundleUtil.create(bundle, BundleUtil.DATA_BL,true);
+        intent.putExtras(bundle);
+        intent.setClass(getContext(), SegmentPlayActivity.class);
+        getContext().startActivity(intent);
+    }
+
+    private void shareClickHandler() {
+        if(content == null){
+            return;
+        }
+        String userName = UserDataCache.getInstance().getUserName();
+        String userId = UserDataCache.getInstance().getUserId();
+        String hasFinished = "正在听英语演讲\""+content.getTitle()+"\"";
+        //  String segmentId = segment.getId();
+        StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
+        stringBuilder.append("/html/details.html").append("?userId=").append(userId).append("&id=").append(content.getId());
+        SharePlatform.onShare(getView().getContext(), userName + hasFinished, userName + hasFinished, LQService.getLogoPath(), stringBuilder.toString());
+
+    }
+
+
+    private void hearted(){
+        if(this.content == null || this.content.getAwesomeNum() == null){
+            return;
+        }
+
+        this.content.setAwesomeNum(content.getAwesomeNum()+1);
+
+        updateHearted(true);
+        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(content.getId());
+        userHeartedDataCache.commit(Consistent.CONTENT_TYPE_CONTENT);
+        ContentDataCache.update(content.getId());
+    }
+
+    private void updateHearted(boolean userInteract){
+        if(content == null || content.getAwesomeNum() == null){
+            return;
+        }
+
+        long awesomeNum = this.content.getAwesomeNum();
+
+
+
+        if(userInteract){
+            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart_red);
+            return;
+        }else{
+            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart);
+        }
+
+        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(content.getId());
+        userHeartedDataCache.load(new LQHandler.Consumer<UserHearted>() {
+            @Override
+            public void accept(UserHearted userHearted) {
+                if(userHearted != null){
+                    operationBar.update("hearted",R.drawable.heart_red);
+                }
+            }
+        });
+
+    }
+
 
     @Override
     public void reload() {
@@ -85,6 +198,7 @@ public class ArticleInfoController extends ControllerAbstract {
             button.setText(R.string.has_add_article_to_recite);
             hasAdd2MyReciting = true;
         }
+        updateHearted(false);
     }
 
     @Override
@@ -200,4 +314,6 @@ public class ArticleInfoController extends ControllerAbstract {
     public void setUser(User user) {
         this.user = user;
     }
+
+
 }

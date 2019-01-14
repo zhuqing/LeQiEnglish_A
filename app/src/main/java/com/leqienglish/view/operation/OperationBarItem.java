@@ -13,8 +13,13 @@ import android.widget.TextView;
 import com.leqienglish.R;
 
 public class OperationBarItem extends LinearLayout {
-    private Drawable background;
+
+    private String itemId;
     private String title;
+    private int imageId;
+
+    private Drawable image;
+
 
     private ImageView button;
     private TextView titleTextView;
@@ -25,7 +30,7 @@ public class OperationBarItem extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.operation_bar_item, this);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OperaiontBarItem);
-        this.background = typedArray.getDrawable(R.styleable.OperaiontBarItem_background_image);
+        this.image = typedArray.getDrawable(R.styleable.OperaiontBarItem_image);
         this.title = typedArray.getString(R.styleable.OperaiontBarItem_title);
 
         typedArray.recycle();
@@ -37,29 +42,41 @@ public class OperationBarItem extends LinearLayout {
         this.button = this.findViewById(R.id.operation_bar_item_button);
         this.titleTextView = this.findViewById(R.id.operation_bar_item_title);
 
-        this.button.setImageDrawable(this.background);
+        this.button.setImageDrawable(this.image);
         this.titleTextView.setText(this.title);
 
     }
 
     @Override
     public Drawable getBackground() {
-        return background;
+        return image;
     }
 
     @Override
     public void setBackground(Drawable background) {
-        this.background = background;
-        if(this.button!=null && this.background !=null){
-            this.button.setBackground(this.background);
+        this.image = background;
+        if(this.button!=null && this.image !=null){
+            this.button.setBackground(this.image);
         }
+    }
+
+    /**
+     * 更新图标
+     * @param id
+     */
+    public void updateImage(int id){
+        this.button.setImageResource(id);
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    /**
+     * 更新标题
+     * @param title
+     */
+    public void updateTitle(String title) {
         this.title = title;
         if(this.title == null){
             this.title = "";
@@ -68,5 +85,25 @@ public class OperationBarItem extends LinearLayout {
 
             this.titleTextView.setText(title);
         }
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
     }
 }

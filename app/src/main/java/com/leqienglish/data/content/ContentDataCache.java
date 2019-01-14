@@ -2,6 +2,7 @@ package com.leqienglish.data.content;
 
 import com.leqienglish.data.DataCacheAbstract;
 import com.leqienglish.database.ExecuteSQL;
+import com.leqienglish.util.TaskUtil;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -69,6 +70,22 @@ public class ContentDataCache extends DataCacheAbstract<Content> {
         return true;
     }
 
+    public static void update(String contentId){
+
+        TaskUtil.run(new Runnable() {
+            @Override
+            public void run() {
+                ContentDataCache contentDataCache = new ContentDataCache(contentId);
+                Content content = contentDataCache.getFromService();
+                if(content == null){
+                    return;
+                }
+
+                contentDataCache.putCache(content);
+            }
+        });
+    }
+
     @Override
     protected String getUpdateTimeType() {
         return "ContentDataCache_update";
@@ -79,13 +96,14 @@ public class ContentDataCache extends DataCacheAbstract<Content> {
         if(content == null){
             return ;
         }
-        ExecuteSQL.delete(CONTENT_TYPE,content.getId());
+        ExecuteSQL.deleteById(contentId);
+        MyContentDataCache.getInstance().putCache(Arrays.asList(content));
         ExecuteSQL.insertLearnE(Arrays.asList(content),content.getId(),CONTENT_TYPE);
     }
 
     @Override
     public void clearData() {
-        ExecuteSQL.delete(CONTENT_TYPE,contentId);
+        ExecuteSQL.deleteById(contentId);
     }
 
 

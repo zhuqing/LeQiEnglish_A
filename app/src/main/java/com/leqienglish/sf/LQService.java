@@ -39,7 +39,7 @@ public class LQService {
             try {
                 restClient = new RestClient(LQService.getHttp());
             } catch (Exception ex) {
-                restClient = new RestClient("http://www.leqienglish.com");
+                restClient = new RestClient("https://www.leqienglish.com");
             }
 
         }
@@ -48,7 +48,7 @@ public class LQService {
 
     public static String getHttp() {
         if (http == null) {
-            http = "http://www.leqienglish.com/";
+            http = "https://www.leqienglish.com/";
 //            http = "http://192.168.8.146:8080/";
 //            http = "http://192.168.2.165:8080/";
           ////  http = "http://192.168.43.9:8080/";

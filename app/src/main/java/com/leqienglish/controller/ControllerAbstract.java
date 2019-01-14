@@ -1,5 +1,6 @@
 package com.leqienglish.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -42,6 +43,11 @@ public abstract class ControllerAbstract<F extends View>{
         }
 
         return this.getView().getContext();
+    }
+
+    protected void finished(){
+        Activity activity = (Activity) this.getContext();
+        activity.finish();
     }
 
 

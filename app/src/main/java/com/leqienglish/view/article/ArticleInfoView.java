@@ -49,7 +49,7 @@ public class ArticleInfoView extends RelativeLayout {
     private Content content;
 
 
-    private TextView titleView;
+
 
     private GridView gridView;
 
@@ -69,7 +69,7 @@ public class ArticleInfoView extends RelativeLayout {
         super(context, attrs);
         LayoutInflater.from(context).inflate(R.layout.article_info, this);
 
-        this.titleView = this.findViewById(R.id.article_info_title);
+       // this.titleView = this.findViewById(R.id.article_info_title);
         this.gridView = this.findViewById(R.id.article_info_gridview);
         this.acticleInfoPrecent = this.findViewById(R.id.article_info_percent);
         this.gridViewAdapter = new GridViewAdapter(LayoutInflater.from(this.gridView.getContext()));
@@ -126,7 +126,7 @@ public class ArticleInfoView extends RelativeLayout {
         this.blurBitMap = this.buildBlurBitmap();
         this.roundBlurBitMap = ImageUtil.createRoundCornerImage(blurBitMap, 30, ImageUtil.HalfType.ALL);
         this.getRootView().setBackground(new BitmapDrawable(this.getResources(), blurBitMap));
-        this.titleView.setText(this.getContent().getTitle());
+      //  this.titleView.setText(this.getContent().getTitle());
 
         SegmentDataCache segmentDataCache = new SegmentDataCache(this.getContent());
 

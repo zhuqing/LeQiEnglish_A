@@ -22,6 +22,8 @@ public class SegmentPlayActivity extends LeQiAppCompatActivity {
 
     private Integer currentIndex;
 
+    private Boolean isClosePlayerWhenRentern;
+
     private SegmentPlayController segmentPlayController;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -33,10 +35,12 @@ public class SegmentPlayActivity extends LeQiAppCompatActivity {
         content = (Content) this.getIntent().getExtras().getSerializable(BundleUtil.DATA);
 
         currentIndex = (Integer) this.getIntent().getExtras().getSerializable(BundleUtil.INDEX);
+        isClosePlayerWhenRentern = this.getIntent().getExtras().getBoolean(BundleUtil.DATA_BL,false);
 
         segmentPlayController = new SegmentPlayController(root,currentIndex,content);
         segmentPlayController.init();
         segmentPlayController.reload();
+        segmentPlayController.setClosePlayerWhenRetern(isClosePlayerWhenRentern);
         super.onCreate(savedInstanceState);
     }
 
@@ -55,8 +59,21 @@ public class SegmentPlayActivity extends LeQiAppCompatActivity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        segmentPlayController.destory();
+    }
+
+    @Override
     protected void backHandler(){
         super.backHandler();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+
     }
 
     @Override

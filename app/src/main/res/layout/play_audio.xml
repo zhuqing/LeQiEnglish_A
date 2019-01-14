@@ -1,74 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cus="http://schemas.android.com/apk/res-auto"
     android:id="@+id/play_audio_view"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--<TextView-->
-    <!--android:id="@+id/play_audio_title"-->
-    <!--android:gravity="center_horizontal"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content" />-->
+
+
     <ScrollView
-
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true">
 
-        <RelativeLayout
-            android:paddingBottom="30dp"
+        <LinearLayout
+            android:id="@+id/play_audio_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/play_audio_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:orientation="vertical"></LinearLayout>
-
-            <Button
-                android:id="@+id/play_audio_share"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="30dp"
-                android:layout_below="@id/play_audio_layout"
-                android:layout_centerHorizontal="true"
-
-                style="@style/font_size_20_white_bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_green_corner"
-
-                android:text="@string/share_5" />
-            <Button
-                android:id="@+id/play_audio_segment_word"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="30dp"
-                android:layout_below="@id/play_audio_share"
-                android:layout_centerHorizontal="true"
-
-                style="@style/font_size_20_white_bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_green_corner"
-
-                android:text="查看单词" />
-            <Button
-                android:id="@+id/play_audio_start_recite"
-                android:layout_marginTop="30dp"
-                android:layout_below="@id/play_audio_segment_word"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                style="@style/font_size_20_white_bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_red_corner"
-
-                android:text="开始背诵" />
-        </RelativeLayout>
+            android:orientation="vertical"></LinearLayout>
     </ScrollView>
+
+    <com.leqienglish.view.operation.OperationBar
+        android:id="@+id/play_audio_operationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        cus:items="return|words|hearted|share"></com.leqienglish.view.operation.OperationBar>
+
+
 </RelativeLayout>

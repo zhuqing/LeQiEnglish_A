@@ -16,6 +16,9 @@ import java.util.List;
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.user.User;
 
+/**
+ * 当前用户关联的Content
+ */
 public class MyContentDataCache extends DataCacheAbstract<List<Content>> {
 
     private static MyContentDataCache instance;

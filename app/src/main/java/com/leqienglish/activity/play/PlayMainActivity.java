@@ -44,5 +44,9 @@ public class PlayMainActivity extends LeQiAppCompatActivity {
         playMainController.onPause();
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        playMainController.destory();
+    }
 }

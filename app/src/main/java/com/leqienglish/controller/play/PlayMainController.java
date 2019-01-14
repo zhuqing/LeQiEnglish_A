@@ -1,9 +1,12 @@
 package com.leqienglish.controller.play;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,39 +16,40 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.segment.SegmentPlayActivity;
 import com.leqienglish.controller.ControllerAbstract;
+import com.leqienglish.data.content.ContentDataCache;
 import com.leqienglish.data.content.MyContentDataCache;
-import com.leqienglish.data.segment.SegmentDataCache;
+import com.leqienglish.data.segment.SegmentPlayEntityGenerator;
 import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.data.user.UserHeartedDataCache;
 import com.leqienglish.entity.SegmentPlayEntity;
+import com.leqienglish.service.MusicService;
 import com.leqienglish.sf.LQService;
-import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.SharePlatform;
-import com.leqienglish.util.TaskUtil;
 import com.leqienglish.util.toast.ToastUtil;
 import com.leqienglish.view.adapter.simpleitem.SimpleItemAdapter;
 import com.leqienglish.view.operation.OperationBar;
 import com.leqienglish.view.play.PlayBarView;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
+import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.english.Content;
-import xyz.tobebetter.entity.english.Segment;
+import xyz.tobebetter.entity.user.UserHearted;
+
+import static android.content.Context.BIND_AUTO_CREATE;
 
 public class PlayMainController extends ControllerAbstract {
     private ListView listView;
     private PlayBarView playBarView;
     private OperationBar operationBar;
-    private Integer selectedIndex;
+    private Integer selectedIndex = -1;
     private Content selectedContent;
     private SimpleItemAdapter<Content> contentSimpleItemAdapter;
-
-
-
+    protected MusicService.MusicBinder musicControl;
+    private MyConnection conn;
     public PlayMainController(View view) {
         super(view);
     }
@@ -109,110 +113,175 @@ public class PlayMainController extends ControllerAbstract {
         });
 
 
-        initPlayBarView(this.playBarView);
+
         this.initOperationBar(this.operationBar);
+        initService();
         reload();
     }
 
+    private void initService(){
+        conn = new MyConnection();
+        //使用混合的方法开启服务，
+        Intent intent3 = new Intent(this.getContext(), MusicService.class);
+        getContext().startService(intent3);
+
+        startBind();
+    }
+
+
+
+
+
     public void onResume() {
-        if (this.playBarView != null) {
-            this.playBarView.startBind();
+        startBind();
+    }
+
+    public void onPause() {
+       this.unbind();
+    }
+
+    /**
+     * 建立与服务端的绑定
+     */
+    public void startBind(){
+
+        Intent intent3 = new Intent(this.getContext(), MusicService.class);
+        getContext().bindService(intent3, conn, BIND_AUTO_CREATE);
+        if(musicControl != null ){
+            if(musicControl.isPlaying()){
+                playBarView.play();
+            }else{
+                playBarView.stop();
+            }
+
         }
     }
 
-    public void onPause(){
-        if (this.playBarView != null) {
-            this.playBarView.unbind();
+    private void hearted(){
+        if(this.selectedContent == null || this.selectedContent.getAwesomeNum() == null){
+            return;
         }
+
+        this.selectedContent.setAwesomeNum(selectedContent.getAwesomeNum()+1);
+
+        updateHearted(true);
+        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(selectedContent.getId());
+        userHeartedDataCache.commit(Consistent.CONTENT_TYPE_CONTENT);
+        ContentDataCache.update(selectedContent.getId());
     }
+
+    private void updateHearted(boolean userInteract){
+        if(this.selectedContent == null || this.selectedContent.getAwesomeNum() == null){
+            return;
+        }
+
+        long awesomeNum = this.selectedContent.getAwesomeNum();
+
+
+
+        if(userInteract){
+            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart_red);
+            return;
+        }else{
+            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart);
+        }
+
+        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(selectedContent.getId());
+        userHeartedDataCache.load(new LQHandler.Consumer<UserHearted>() {
+            @Override
+            public void accept(UserHearted userHearted) {
+                if(userHearted != null){
+                    operationBar.update("hearted",R.drawable.heart_red);
+                }
+            }
+        });
+
+    }
+
+
+    /**
+     * 解除与服务端的绑定
+     */
+    public void unbind(){
+        try{
+            getContext().unbindService(conn);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
 
 
     private void initOperationBar(OperationBar operationBar) {
         this.operationBar.setOperationBarI(new OperationBar.OperationBarI() {
-            @Override
-            public void heartClickHandler() {
-
-            }
 
             @Override
-            public void contentClickHandler() {
+            public void handler(String id) {
+                switch (id){
+                    case "return":
+                        playBarView.stop();
+                        PlayMainController.this.finished();
+                        break;
+                    case "content":
+                        contentClickHandler();
+                        break;
+                    case "hearted":
+                        hearted();
+                        break;
+                    case "share":
+                        shareClickHandler();
+                        break;
+
+                    default:
 
 
-                playBarView.onStopUpdate();
-                if (selectedContent == null) {
-                    ToastUtil.showShort(getContext(), "没有选中数据");
-                    return;
                 }
-
-                playBarView.unbind();
-                Intent intent = new Intent();
-
-                Bundle bundle = BundleUtil.create(BundleUtil.DATA, selectedContent);
-                BundleUtil.create(bundle, BundleUtil.INDEX, playBarView.getPlayIndex());
-                intent.putExtras(bundle);
-                intent.setClass(getContext(), SegmentPlayActivity.class);
-                getContext().startActivity(intent);
-            }
-
-            @Override
-            public void shareClickHandler() {
-                String userName = UserDataCache.getInstance().getUserName();
-                String userId = UserDataCache.getInstance().getUserId();
-                String hasFinished = "刚刚完成了\"\"的背诵";
-                //  String segmentId = segment.getId();
-                StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
-                stringBuilder.append("html/share/shareContent.html").append("?userId=").append(userId).append("&segmentId=").append("");
-                SharePlatform.onShare(getView().getContext(), userName + hasFinished, "我" + hasFinished, LQService.getLogoPath(), stringBuilder.toString());
-
             }
         });
     }
 
-    private void initPlayBarView(PlayBarView playBarView) {
-        this.playBarView.setPlayBarI(new PlayBarView.PlayBarI() {
-            @Override
-            public void play() {
 
-            }
+    private void contentClickHandler() {
 
-            @Override
-            public void playNext() {
-                selectedIndex += 1;
-                if (selectedIndex == contentSimpleItemAdapter.getCount()) {
-                    selectedIndex = 0;
-                }
 
-                contentSimpleItemAdapter.selecte(selectedIndex);
+        if (selectedContent == null) {
+            ToastUtil.showShort(getContext(), "没有选中数据");
+            return;
+        }
 
-                PlayMainController.this.play(selectedIndex);
-            }
+        int currentPlayIndex = 0;
 
-            @Override
-            public void playPrevious() {
-                selectedIndex -= 1;
-                if (selectedIndex == -1) {
-                    selectedIndex = contentSimpleItemAdapter.getCount() - 1;
-                }
-                contentSimpleItemAdapter.selecte(selectedIndex);
-                PlayMainController.this.play(selectedIndex);
-            }
+        if(musicControl  != null){
+            currentPlayIndex = musicControl.getCurrentPlayIndex();
+        }
 
-            @Override
-            public void stop() {
 
-            }
+        Intent intent = new Intent();
 
-            @Override
-            public void playSegmentIndex(Integer index) {
-
-            }
-
-            @Override
-            public void currentTimeChange(long currentTime) {
-
-            }
-        });
+        Bundle bundle = BundleUtil.create(BundleUtil.DATA, selectedContent);
+        BundleUtil.create(bundle, BundleUtil.INDEX,currentPlayIndex);
+        intent.putExtras(bundle);
+        intent.setClass(getContext(), SegmentPlayActivity.class);
+        getContext().startActivity(intent);
     }
+
+
+    private void shareClickHandler() {
+        if(selectedContent == null){
+            return;
+        }
+        String userName = UserDataCache.getInstance().getUserName();
+        String userId = UserDataCache.getInstance().getUserId();
+        String hasFinished = "刚刚完成了\"\"的背诵";
+        //  String segmentId = segment.getId();
+        StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
+        stringBuilder.append("/html/details.html").append("?userId=").append(userId).append("&id=").append(selectedContent.getId());
+        SharePlatform.onShare(getView().getContext(), userName + hasFinished, "我" + hasFinished, LQService.getLogoPath(), stringBuilder.toString());
+
+    }
+
+
 
     @Override
     public void reload() {
@@ -229,106 +298,175 @@ public class PlayMainController extends ControllerAbstract {
 
     @Override
     public void destory() {
-        playBarView.onDestroy();
+        if(musicControl != null ){
+            if(musicControl.isPlaying()){
+                musicControl.pause();
+                playBarView.stop();
+            }
+
+        }
     }
 
     private void play(Integer position) {
+        contentSimpleItemAdapter.selecte(selectedIndex);
         Content content = contentSimpleItemAdapter.getItem(position);
         selectedContent = content;
-        loadSegments(content);
+
+        SegmentPlayEntityGenerator segmentPlayEntityGenerator = new SegmentPlayEntityGenerator(content);
+        segmentPlayEntityGenerator.accept(new LQHandler.Consumer<List<SegmentPlayEntity>>() {
+            @Override
+            public void accept(List<SegmentPlayEntity> segmentPlayEntities) {
+                if(segmentPlayEntities == null || segmentPlayEntities.isEmpty()){
+                    return;
+                }
+                if(musicControl !=null){
+                    musicControl.setSegmentPlayEntityList(segmentPlayEntities);
+                    musicControl.play(0);
+                }
+
+                playBarView.init(0, segmentPlayEntities.get(segmentPlayEntities.size()-1).getEndTime());
+
+            }
+        });
+
+        //loadSegments(content);
+        updateHearted(false);
     }
 
-    private void initHeart(Content content){
-        content.getAwesomeNum();
-      //  operationBar.set
+
+
+    class PlayMainMusicControlImpl implements MusicService.MusicBinderI{
+        private PlayBarView playBarView;
+
+        public PlayMainMusicControlImpl(PlayBarView playBarView){
+            this.playBarView = playBarView;
+        }
+
+        @Override
+        public void currentTimeChange(int index , int currentTime) {
+
+            if(this.playBarView == null){
+                return;
+            }
+
+            int startTime = 0;
+            if(index >0 && index < musicControl.getSegmentPlayEntityList().size()){
+                startTime = musicControl.getSegmentPlayEntityList().get(index -1).getEndTime();
+            }
+
+            this.playBarView.updateProgress(startTime+currentTime);
+        }
+
+        @Override
+        public void finished() {
+            //播放下一条数据
+            selectedIndex += 1;
+            if (selectedIndex == contentSimpleItemAdapter.getCount()) {
+                selectedIndex = 0;
+            }
+
+            contentSimpleItemAdapter.selecte(selectedIndex);
+
+            PlayMainController.this.play(selectedIndex);
+        }
+
+        @Override
+        public void currentPlayIndexChange(int playIndex) {
+
+        }
+    }
+
+
+    /**
+     * 实现playBarView的接口
+     */
+    class PlayMainPlayBarImpl implements PlayBarView.PlayBarI{
+       private MusicService.MusicBinder musicBinder;
+
+       public PlayMainPlayBarImpl(MusicService.MusicBinder musicBinder){
+           this.musicBinder = musicBinder;
+       }
+
+        @Override
+        public void play() {
+            if(musicBinder == null){
+                return;
+            }
+            if(selectedIndex<0|| selectedContent == null){
+                selectedIndex = 0;
+                PlayMainController.this.play(selectedIndex);
+            }
+            musicBinder.play();
+        }
+
+        @Override
+        public void playNext() {
+            selectedIndex += 1;
+            if (selectedIndex == contentSimpleItemAdapter.getCount()) {
+                selectedIndex = 0;
+            }
+
+
+
+            PlayMainController.this.play(selectedIndex);
+        }
+
+        @Override
+        public void playPrevious() {
+            selectedIndex -= 1;
+            if (selectedIndex == -1) {
+                selectedIndex = contentSimpleItemAdapter.getCount() - 1;
+            }
+
+            PlayMainController.this.play(selectedIndex);
+        }
+
+        @Override
+        public void stop() {
+            if(musicBinder == null){
+                return;
+            }
+            musicBinder.pause();
+        }
+
+        @Override
+        public void updateControl(MusicService.MusicBinder musicBinder) {
+
+        }
+
+        @Override
+        public void updateProgress(long newValue) {
+           for(int i = 0 ; i < musicBinder.getSegmentPlayEntityList().size() ; i++){
+                SegmentPlayEntity segmentPlayEntity = musicBinder.getSegmentPlayEntityList().get(i);
+                if(newValue >= segmentPlayEntity.getStartTime()&& newValue <= segmentPlayEntity.getEndTime()){
+                    musicBinder.play(i,Integer.valueOf((newValue - segmentPlayEntity.getStartTime())+""));
+                    return;
+               }
+           }
+        }
     }
 
     /**
-     * 递归加载音频文件
-     *
-     * @param filePaths
-     * @param index
+     * 与服务端的连接器
      */
-    private void loadFiles(List<SegmentPlayEntity> filePaths, int index) {
+    private class MyConnection implements ServiceConnection {
 
+        //服务启动完成后会进入到这个方法
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            //获得service中的MyBinder
+            musicControl = (MusicService.MusicBinder) service;
 
-        SegmentPlayEntity segmentPlayEntity = filePaths.get(index);
+            playBarView.setPlayBarI(new PlayMainPlayBarImpl(musicControl));
 
+            musicControl.setMusicBinderI(new PlayMainMusicControlImpl(playBarView));
 
-        LoadFile.loadFile(segmentPlayEntity.getFilePath(), new LQHandler.Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                segmentPlayEntity.setFilePath(s);
-                if (index == filePaths.size() - 1) {
-
-                    return;
-                }
-                loadFiles(filePaths, index + 1);
-
-            }
-        });
-
-
-    }
-
-    private void initPlayBarView(List<SegmentPlayEntity> filePaths) {
-
-        //先加载第一个文件，然后异步加载其他文件
-        LoadFile.loadFile(filePaths.get(0).getFilePath(), new LQHandler.Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                filePaths.get(0).setFilePath(s);
-                playBarView.init(1, filePaths);
-                TaskUtil.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadFiles(filePaths, 1);
-                    }
-                });
-
-            }
-        });
-
-    }
-
-    private void loadSegments(Content content) {
-        SegmentDataCache segmentDataCache = new SegmentDataCache(content);
-        segmentDataCache.load(new LQHandler.Consumer<List<Segment>>() {
-            @Override
-            public void accept(List<Segment> segments) {
-                if (segments == null) {
-                    return;
-                }
-
-                List<SegmentPlayEntity> segmentPlayEntities = createSegmentPlayEntitys(segments);
-                initPlayBarView(segmentPlayEntities);
-            }
-        });
-    }
-
-    private List<SegmentPlayEntity> createSegmentPlayEntitys(List<Segment> segments) {
-        Collections.sort(segments, new Comparator<Segment>() {
-            @Override
-            public int compare(Segment o1, Segment o2) {
-                return o1.getIndexNo() - o2.getIndexNo();
-            }
-        });
-        List<SegmentPlayEntity> segmentPlayEntities = new ArrayList<>(segments.size());
-        SegmentPlayEntity lastPlayEntity = null;
-        for (Segment segment : segments) {
-            SegmentPlayEntity segmentPlayEntity = SegmentPlayEntity.toSegmentPlayEntity(segment);
-
-            if (lastPlayEntity != null) {
-                segmentPlayEntity.setEndTime(lastPlayEntity.getEndTime() + segmentPlayEntity.getEndTime());
-                segmentPlayEntity.setStartTime(lastPlayEntity.getEndTime());
-
-            }
-
-            lastPlayEntity = segmentPlayEntity;
-            segmentPlayEntities.add(segmentPlayEntity);
         }
 
-        return segmentPlayEntities;
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
     }
 
 

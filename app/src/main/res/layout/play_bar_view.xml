@@ -48,7 +48,7 @@
         android:id="@+id/play_bar_view_play"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:background="@drawable/play_red"
+        android:background="@drawable/play_new"
         android:gravity="center"
         android:layout_centerInParent="true"
         />
@@ -59,7 +59,7 @@
         android:layout_height="32dp"
         android:layout_marginRight="50dp"
          android:layout_toLeftOf="@id/play_bar_view_play"
-        android:background="@drawable/previous_play"
+        android:background="@drawable/previous_new"
         android:layout_centerVertical="true"
         android:gravity="center" />
 
@@ -70,7 +70,7 @@
         android:layout_marginLeft="50dp"
         android:layout_toRightOf="@id/play_bar_view_play"
 android:layout_centerVertical="true"
-        android:background="@drawable/next_play"
+        android:background="@drawable/next_new"
         android:gravity="center" />
 </RelativeLayout>
 

@@ -130,8 +130,9 @@ public class ExecuteSQL {
     }
 
 
-    public static <T extends Entity> void insertLearnE(final List<T> data, String parentId, String type) {
+    public static synchronized <T extends Entity>  void  insertLearnE(final List<T> data, String parentId, String type) {
         try {
+
             List<SQLEntity> sqlEntities = toSQLEntitys(type, parentId, data);
 
             SQLiteDatabase db = executeSQL.sqlData.getWritableDatabase();

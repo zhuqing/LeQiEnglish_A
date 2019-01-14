@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <ImageView
+        android:layout_marginTop="10dp"
         android:id="@+id/operation_bar_item_button"
         android:layout_width="@dimen/icon_small"
         android:layout_height="@dimen/icon_small"

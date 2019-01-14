@@ -10,11 +10,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.segment.RecitingSegmentActivity;
 import com.leqienglish.activity.segment.SegmentWordsActivity;
 import com.leqienglish.activity.word.WordInfoActivity;
 import com.leqienglish.data.content.RecitedSegmentDataCache;
 import com.leqienglish.data.user.UserDataCache;
+import com.leqienglish.data.user.UserHeartedDataCache;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
 import com.leqienglish.data.word.WordInfoDataCache;
 import com.leqienglish.pop.actionsheet.ActionSheet;
@@ -26,6 +26,7 @@ import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.TaskUtil;
+import com.leqienglish.view.operation.OperationBar;
 import com.leqienglish.view.play.PlayerPaneView;
 import com.leqienglish.view.word.WordInfoView;
 
@@ -37,11 +38,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.english.play.AudioPlayPoint;
 import xyz.tobebetter.entity.english.word.user.UserAndSegment;
 import xyz.tobebetter.entity.user.User;
+import xyz.tobebetter.entity.user.UserHearted;
 import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 import xyz.tobebetter.entity.word.Word;
 
@@ -54,15 +57,16 @@ public class PlayAudioAController extends ControllerAbstract {
     List<View> views;
 
     private LinearLayout frameLayout;
+
     private TextView titleView;
-    private Button shareButton;
-    private Button wordsButton;
+
+    private OperationBar operationBar;
 
     private PlayerPaneView paneView;
 
     private View lastView;
 
-    private Button startReciteButton;
+
 
     private int minutes;
 
@@ -80,9 +84,8 @@ public class PlayAudioAController extends ControllerAbstract {
     public void init() {
         this.frameLayout = this.getView().findViewById(R.id.play_audio_layout);
         this.paneView = new PlayerPaneView(this.getView().getContext(), null);
-        this.startReciteButton = (Button) this.findViewById(R.id.play_audio_start_recite);
-        this.shareButton = (Button) this.findViewById(R.id.play_audio_share);
-        this.wordsButton = (Button) this.findViewById(R.id.play_audio_segment_word);
+        this.operationBar = (OperationBar) this.findViewById(R.id.play_audio_operationBar);
+
         this.views = new ArrayList<>();
 
         TaskUtil.run(new LQHandler.Supplier<List<AudioPlayPoint>>() {
@@ -118,6 +121,7 @@ public class PlayAudioAController extends ControllerAbstract {
 
         saveWord(segment, UserDataCache.getInstance().getUser());
         this.initListener();
+        updateHearted(false);
     }
 
     /**
@@ -171,47 +175,138 @@ public class PlayAudioAController extends ControllerAbstract {
     }
 
     private void initListener() {
-        startReciteButton.setOnClickListener(new View.OnClickListener() {
+        this.operationBar.setOperationBarI(new OperationBar.OperationBarI() {
             @Override
-            public void onClick(View v) {
-                updateTimes();
-                addUserAndSegment();
-                paneView.destroy();
-                Intent intent = new Intent();
-                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
-                intent.setClass(getView().getContext(), RecitingSegmentActivity.class);
-                getView().getContext().startActivity(intent);
+            public void handler(String id) {
+                switch (id){
+                    case "return":
 
-            }
-        });
+                        finished();
+                        break;
+                    case "words":
+                        if(paneView != null){
+                            paneView.stop();
+                        }
+                        toWordsAndShortWordsView(segment);
+                        break;
+                    case "hearted":
+                        hearted();
+                        break;
+                    case "share":
+                        shareClickHandler();
+                        break;
 
-        this.wordsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
-                intent.setClass(getView().getContext(), SegmentWordsActivity.class);
-                getView().getContext().startActivity(intent);
-            }
-        });
+                    default:
 
-        this.shareButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                if (segment == null) {
-                    return;
                 }
-                String userName = UserDataCache.getInstance().getUserName();
-                String userId = UserDataCache.getInstance().getUserId();
-                String hasFinished = "刚刚完成了\"" + segment.getTitle() + "\"的背诵";
-                String segmentId = segment.getId();
-                StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
-                stringBuilder.append("html/share/shareContent.html").append("?userId=").append(userId).append("&segmentId=").append(segmentId);
-                SharePlatform.onShare(getView().getContext(), userName + hasFinished, "我" + hasFinished, LQService.getLogoPath(), stringBuilder.toString());
-
             }
         });
+
+
+//        startReciteButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                updateTimes();
+//                addUserAndSegment();
+//                paneView.destroy();
+//                Intent intent = new Intent();
+//                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
+//                intent.setClass(getView().getContext(), RecitingSegmentActivity.class);
+//                getView().getContext().startActivity(intent);
+//
+//            }
+//        });
+//
+//        this.wordsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent();
+//                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
+//                intent.setClass(getView().getContext(), SegmentWordsActivity.class);
+//                getView().getContext().startActivity(intent);
+//            }
+//        });
+//
+//        this.shareButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                if (segment == null) {
+//                    return;
+//                }
+            //
+//            }
+//        });
+    }
+
+    private void hearted(){
+
+        if(segment == null){
+            return;
+        }
+
+        Integer awesomeNum = segment.getAwesomeNum() == null ? 0 :segment.getAwesomeNum();
+
+
+        segment.setAwesomeNum(awesomeNum + 1);
+
+        updateHearted(true);
+        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(segment.getId());
+        userHeartedDataCache.commit(Consistent.CONTENT_TYPE_SEGMENT);
+        //ContentDataCache.update(selectedContent.getId());
+    }
+
+    private void updateHearted(boolean userInteract){
+
+        if(segment == null){
+            return;
+        }
+
+        Integer awesomeNum = segment.getAwesomeNum() == null ? 0 :segment.getAwesomeNum();
+
+        if(userInteract){
+            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart_red);
+            return;
+        }else{
+            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart);
+        }
+
+        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(segment.getId());
+        userHeartedDataCache.load(new LQHandler.Consumer<UserHearted>() {
+            @Override
+            public void accept(UserHearted userHearted) {
+                if(userHearted != null){
+                    operationBar.update("hearted",R.drawable.heart_red);
+                }
+            }
+        });
+
+    }
+
+
+    private void shareClickHandler() {
+
+
+        if(segment == null){
+            return;
+        }
+
+        String userName = UserDataCache.getInstance().getUserName();
+        String userId = UserDataCache.getInstance().getUserId();
+        String hasFinished = "刚刚完成了\"" + segment.getTitle() + "\"的背诵";
+        String segmentId = segment.getId();
+        StringBuilder stringBuilder = new StringBuilder(LQService.getHttp());
+        stringBuilder.append("html/share/shareContent.html").append("?userId=").append(userId).append("&segmentId=").append(segmentId);
+        SharePlatform.onShare(getView().getContext(), userName + hasFinished, "我" + hasFinished, LQService.getLogoPath(), stringBuilder.toString());
+
+    }
+
+    private void toWordsAndShortWordsView(Segment segment){
+        Intent intent = new Intent();
+        intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
+        intent.setClass(getView().getContext(), SegmentWordsActivity.class);
+        getView().getContext().startActivity(intent);
     }
 
 
