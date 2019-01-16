@@ -12,10 +12,9 @@ import com.leqienglish.R;
 import com.leqienglish.activity.segment.SegmentPlayActivity;
 import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.AppRefreshManager;
-import com.leqienglish.data.content.ContentDataCache;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.data.user.UserDataCache;
-import com.leqienglish.data.user.UserHeartedDataCache;
+import com.leqienglish.helper.heart.ContentHeartHelper;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
@@ -30,12 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.english.content.ReciteContentVO;
 import xyz.tobebetter.entity.user.User;
-import xyz.tobebetter.entity.user.UserHearted;
 import xyz.tobebetter.entity.user.content.UserAndContent;
 
 public class ArticleInfoController extends ControllerAbstract {
@@ -55,10 +52,13 @@ public class ArticleInfoController extends ControllerAbstract {
     private boolean isReciting;
 
 
+    private ContentHeartHelper contentHeartHelper;
 
-    public ArticleInfoController(View view,boolean isReciting) {
+
+    public ArticleInfoController(View view,boolean isReciting,Content content) {
         super(view);
         this.isReciting = isReciting;
+        this.content = content;
     }
 
     @Override
@@ -66,6 +66,8 @@ public class ArticleInfoController extends ControllerAbstract {
         this.button = this.getView().findViewById(R.id.add_recite_article_info_button);
         this.articleInfoView = this.getView().findViewById(R.id.add_recite_article_info_view);
         this.operationBar = (OperationBar) this.findViewById(R.id.add_recite_article_info_operationBar);
+        this.contentHeartHelper = new ContentHeartHelper(operationBar,content);
+        this.setContent(content);
         this.initListener();
         reload();
     }
@@ -95,7 +97,7 @@ public class ArticleInfoController extends ControllerAbstract {
                         startPlayAudio();
                         break;
                     case "hearted":
-                        hearted();
+                        contentHeartHelper.hearted();
                         break;
                     case "share":
                         shareClickHandler();
@@ -108,10 +110,6 @@ public class ArticleInfoController extends ControllerAbstract {
             }
         });
     }
-
-
-
-
 
 
 
@@ -142,51 +140,11 @@ public class ArticleInfoController extends ControllerAbstract {
     }
 
 
-    private void hearted(){
-        if(this.content == null || this.content.getAwesomeNum() == null){
-            return;
-        }
 
-        this.content.setAwesomeNum(content.getAwesomeNum()+1);
-
-        updateHearted(true);
-        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(content.getId());
-        userHeartedDataCache.commit(Consistent.CONTENT_TYPE_CONTENT);
-        ContentDataCache.update(content.getId());
-    }
-
-    private void updateHearted(boolean userInteract){
-        if(content == null || content.getAwesomeNum() == null){
-            return;
-        }
-
-        long awesomeNum = this.content.getAwesomeNum();
-
-
-
-        if(userInteract){
-            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart_red);
-            return;
-        }else{
-            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart);
-        }
-
-        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(content.getId());
-        userHeartedDataCache.load(new LQHandler.Consumer<UserHearted>() {
-            @Override
-            public void accept(UserHearted userHearted) {
-                if(userHearted != null){
-                    operationBar.update("hearted",R.drawable.heart_red);
-                }
-            }
-        });
-
-    }
 
 
     @Override
     public void reload() {
-
 
         if(this.isReciting){
             button.setVisibility(View.GONE);
@@ -198,7 +156,8 @@ public class ArticleInfoController extends ControllerAbstract {
             button.setText(R.string.has_add_article_to_recite);
             hasAdd2MyReciting = true;
         }
-        updateHearted(false);
+        articleInfoView.load();
+        contentHeartHelper.updateHearted(false);
     }
 
     @Override

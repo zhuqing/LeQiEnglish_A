@@ -10,5 +10,6 @@ public class AppContextActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppType.mainContext = this.getApplicationContext();
+        //this.setContentView();
     }
 }

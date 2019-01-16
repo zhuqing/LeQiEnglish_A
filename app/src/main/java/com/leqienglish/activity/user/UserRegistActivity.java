@@ -5,10 +5,17 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.user.UserRegistController;
 
 public class UserRegistActivity extends LeQiAppCompatActivity {
     private UserRegistController userRegistController;
+
+    @Override
+    protected ControllerAbstract getController() {
+        return userRegistController;
+    }
+
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);

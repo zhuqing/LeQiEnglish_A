@@ -1,4 +1,4 @@
-package com.leqienglish.controller;
+package com.leqienglish.controller.segment;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -12,12 +12,16 @@ import android.widget.TextView;
 import com.leqienglish.R;
 import com.leqienglish.activity.segment.SegmentWordsActivity;
 import com.leqienglish.activity.word.WordInfoActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.data.content.RecitedSegmentDataCache;
 import com.leqienglish.data.user.UserDataCache;
-import com.leqienglish.data.user.UserHeartedDataCache;
 import com.leqienglish.data.user.UserReciteRecordDataCache;
 import com.leqienglish.data.word.WordInfoDataCache;
+import com.leqienglish.entity.SegmentPlayEntity;
+import com.leqienglish.helper.heart.SegmentHeartHelper;
+import com.leqienglish.helper.music.MusicServicePlayHelper;
 import com.leqienglish.pop.actionsheet.ActionSheet;
+import com.leqienglish.service.music.MusicService;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.BundleUtil;
@@ -27,7 +31,9 @@ import com.leqienglish.util.LQHandler;
 import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.TaskUtil;
 import com.leqienglish.view.operation.OperationBar;
-import com.leqienglish.view.play.PlayerPaneView;
+import com.leqienglish.view.play.PlayBarDelegate;
+import com.leqienglish.view.play.floatplay.FloatPlayView;
+import com.leqienglish.view.play.playpane.PlayerPaneView;
 import com.leqienglish.view.word.WordInfoView;
 
 import java.io.IOException;
@@ -38,18 +44,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import xyz.tobebetter.entity.Consistent;
 import xyz.tobebetter.entity.english.Content;
 import xyz.tobebetter.entity.english.Segment;
 import xyz.tobebetter.entity.english.play.AudioPlayPoint;
 import xyz.tobebetter.entity.english.word.user.UserAndSegment;
 import xyz.tobebetter.entity.user.User;
-import xyz.tobebetter.entity.user.UserHearted;
 import xyz.tobebetter.entity.user.recite.UserReciteRecord;
 import xyz.tobebetter.entity.word.Word;
 
-public class PlayAudioAController extends ControllerAbstract {
-    private LOGGER LOG = new LOGGER(PlayAudioAController.class);
+public class SegmentInfoController extends ControllerAbstract {
+    private LOGGER LOG = new LOGGER(SegmentInfoController.class);
     private Segment segment;
     private String filePath;
 
@@ -58,7 +62,6 @@ public class PlayAudioAController extends ControllerAbstract {
 
     private LinearLayout frameLayout;
 
-    private TextView titleView;
 
     private OperationBar operationBar;
 
@@ -66,17 +69,28 @@ public class PlayAudioAController extends ControllerAbstract {
 
     private View lastView;
 
+    /**
+     * 浮动播放控件
+     */
+    private FloatPlayView floatPlayView;
+
 
 
     private int minutes;
 
     private long during;
 
+    private SegmentHeartHelper segmentHeartHelper;
 
-    public PlayAudioAController(View view, Segment segment, String path) {
+
+    private MusicServicePlayHelper musicServicePlayHelper;
+
+
+    public SegmentInfoController(View view, Segment segment, String path) {
         super(view);
         this.segment = segment;
         this.filePath = path;
+
 
     }
 
@@ -85,9 +99,59 @@ public class PlayAudioAController extends ControllerAbstract {
         this.frameLayout = this.getView().findViewById(R.id.play_audio_layout);
         this.paneView = new PlayerPaneView(this.getView().getContext(), null);
         this.operationBar = (OperationBar) this.findViewById(R.id.play_audio_operationBar);
-
+        this.segmentHeartHelper = new SegmentHeartHelper(operationBar,segment);
         this.views = new ArrayList<>();
 
+        loadData();
+
+        initFloatPlayView();
+        saveWord(segment, UserDataCache.getInstance().getUser());
+        this.initListener();
+
+        segmentHeartHelper.updateHearted(false);
+
+        this.initMusicServicePlayHelper();
+
+    }
+
+    private void initMusicServicePlayHelper(){
+        musicServicePlayHelper = new MusicServicePlayHelper(this.getContext());
+        musicServicePlayHelper.setPlayBarDelegate(new PlayBarImpl());
+        musicServicePlayHelper.setMusicBinderDelegate(new MusicBinderImpl());
+        musicServicePlayHelper.setPlayBarView(this.floatPlayView);
+        musicServicePlayHelper.setMusicBinderConsumer(new LQHandler.Consumer<MusicService.MusicBinder>() {
+            @Override
+            public void accept(MusicService.MusicBinder musicBinder) {
+                if(segment == null){
+                    return;
+                }
+
+                musicBinder.setSegmentPlayEntityList(Arrays.asList(SegmentPlayEntity.toSegmentPlayEntity(segment)));
+            }
+        });
+        musicServicePlayHelper.initService();
+    }
+
+
+    @Override
+    public void onResume() {
+        musicServicePlayHelper.startBind();
+//        if(musicServicePlayHelper.getMusicBinder()!=null){
+//            musicServicePlayHelper.getMusicBinder().play();
+//        }
+    }
+
+    /**
+     * 初始化浮动播放按钮
+     */
+    private void initFloatPlayView(){
+        floatPlayView = new FloatPlayView(this.getContext(),null);
+        this.addPopView(floatPlayView,200,200);
+        this.floatPlayView.setPlayBarDelegate(new PlayBarImpl());
+
+    }
+
+    private void loadData(){
         TaskUtil.run(new LQHandler.Supplier<List<AudioPlayPoint>>() {
                          @Override
                          public List<AudioPlayPoint> get() {
@@ -110,18 +174,12 @@ public class PlayAudioAController extends ControllerAbstract {
                      }
         );
 
-        loadMp3(this.filePath, new LQHandler.Consumer<Boolean>() {
+        this.loadMp3(segment.getAudioPath(), new LQHandler.Consumer<Boolean>() {
             @Override
             public void accept(Boolean aBoolean) {
 
-
             }
         });
-
-
-        saveWord(segment, UserDataCache.getInstance().getUser());
-        this.initListener();
-        updateHearted(false);
     }
 
     /**
@@ -187,10 +245,12 @@ public class PlayAudioAController extends ControllerAbstract {
                         if(paneView != null){
                             paneView.stop();
                         }
+
+                        floatPlayViewStop();
                         toWordsAndShortWordsView(segment);
                         break;
                     case "hearted":
-                        hearted();
+                        segmentHeartHelper.hearted();
                         break;
                     case "share":
                         shareClickHandler();
@@ -204,89 +264,13 @@ public class PlayAudioAController extends ControllerAbstract {
         });
 
 
-//        startReciteButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                updateTimes();
-//                addUserAndSegment();
-//                paneView.destroy();
-//                Intent intent = new Intent();
-//                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
-//                intent.setClass(getView().getContext(), RecitingSegmentActivity.class);
-//                getView().getContext().startActivity(intent);
-//
-//            }
-//        });
-//
-//        this.wordsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.putExtras(BundleUtil.create(BundleUtil.DATA, segment));
-//                intent.setClass(getView().getContext(), SegmentWordsActivity.class);
-//                getView().getContext().startActivity(intent);
-//            }
-//        });
-//
-//        this.shareButton.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                if (segment == null) {
-//                    return;
-//                }
-            //
-//            }
-//        });
-    }
-
-    private void hearted(){
-
-        if(segment == null){
-            return;
-        }
-
-        Integer awesomeNum = segment.getAwesomeNum() == null ? 0 :segment.getAwesomeNum();
-
-
-        segment.setAwesomeNum(awesomeNum + 1);
-
-        updateHearted(true);
-        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(segment.getId());
-        userHeartedDataCache.commit(Consistent.CONTENT_TYPE_SEGMENT);
-        //ContentDataCache.update(selectedContent.getId());
-    }
-
-    private void updateHearted(boolean userInteract){
-
-        if(segment == null){
-            return;
-        }
-
-        Integer awesomeNum = segment.getAwesomeNum() == null ? 0 :segment.getAwesomeNum();
-
-        if(userInteract){
-            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart_red);
-            return;
-        }else{
-            this.operationBar.update("hearted",awesomeNum+"",R.drawable.heart);
-        }
-
-        UserHeartedDataCache userHeartedDataCache = new UserHeartedDataCache(segment.getId());
-        userHeartedDataCache.load(new LQHandler.Consumer<UserHearted>() {
-            @Override
-            public void accept(UserHearted userHearted) {
-                if(userHearted != null){
-                    operationBar.update("hearted",R.drawable.heart_red);
-                }
-            }
-        });
 
     }
+
+
 
 
     private void shareClickHandler() {
-
 
         if(segment == null){
             return;
@@ -358,7 +342,6 @@ public class PlayAudioAController extends ControllerAbstract {
         if (segment == null || user == null) {
             return;
         }
-
 
         Map<String, String> param = new HashMap<>();
         param.put("userId", user.getId());
@@ -484,9 +467,21 @@ public class PlayAudioAController extends ControllerAbstract {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         viewHolder.play_audio_playerpane.addView(paneView);
         viewHolder.play_audio_playerpane.setVisibility(View.VISIBLE);
+        floatPlayViewStop();
         paneView.play(viewHolder.audioPlayPoint);
         lastView = view;
         frameLayout.requestLayout();
+    }
+
+    public void onPause(){
+        super.onPause();
+        this.floatPlayViewStop();
+    }
+
+
+    private void floatPlayViewStop(){
+        this.floatPlayView.stop();
+        this.musicServicePlayHelper.getMusicBinder().pause();
     }
 
     private void showWordInfo(String word) {
@@ -524,6 +519,10 @@ public class PlayAudioAController extends ControllerAbstract {
     public void destory() {
 
         this.paneView.destroy();
+        musicServicePlayHelper.unbind();
+        if(musicServicePlayHelper.getMusicBinder()!=null){
+            musicServicePlayHelper.getMusicBinder().pause();
+        }
     }
 
     public static final class ViewHolder {
@@ -535,4 +534,76 @@ public class PlayAudioAController extends ControllerAbstract {
         public  AudioPlayPoint audioPlayPoint;
 
     }
+
+    private class PlayBarImpl implements PlayBarDelegate {
+
+        @Override
+        public void play() {
+            if(musicServicePlayHelper.getMusicBinder() == null){
+                return;
+            }
+
+            if(paneView!=null){
+                paneView.stop();
+            }
+
+            musicServicePlayHelper.getMusicBinder().play();
+        }
+
+        @Override
+        public void playNext() {
+
+        }
+
+        @Override
+        public void playPrevious() {
+
+        }
+
+        @Override
+        public void stop() {
+            if(musicServicePlayHelper.getMusicBinder() == null){
+                return;
+            }
+
+            musicServicePlayHelper.getMusicBinder().pause();
+        }
+
+
+
+        @Override
+        public void updateProgress(long newValue) {
+
+        }
+    }
+
+    private class MusicBinderImpl implements MusicService.MusicBinderDelegate {
+
+        @Override
+        public void currentTimeChange(int index, int currentTime) {
+            if(musicServicePlayHelper.getPlayBarView() == null){
+                return;
+            }
+            musicServicePlayHelper.getPlayBarView().updateProgress(currentTime,musicServicePlayHelper.getMusicBinder().getMax());
+
+        }
+
+        @Override
+        public void finished() {
+            if(musicServicePlayHelper.getPlayBarView() == null){
+                return;
+            }
+
+            musicServicePlayHelper.getPlayBarView().stop();
+            musicServicePlayHelper.getPlayBarView().updateProgress(0,1);
+        }
+
+        @Override
+        public void currentPlayIndexChange(int playIndex) {
+
+        }
+    }
+
+
+
 }

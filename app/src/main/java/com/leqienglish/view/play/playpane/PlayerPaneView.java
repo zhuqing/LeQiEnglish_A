@@ -1,4 +1,4 @@
-package com.leqienglish.view.play;
+package com.leqienglish.view.play.playpane;
 
 import android.content.Context;
 import android.util.AttributeSet;

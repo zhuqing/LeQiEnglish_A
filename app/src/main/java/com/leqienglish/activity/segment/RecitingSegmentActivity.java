@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.segment.RecitingSegmentController;
 import com.leqienglish.util.BundleUtil;
 
@@ -12,8 +13,14 @@ import xyz.tobebetter.entity.english.Segment;
 
 public class RecitingSegmentActivity extends LeQiAppCompatActivity {
 
+
     private RecitingSegmentController recitingSegmentController;
     private Segment segment;
+
+    @Override
+    protected ControllerAbstract getController() {
+        return recitingSegmentController;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
 

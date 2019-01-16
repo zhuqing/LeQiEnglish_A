@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.suggestion.SuggestionController;
 
 public class SuggestionActivity extends LeQiAppCompatActivity {
@@ -13,6 +14,11 @@ public class SuggestionActivity extends LeQiAppCompatActivity {
     private View mainView;
 
     private SuggestionController suggestionController;
+
+    @Override
+    protected ControllerAbstract getController() {
+        return suggestionController;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
 

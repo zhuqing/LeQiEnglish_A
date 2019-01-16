@@ -6,6 +6,7 @@ import android.widget.TabHost;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.segment.SegmentWordsController;
 import com.leqienglish.util.BundleUtil;
 
@@ -16,6 +17,12 @@ public class SegmentWordsActivity extends LeQiAppCompatActivity {
     private TabHost tabHost;
     private ViewPager viewPager;
     private SegmentWordsController segmentWordsController;
+
+    @Override
+    protected ControllerAbstract getController() {
+        return segmentWordsController;
+    }
+
     public void onCreate(Bundle savedInstanceState) {
 
         this.setContentView(R.layout.segment_words);

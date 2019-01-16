@@ -6,17 +6,6 @@
     android:layout_height="match_parent">
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true">
-
-        <LinearLayout
-            android:id="@+id/play_audio_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
-    </ScrollView>
 
     <com.leqienglish.view.operation.OperationBar
         android:id="@+id/play_audio_operationBar"
@@ -25,5 +14,17 @@
         android:layout_alignParentBottom="true"
         cus:items="return|words|hearted|share"></com.leqienglish.view.operation.OperationBar>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/play_audio_operationBar"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:id="@+id/play_audio_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

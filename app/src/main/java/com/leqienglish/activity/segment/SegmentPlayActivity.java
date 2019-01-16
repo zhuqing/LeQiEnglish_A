@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.segment.SegmentPlayController;
 import com.leqienglish.util.BundleUtil;
 
@@ -26,6 +27,11 @@ public class SegmentPlayActivity extends LeQiAppCompatActivity {
 
     private SegmentPlayController segmentPlayController;
 
+    @Override
+    protected ControllerAbstract getController() {
+        return segmentPlayController;
+    }
+
     public void onCreate(Bundle savedInstanceState) {
 
         this.setContentView(R.layout.segment_play_audio);
@@ -44,31 +50,8 @@ public class SegmentPlayActivity extends LeQiAppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        segmentPlayController.onResume();
-    }
 
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        segmentPlayController.onPause();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        segmentPlayController.destory();
-    }
-
-    @Override
-    protected void backHandler(){
-        super.backHandler();
-    }
 
     @Override
     public void finish() {

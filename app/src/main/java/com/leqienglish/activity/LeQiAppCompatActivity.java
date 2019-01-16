@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.leqienglish.controller.ControllerAbstract;
+
 public abstract class LeQiAppCompatActivity extends AppCompatActivity {
 
+    protected abstract ControllerAbstract getController();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,10 +27,9 @@ public abstract class LeQiAppCompatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // back button
                 backHandler();
                 return true;
-            //    case android.R.id.
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -40,9 +42,29 @@ public abstract class LeQiAppCompatActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(this.getController() != null){
+            this.getController().onResume();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        //  reciteWordsController.destory();
+        if(this.getController() != null){
+            this.getController().destory();
+        }
     }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        if(this.getController() != null){
+            this.getController().onPause();
+        }
+
+    }
+
 
 }

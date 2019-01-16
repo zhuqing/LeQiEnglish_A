@@ -28,12 +28,12 @@
         android:layout_height="wrap_content">
     </com.leqienglish.view.operation.OperationBar>
 
-    <com.leqienglish.view.play.PlayBarView
+    <com.leqienglish.view.play.playbar.PlayBarView
         android:id="@+id/segment_play_audio_playbar"
         android:layout_above="@id/segment_play_audio_operationbar"
         android:layout_width="match_parent"
         android:layout_height="100dp">
 
 
-    </com.leqienglish.view.play.PlayBarView>
+    </com.leqienglish.view.play.playbar.PlayBarView>
 </RelativeLayout>

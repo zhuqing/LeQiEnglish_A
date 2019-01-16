@@ -5,11 +5,17 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.user.LoginController;
 
 public class UserLoginActivity extends LeQiAppCompatActivity {
 
     private LoginController loginController;
+
+    @Override
+    protected ControllerAbstract getController() {
+        return loginController;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
 

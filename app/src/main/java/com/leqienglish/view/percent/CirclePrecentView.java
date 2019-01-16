@@ -22,14 +22,8 @@ public class CirclePrecentView extends View{
      */
     private float percent = 0.0f;
 
-    /**
-     *背景颜色，默认白色
-     */
     private int backgroundColor = Color.WHITE;
 
-    /**
-     * 前景颜色，先当前百分比的大小,默认绿色
-     */
     private int frontColor = 0xff4cd964;
 
 
@@ -51,7 +45,7 @@ public class CirclePrecentView extends View{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        float radius = Math.min(getWidth(), getHeight())/2.0f;
+        float radius = getRadius();
 
         Paint  paint= new Paint();
 
@@ -77,6 +71,10 @@ public class CirclePrecentView extends View{
 
     }
 
+    protected float getRadius(){
+        return  Math.min(getWidth(), getHeight())/2.0f;
+    }
+
     /**
      * 百分比，大于等于0，小于等于1
      */
@@ -87,5 +85,28 @@ public class CirclePrecentView extends View{
     public void setPercent(float percent) {
         this.percent = percent;
         this.invalidate();
+    }
+
+    /**
+     *背景颜色，默认白色
+     */
+    public int getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    @Override
+    public void setBackgroundColor(int backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * 前景颜色，先当前百分比的大小,默认绿色
+     */
+    public int getFrontColor() {
+        return frontColor;
+    }
+
+    public void setFrontColor(int frontColor) {
+        this.frontColor = frontColor;
     }
 }

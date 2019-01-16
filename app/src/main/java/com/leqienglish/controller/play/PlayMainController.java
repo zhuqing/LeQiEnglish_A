@@ -22,7 +22,7 @@ import com.leqienglish.data.segment.SegmentPlayEntityGenerator;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.user.UserHeartedDataCache;
 import com.leqienglish.entity.SegmentPlayEntity;
-import com.leqienglish.service.MusicService;
+import com.leqienglish.service.music.MusicService;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LQHandler;
@@ -30,7 +30,8 @@ import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.toast.ToastUtil;
 import com.leqienglish.view.adapter.simpleitem.SimpleItemAdapter;
 import com.leqienglish.view.operation.OperationBar;
-import com.leqienglish.view.play.PlayBarView;
+import com.leqienglish.view.play.PlayBarDelegate;
+import com.leqienglish.view.play.playbar.PlayBarView;
 
 import java.util.Collections;
 import java.util.List;
@@ -335,7 +336,7 @@ public class PlayMainController extends ControllerAbstract {
 
 
 
-    class PlayMainMusicControlImpl implements MusicService.MusicBinderI{
+    class PlayMainMusicControlImpl implements MusicService.MusicBinderDelegate {
         private PlayBarView playBarView;
 
         public PlayMainMusicControlImpl(PlayBarView playBarView){
@@ -380,7 +381,7 @@ public class PlayMainController extends ControllerAbstract {
     /**
      * 实现playBarView的接口
      */
-    class PlayMainPlayBarImpl implements PlayBarView.PlayBarI{
+    class PlayMainPlayBarImpl implements PlayBarDelegate {
        private MusicService.MusicBinder musicBinder;
 
        public PlayMainPlayBarImpl(MusicService.MusicBinder musicBinder){
@@ -429,10 +430,7 @@ public class PlayMainController extends ControllerAbstract {
             musicBinder.pause();
         }
 
-        @Override
-        public void updateControl(MusicService.MusicBinder musicBinder) {
 
-        }
 
         @Override
         public void updateProgress(long newValue) {
@@ -457,9 +455,9 @@ public class PlayMainController extends ControllerAbstract {
             //获得service中的MyBinder
             musicControl = (MusicService.MusicBinder) service;
 
-            playBarView.setPlayBarI(new PlayMainPlayBarImpl(musicControl));
+            playBarView.setPlayBarDelegate(new PlayMainPlayBarImpl(musicControl));
 
-            musicControl.setMusicBinderI(new PlayMainMusicControlImpl(playBarView));
+            musicControl.setMusicBinderDelegate(new PlayMainMusicControlImpl(playBarView));
 
         }
 

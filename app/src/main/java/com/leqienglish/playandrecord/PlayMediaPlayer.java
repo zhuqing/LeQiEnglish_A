@@ -59,6 +59,13 @@ public class PlayMediaPlayer {
         this.setAudioPlayPoint(audioPlayPoint);
         completeType = PAUSE_NOT_CHAGNE;
         this.setPlayComplete(playComplete);
+        if(this.mediaPlayer == null ){
+            try {
+                initMediaPlayer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         if(this.mediaPlayer.isPlaying()){
             completeType = PAUSE_NOT_CHAGNE;
             mediaPlayer.pause();
@@ -116,6 +123,9 @@ public class PlayMediaPlayer {
     }
 
     public boolean isplaying() {
+        if(mediaPlayer == null){
+            return false;
+        }
         return mediaPlayer.isPlaying();
     }
 

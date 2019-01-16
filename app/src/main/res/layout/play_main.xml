@@ -20,10 +20,10 @@
         android:layout_alignParentBottom="true"
         android:layout_height="wrap_content"></com.leqienglish.view.operation.OperationBar>
 
-    <com.leqienglish.view.play.PlayBarView
+    <com.leqienglish.view.play.playbar.PlayBarView
         android:id="@+id/play_main_playBardView"
   android:layout_above="@id/play_main_operationbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></com.leqienglish.view.play.PlayBarView>
+        android:layout_height="wrap_content"></com.leqienglish.view.play.playbar.PlayBarView>
 
 </RelativeLayout>

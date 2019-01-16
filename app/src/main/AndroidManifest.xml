@@ -10,12 +10,17 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/le_jin"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/le_jin"
         android:supportsRtl="true"
+
+        android:name=".activity.base.App"
         android:theme="@style/AppTheme">
         <activity
 
@@ -47,7 +52,7 @@
         <!-- </intent-filter> -->
         <!-- </activity> -->
         <activity android:name=".MainActivity"  android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity android:name=".activity.PlayAudioActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.segment.SegmentInfoActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".activity.content.ArticleInfoActivity"  android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".activity.suggestion.SuggestionActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".activity.user.UserLoginActivity"  android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -142,7 +147,7 @@
         </activity>
 
         <service
-            android:name=".service.MusicService"
+            android:name=".service.music.MusicService"
             android:enabled="true"
             android:exported="true"></service>
     </application>

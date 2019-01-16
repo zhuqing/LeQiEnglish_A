@@ -1,4 +1,4 @@
-package com.leqienglish.view.play;
+package com.leqienglish.view.play.playbar;
 
 
 import android.content.Context;
@@ -12,35 +12,18 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.service.MusicService;
 import com.leqienglish.util.LOGGER;
 import com.leqienglish.util.string.StringUtil;
+import com.leqienglish.view.play.PlayBarDelegate;
+import com.leqienglish.view.play.PlayBarViewInterface;
+import com.leqienglish.view.play.PlayStatus;
 
 /**
  * 播放器，只有播放的控制
  */
-public class PlayBarView extends LinearLayout {
+public class PlayBarView extends LinearLayout implements PlayBarViewInterface {
 
     private static final LOGGER Log = new LOGGER(PlayBarView.class);
-
-
-
-    public PlayBarI getPlayBarI() {
-        return playBarI;
-    }
-
-    public void setPlayBarI(PlayBarI playBarI) {
-        this.playBarI = playBarI;
-    }
-
-
-
-    private enum PlayStatus {
-        PLAY,
-        STOP
-    }
-
-
 
 
 
@@ -88,7 +71,7 @@ public class PlayBarView extends LinearLayout {
 
     private static final int UPDATE_PROGRESS = 0;
 
-    private PlayBarI playBarI;
+    private PlayBarDelegate playBarI;
 
 
 
@@ -232,10 +215,10 @@ public class PlayBarView extends LinearLayout {
 
     }
 
-
-
-
-
+    @Override
+    public void updateProgress(int progress, int max) {
+        this.updateProgress(progress);
+    }
 
 
     /**
@@ -255,37 +238,12 @@ public class PlayBarView extends LinearLayout {
 
 
 
-    public interface PlayBarI {
-        /**
-         * 播放
-         */
-        public void play();
-
-        /**
-         * 播放下一个
-         */
-        public void playNext();
-
-        /**
-         * 播放前一个
-         */
-        public void playPrevious();
-
-        /**
-         * 暂停
-         */
-        public void stop();
-
-        public void updateControl(MusicService.MusicBinder musicBinder);
-
-
-
-        /**
-         * 当前播放时间改变时调用
-
-         */
-        public void updateProgress(long newValue);
+    public PlayBarDelegate getPlayBarI() {
+        return playBarI;
     }
 
+    public void setPlayBarDelegate(PlayBarDelegate playBarI) {
+        this.playBarI = playBarI;
+    }
 
 }

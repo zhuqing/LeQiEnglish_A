@@ -7,7 +7,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.PlayAudioActivity;
+import com.leqienglish.activity.segment.SegmentInfoActivity;
 import com.leqienglish.sf.LoadFile;
 import com.leqienglish.util.AppType;
 import com.leqienglish.util.BundleUtil;
@@ -78,7 +78,7 @@ public class LoadingActivity extends AppCompatActivity {
                     Bundle bundle = BundleUtil.create(BundleUtil.DATA, content);
                     BundleUtil.create(bundle, BundleUtil.PATH, path);
                     intent.putExtras(bundle);
-                    intent.setClass(LoadingActivity.this, PlayAudioActivity.class);
+                    intent.setClass(LoadingActivity.this, SegmentInfoActivity.class);
                     //  intent.
                     LoadingActivity.this.startActivity(intent);
                     finish();

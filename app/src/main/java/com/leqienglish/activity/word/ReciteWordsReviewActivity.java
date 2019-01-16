@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.word.ReciteWordsReviewController;
 
 public class ReciteWordsReviewActivity extends LeQiAppCompatActivity {
@@ -12,6 +13,10 @@ public class ReciteWordsReviewActivity extends LeQiAppCompatActivity {
     private ReciteWordsReviewController reciteWordsReviewController;
 
 
+    @Override
+    protected ControllerAbstract getController() {
+        return reciteWordsReviewController;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
 

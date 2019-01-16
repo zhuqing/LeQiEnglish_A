@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leqienglish.R;
-import com.leqienglish.activity.PlayAudioActivity;
+import com.leqienglish.activity.segment.SegmentInfoActivity;
 import com.leqienglish.activity.load.LoadingActivity;
 import com.leqienglish.data.content.MyRecitingContentDataCache;
 import com.leqienglish.data.content.RecitedSegmentDataCache;
@@ -94,7 +94,7 @@ public class ArticleInfoView extends RelativeLayout {
 
                 String filePath = FileUtil.toLocalPath(path);
                 if (new File(filePath).exists()) {
-                    intent.setClass(getContext(), PlayAudioActivity.class);
+                    intent.setClass(getContext(), SegmentInfoActivity.class);
                 } else {
                     intent.setClass(getContext(), LoadingActivity.class);
                 }

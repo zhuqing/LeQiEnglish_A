@@ -12,13 +12,12 @@ import android.widget.ScrollView;
 import com.leqienglish.R;
 import com.leqienglish.activity.segment.SegmentWordsActivity;
 import com.leqienglish.controller.ControllerAbstract;
-import com.leqienglish.controller.PlayAudioAController;
 import com.leqienglish.data.segment.SegmentDataCache;
 import com.leqienglish.data.segment.SegmentPlayEntityGenerator;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.data.user.UserHeartedDataCache;
 import com.leqienglish.entity.SegmentPlayEntity;
-import com.leqienglish.service.MusicService;
+import com.leqienglish.service.music.MusicService;
 import com.leqienglish.sf.LQService;
 import com.leqienglish.util.BundleUtil;
 import com.leqienglish.util.LOGGER;
@@ -27,7 +26,8 @@ import com.leqienglish.util.SharePlatform;
 import com.leqienglish.util.TaskUtil;
 import com.leqienglish.util.toast.ToastUtil;
 import com.leqienglish.view.operation.OperationBar;
-import com.leqienglish.view.play.PlayBarView;
+import com.leqienglish.view.play.PlayBarDelegate;
+import com.leqienglish.view.play.playbar.PlayBarView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,6 +82,7 @@ public class SegmentPlayController extends ControllerAbstract {
         this.operationBar = (OperationBar) this.findViewById(R.id.segment_play_audio_operationbar);
         initOperationBar(operationBar);
         initService();
+
     }
 
 
@@ -232,7 +233,7 @@ public class SegmentPlayController extends ControllerAbstract {
     }
 
     private void changeTextColor(View lastSelectedView , int colorId){
-        PlayAudioAController.ViewHolder viewHolder = (PlayAudioAController.ViewHolder) lastSelectedView.getTag();
+        SegmentInfoController.ViewHolder viewHolder = (SegmentInfoController.ViewHolder) lastSelectedView.getTag();
         viewHolder.title.setTextColor(getContext().getResources().getColor(colorId));
 
     }
@@ -335,7 +336,7 @@ public class SegmentPlayController extends ControllerAbstract {
         for (AudioPlayPoint audioPlayPoint : playEntities) {
             final View view = layoutInflater.inflate(R.layout.play_audio_item, null);
 
-            PlayAudioAController.ViewHolder viewHolder = new PlayAudioAController.ViewHolder();
+            SegmentInfoController.ViewHolder viewHolder = new SegmentInfoController.ViewHolder();
             viewHolder.title = view.findViewById(R.id.play_audio_text);
             viewHolder.play_audio_playerpane = view.findViewById(R.id.play_audio_playerpane);
             viewHolder.ch = view.findViewById(R.id.play_audio_text_ch);
@@ -376,7 +377,7 @@ public class SegmentPlayController extends ControllerAbstract {
         isClosePlayerWhenRetern = closePlayerWhenRetern;
     }
 
-    class PlayMainMusicControlImpl implements MusicService.MusicBinderI{
+    class PlayMainMusicControlImpl implements MusicService.MusicBinderDelegate {
         private PlayBarView playBarView;
 
         public PlayMainMusicControlImpl(PlayBarView playBarView){
@@ -424,7 +425,7 @@ public class SegmentPlayController extends ControllerAbstract {
     /**
      * 实现playBarView的接口
      */
-    class PlayMainPlayBarImpl implements PlayBarView.PlayBarI{
+    class PlayMainPlayBarImpl implements PlayBarDelegate {
         private MusicService.MusicBinder musicBinder;
 
         public PlayMainPlayBarImpl(MusicService.MusicBinder musicBinder){
@@ -478,10 +479,7 @@ public class SegmentPlayController extends ControllerAbstract {
             musicControl.pause();
         }
 
-        @Override
-        public void updateControl(MusicService.MusicBinder musicBinder) {
 
-        }
 
         @Override
         public void updateProgress(long newValue) {
@@ -517,9 +515,9 @@ public class SegmentPlayController extends ControllerAbstract {
 
 
 
-            playBarView.setPlayBarI(new SegmentPlayController.PlayMainPlayBarImpl(musicControl));
+            playBarView.setPlayBarDelegate(new SegmentPlayController.PlayMainPlayBarImpl(musicControl));
 
-            musicControl.setMusicBinderI(new SegmentPlayController.PlayMainMusicControlImpl(playBarView));
+            musicControl.setMusicBinderDelegate(new SegmentPlayController.PlayMainMusicControlImpl(playBarView));
 
 
         }

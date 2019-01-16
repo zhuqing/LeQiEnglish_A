@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.leqienglish.R;
 import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
 import com.leqienglish.controller.article.ArticleInfoController;
 import com.leqienglish.data.user.UserDataCache;
 import com.leqienglish.sf.LoadFile;
@@ -25,6 +26,13 @@ import xyz.tobebetter.entity.user.User;
 public class ArticleInfoActivity extends LeQiAppCompatActivity {
 
     private Content content;
+   private ArticleInfoController articleInfoController;
+
+    @Override
+    protected ControllerAbstract getController() {
+        return articleInfoController;
+    }
+
     public void onCreate(Bundle savedInstanceState) {
 
         setContentView(R.layout.add_recite_article_info);
@@ -35,9 +43,9 @@ public class ArticleInfoActivity extends LeQiAppCompatActivity {
 
 
 
-        ArticleInfoController articleInfoController = new ArticleInfoController(view,isReciting);
+        ArticleInfoController articleInfoController = new ArticleInfoController(view,isReciting,content);
+
         articleInfoController.init();
-        articleInfoController.setContent(content);
         UserDataCache.getInstance().load(new LQHandler.Consumer<User>() {
             @Override
             public void accept(User user) {

@@ -1,4 +1,4 @@
-package com.leqienglish.service;
+package com.leqienglish.service.music;
 
 import android.app.Service;
 import android.content.Intent;
@@ -56,7 +56,7 @@ public class MusicService extends Service {
     //该方法包含关于歌曲的操作
     public class MusicBinder extends Binder {
 
-        private MusicBinderI musicBinderI;
+        private MusicBinderDelegate musicBinderDelegate;
 
         //使用handler定时更新进度条
         private Handler handler = new Handler() {
@@ -71,8 +71,8 @@ public class MusicService extends Service {
                             handler.sendEmptyMessageDelayed(UPDATE_PROGRESS, 200);
                         }
 
-                        if (musicBinderI != null) {
-                            musicBinderI.currentTimeChange(currentPlayIndex,player.getCurrentPosition());
+                        if (musicBinderDelegate != null) {
+                            musicBinderDelegate.currentTimeChange(currentPlayIndex,player.getCurrentPosition());
                         }
                         break;
                 }
@@ -178,6 +178,20 @@ public class MusicService extends Service {
         }
 
         /**
+         * 获取最大的播放时间
+         * @return
+         */
+        public int getMax(){
+            if(this.getSegmentPlayEntityList() == null || this.getSegmentPlayEntityList().isEmpty()){
+                return 0;
+            }
+
+            SegmentPlayEntity end  = this.getSegmentPlayEntityList().get(this.getSegmentPlayEntityList().size()-1);
+
+            return end.getEndTime();
+        }
+
+        /**
          * 播放上一个数据
          */
         public void playProvious() {
@@ -186,8 +200,8 @@ public class MusicService extends Service {
             }
             currentPlayIndex -= 1;
 
-            if (this.musicBinderI != null) {
-                musicBinderI.currentPlayIndexChange(currentPlayIndex);
+            if (this.musicBinderDelegate != null) {
+                musicBinderDelegate.currentPlayIndexChange(currentPlayIndex);
             }
 
             this.play(currentPlayIndex);
@@ -200,16 +214,16 @@ public class MusicService extends Service {
 
 
             if (currentPlayIndex == segmentPlayEntityList.size() - 1) {
-                if (this.musicBinderI != null) {
-                    musicBinderI.finished();
+                if (this.musicBinderDelegate != null) {
+                    musicBinderDelegate.finished();
                 }
                 return;
             }
 
             currentPlayIndex += 1;
 
-            if (this.musicBinderI != null) {
-                musicBinderI.currentPlayIndexChange(currentPlayIndex);
+            if (this.musicBinderDelegate != null) {
+                musicBinderDelegate.currentPlayIndexChange(currentPlayIndex);
             }
 
             this.play(currentPlayIndex);
@@ -244,6 +258,7 @@ public class MusicService extends Service {
         public void play() {
 
             if (player == null) {
+                this.play(0);
                 return;
             }
             if (!player.isPlaying()) {
@@ -293,12 +308,12 @@ public class MusicService extends Service {
         }
 
 
-        public MusicBinderI getMusicBinderI() {
-            return musicBinderI;
+        public MusicBinderDelegate getMusicBinderDelegate() {
+            return musicBinderDelegate;
         }
 
-        public void setMusicBinderI(MusicBinderI musicBinderI) {
-            this.musicBinderI = musicBinderI;
+        public void setMusicBinderDelegate(MusicBinderDelegate musicBinderDelegate) {
+            this.musicBinderDelegate = musicBinderDelegate;
         }
 
 
@@ -318,7 +333,7 @@ public class MusicService extends Service {
         }
     }
 
-    public interface MusicBinderI {
+    public interface MusicBinderDelegate {
 
         /**
          * 播放的当前时间改变

@@ -1,10 +1,12 @@
-package com.leqienglish.activity;
+package com.leqienglish.activity.segment;
 
 import android.os.Bundle;
 import android.view.View;
 
 import com.leqienglish.R;
-import com.leqienglish.controller.PlayAudioAController;
+import com.leqienglish.activity.LeQiAppCompatActivity;
+import com.leqienglish.controller.ControllerAbstract;
+import com.leqienglish.controller.segment.SegmentInfoController;
 import com.leqienglish.util.BundleUtil;
 
 import xyz.tobebetter.entity.english.Segment;
@@ -13,9 +15,15 @@ import xyz.tobebetter.entity.english.Segment;
  * Created by zhuqing on 2018/4/21.
  */
 
-public class PlayAudioActivity extends  LeQiAppCompatActivity {
+public class SegmentInfoActivity extends LeQiAppCompatActivity {
     private Segment segment;
-    private PlayAudioAController playAudioAController;
+    private SegmentInfoController segmentInfoController;
+
+    @Override
+    protected ControllerAbstract getController() {
+        return this.segmentInfoController;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -23,8 +31,8 @@ public class PlayAudioActivity extends  LeQiAppCompatActivity {
         segment = (Segment) this.getIntent().getExtras().getSerializable(BundleUtil.DATA);
         String path = this.getIntent().getExtras().getString(BundleUtil.PATH);
         View view = this.findViewById(R.id.play_audio_view);
-        playAudioAController = new PlayAudioAController(view,segment,path);
-        playAudioAController.init();
+        segmentInfoController = new SegmentInfoController(view,segment,path);
+        segmentInfoController.init();
         super.onCreate(savedInstanceState);
     }
 
@@ -36,9 +44,5 @@ public class PlayAudioActivity extends  LeQiAppCompatActivity {
         return segment.getTitle();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        playAudioAController.destory();
-    }
+
 }
